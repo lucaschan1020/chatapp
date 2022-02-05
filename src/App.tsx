@@ -1,6 +1,10 @@
-function App(): JSX.Element {
+import './index.css';
+
+function App() {
   return (
-    <h1>Hello World and GitHub</h1>
+    <h1>
+      Hello World and GitHub
+    </h1>
   );
 }
 
