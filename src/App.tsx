@@ -6,7 +6,7 @@ import './index.css';
 function App() {
   return (
     <div className="flex h-screen">
-      <ServerList className=" flex-none w-18 bg-tertiary" />
+      <ServerList className=" flex-none w-[4.5rem] bg-tertiary" />
       <div className="flex-1 flex flex-col">
         <Notice className="bg-cyan-600">hello notice</Notice>
         <div className="flex-1 flex min-h-0">
