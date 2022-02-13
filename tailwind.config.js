@@ -16,11 +16,16 @@ module.exports = {
         'header-primary': '#ffffff',
         'header-secondary': '#b9bbbe',
         'channel-default': '#8e9297',
+        'channeltextarea-background': '#40444b',
+        'normal': '#dcddde',
         'interactive-normal': '#b9bbbe',
         'interactive-hover': '#dcddde',
         'modifier-hover': 'rgba(79,84,92,0.16)',
         'muted': '#72767d'
       },
+      boxShadow: {
+        'low-elevation': '0 1px 0 rgba(4,4,5,0.2),0 1.5px 0 rgba(6,6,7,0.05),0 2px 0 rgba(4,4,5,0.05)'
+      }
     },
     fontFamily: {
       'primary': 'Whitney,"Helvetica Neue",Helvetica,Arial,sans-serif',
@@ -36,6 +41,9 @@ module.exports = {
     }),
     plugin(function ({ addVariant }) {
       addVariant('-webkit-scrollbar-thumb', '&::-webkit-scrollbar-thumb')
+    }),
+    plugin(function ({ addVariant }) {
+      addVariant('placeholder-not-shown', '&:not(:placeholder-shown)')
     })
   ],
 }
