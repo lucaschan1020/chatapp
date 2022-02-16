@@ -61,6 +61,7 @@ function PrivateChannelList({ className = "", privateChannelOnClick }: props) {
 
     useEffect(() => {
         privateChannelOnClick(privateChannels[0]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
@@ -70,16 +71,16 @@ function PrivateChannelList({ className = "", privateChannelOnClick }: props) {
             </div>
             <div className="pt-2 flex flex-col overflow-y-scroll -webkit-scrollbar:w-2 -webkit-scrollbar:h-2 -webkit-scrollbar-thumb:bg-clip-padding -webkit-scrollbar-thumb:border-2 -webkit-scrollbar-thumb:border-solid -webkit-scrollbar-thumb:border-transparent -webkit-scrollbar-thumb:rounded -webkit-scrollbar-thumb:bg-transparent hover:-webkit-scrollbar-thumb:bg-scrollbar-thin-thumb -webkit-scrollbar-thumb:min-h-[2.5rem]">
                 <div className="flex-none rounded-[0.25rem] h-[2.625rem] my-[0.0625rem] flex items-center justify-start ml-[0.5rem]  text-channel-default hover:text-interactive-hover hover:bg-modifier-hover cursor-pointer active:bg-[rgba(79,84,92,0.24)] active:text-white">
-                    <Icon name="friends" className="w-6 h-6 ml-3" />
+                    <Icon.Friends className="w-6 h-6 ml-3" />
                     <label className="ml-4 font-medium font-primary">Friends</label>
                 </div>
                 <div className="flex-none rounded-[0.25rem] h-[2.625rem] my-[0.0625rem] flex items-center justify-start ml-[0.5rem] text-channel-default hover:text-interactive-hover hover:bg-modifier-hover cursor-pointer active:bg-[rgba(79,84,92,0.24)] active:text-white">
-                    <Icon name="nitro" className="w-6 h-6 ml-3" />
+                    <Icon.Nitro className="w-6 h-6 ml-3" />
                     <label className="ml-4 font-medium font-primary">Nitro</label>
                 </div>
                 <div className="flex-none flex items-center justify-between pt-[1.125rem] pr-[0.5rem] pb-[0.25rem] pl-[1.125rem] h-10 text-channel-default hover:text-interactive-hover">
                     <label className="text-xs tracking-[0.015625rem] h-[1.125rem] font-semibold font-display cursor-default">DIRECT MESSAGES</label>
-                    <Icon name="dm-plus" className="w-4 h-4 cursor-pointer" />
+                    <Icon.DMPlus className="w-4 h-4 cursor-pointer" />
                 </div>
                 {privateChannels.map((privateChannel, index) => (
                     <div key={index}
@@ -93,7 +94,7 @@ function PrivateChannelList({ className = "", privateChannelOnClick }: props) {
                             }
                         </div>
 
-                        <Icon name="cross" className="flex-none text-channel-default hover:text-interactive-hover active:text-interactive-active hidden group-hover:block w-4 h-4 ml-auto mr-[0.125rem]" />
+                        <Icon.Cross className="flex-none text-channel-default hover:text-interactive-hover active:text-interactive-active hidden group-hover:block w-4 h-4 ml-auto mr-[0.125rem]" />
                     </div>
                 ))}
             </div>
@@ -105,13 +106,13 @@ function PrivateChannelList({ className = "", privateChannelOnClick }: props) {
                 </span>
                 <div className="flex-1 flex justify-around">
                     <button className="w-8 h-8 text-interactive-normal hover:bg-modifier-hover hover:text-interactive-hover rounded-[0.25rem]">
-                        <Icon name="mute" className="mx-auto" />
+                        <Icon.Mute className="mx-auto" />
                     </button>
                     <button className="w-8 h-8 text-interactive-normal hover:bg-modifier-hover hover:text-interactive-hover rounded-[0.25rem]">
-                        <Icon name="deafen" className="mx-auto" />
+                        <Icon.Deafen className="mx-auto" />
                     </button>
                     <button className="w-8 h-8 text-interactive-normal hover:bg-modifier-hover hover:text-interactive-hover rounded-[0.25rem]">
-                        <Icon name="setting" className="mx-auto" />
+                        <Icon.Setting className="mx-auto" />
                     </button>
                 </div>
             </div>

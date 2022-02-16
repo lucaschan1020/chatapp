@@ -14,41 +14,41 @@ function ChatView({ className = "", currentPrivateChannel = undefined }: props) 
         <div className={className}>
             <div className="flex-none h-12 flex items-center shadow-low-elevation px-2 z-[2]">
                 <div className="text-muted mx-2">
-                    <Icon name="alias" />
+                    <Icon.Alias />
                 </div>
                 <div className="font-display text-header-primary font-semibold">
                     {currentPrivateChannel?.participants.join(", ")}
                 </div>
                 <div className="ml-auto flex">
                     <div className="text-interactive-normal mx-2 hover:text-interactive-hover cursor-pointer">
-                        <Icon name="audio-call" />
+                        <Icon.AudioCall />
                     </div>
                     <div className="text-interactive-normal mx-2 hover:text-interactive-hover cursor-pointer">
-                        <Icon name="video-call" />
+                        <Icon.VideoCall />
                     </div>
                     <div className="text-interactive-normal mx-2 hover:text-interactive-hover cursor-pointer">
-                        <Icon name="pin" />
+                        <Icon.Pin />
                     </div>
 
                     <div className="text-interactive-normal mx-2 hover:text-interactive-hover cursor-pointer">
-                        <Icon name="add-member" />
+                        <Icon.AddMember />
                     </div>
                     {currentPrivateChannel?.participants.length > 1 &&
                         <div className="text-interactive-normal mx-2 hover:text-interactive-hover cursor-pointer" onClick={() => setViewMemberList(!viewMemberList)}>
-                            <Icon name="members" />
+                            <Icon.Members />
                         </div>
                     }
                     <div className="flex text-normal mx-2">
                         <input className="flex-1 w-[7.25rem] h-6 rounded-l pl-[0.375rem] bg-tertiary text-sm leading-5 font-primary font-medium focus:w-[13.25rem] placeholder-not-shown:w-[13.25rem] transition-[width] duration-[250ms] outline-none placeholder:text-muted" placeholder="Search" type="text" />
                         <div className="rounded-r bg-tertiary text-muted px-[0.125rem] w-7 h-6 flex items-center justify-center cursor-text">
-                            <Icon name="magnifying-glass" />
+                            <Icon.MagnifyingGlass />
                         </div>
                     </div>
                     <div className="text-interactive-normal mx-2 hover:text-interactive-hover cursor-pointer">
-                        <Icon name="dm-inbox" />
+                        <Icon.DMInbox />
                     </div>
                     <div className="text-interactive-normal mx-2 hover:text-interactive-hover cursor-pointer">
-                        <Icon name="help" />
+                        <Icon.Help />
                     </div>
                 </div>
             </div>
@@ -210,18 +210,18 @@ function ChatView({ className = "", currentPrivateChannel = undefined }: props) 
                     </div>
                     <div className="flex-none flex px-4 mb-6 relative">
                         <span className="flex-none bg-channeltextarea-background rounded-l-lg text-interactive-normal hover:text-interactive-hover px-4 py-[0.625rem]">
-                            <Icon name="attach-plus" className="cursor-pointer" />
+                            <Icon.AttachPlus className="cursor-pointer" />
                         </span>
                         <div className="flex-1 text-normal font-primary bg-channeltextarea-background py-[0.625rem] min-h-[2.75rem] max-h-[29.375rem] overflow-y-auto outline-none rounded-r-lg -webkit-scrollbar:w-3 -webkit-scrollbar:h-3 -webkit-scrollbar-thumb:border-4 -webkit-scrollbar-thumb:border-solid -webkit-scrollbar-thumb:border-transparent -webkit-scrollbar-thumb:bg-clip-padding -webkit-scrollbar-thumb:rounded-lg -webkit-scrollbar-thumb:bg-[rgba(24,25,28,.6)]" contentEditable></div>
                         <div className="flex-none flex items-center absolute right-5 top-1">
                             <div className="text-interactive-normal hover:text-interactive-active cursor-pointer mx-1 p-1">
-                                <Icon name="gift" />
+                                <Icon.Gift />
                             </div>
                             <div className="text-interactive-normal hover:text-interactive-active cursor-pointer mx-1 p-1">
-                                <Icon name="gif" />
+                                <Icon.GIF />
                             </div>
                             <div className="text-interactive-normal hover:text-interactive-active cursor-pointer mx-1 p-1">
-                                <Icon name="sticker" />
+                                <Icon.Sticker />
                             </div>
                         </div>
                     </div>
