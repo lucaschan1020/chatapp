@@ -1,12 +1,14 @@
+import { TypedRecord } from "../utilities/TypedRecord"
+
 interface props {
     className?: string
 }
 
-interface FunctionalComponentMap {
-    [key: string]: (props: props) => JSX.Element
+interface IconFunctionalComponent {
+    (props: props): JSX.Element
 }
 
-const Icon = (<T extends FunctionalComponentMap>(properties: T) => properties)({
+const Icon = TypedRecord<IconFunctionalComponent>()({
     Friends: function ({ className = "" }) {
         return (
             <svg className={className} aria-hidden="false" width="16" height="16" viewBox="0 0 24 24">
