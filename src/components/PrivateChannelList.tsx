@@ -1,66 +1,73 @@
 import { useEffect } from "react";
+import { connect, ConnectedProps } from "react-redux";
 import AvatarIcon from "./AvatarIcon";
 import Icon from "./Icon";
+import PrivateChannel from "../interfaces/PrivateChannel";
+import { AppState } from "../state";
+import { AddPrivateChannelList } from "../state/actions/PrivateChannelListActionCreator";
+import { ChangeCurrentChat } from "../state/actions/CurrentChatActionCreator";
 
-interface props {
-    className?: string,
-    privateChannelOnClick: Function,
+
+const mapStateToProps = (state: AppState) => {
+    return { PrivateChannelList: state.PrivateChannelList };
+}
+const connector = connect(mapStateToProps, { AddPrivateChannelList, ChangeCurrentChat });
+
+type PropsFromRedux = ConnectedProps<typeof connector>
+
+interface props extends PropsFromRedux {
+    className?: string
 }
 
-interface PrivateChannel {
-    participants: string[]
-    avatarSrc?: string
-}
-
-function PrivateChannelList({ className = "", privateChannelOnClick }: props) {
-    const privateChannels: PrivateChannel[] = [
-        { participants: ['sadsadasd| Elexir Wizard', 'Jackson Wong'] },
-        { participants: ['Jay'] },
-        { participants: ['Alex'] },
-        { participants: ['Sam'] },
-        { participants: ['Jeremy', 'Kelvin'] },
-        { participants: ['Sam', 'Lucas', 'Ming Fong', 'Desmond', 'Mun Haw'] },
-        
-        { participants: ['Sam'] },
-        { participants: ['Sam'] },
-        { participants: ['Sam'] },
-        { participants: ['Sam'] },
-        { participants: ['Sam'] },
-        { participants: ['Sam'] },
-        { participants: ['Sam'] },
-        { participants: ['Sam'] },
-        { participants: ['Sam'] },
-        { participants: ['Sam'] },
-        { participants: ['Sam'] },
-        { participants: ['Sam'] },
-        { participants: ['Sam'] },
-        { participants: ['Sam'] },
-        { participants: ['Sam'] },
-        { participants: ['Sam'] },
-        { participants: ['Sam'] },
-        { participants: ['Sam'] },
-        { participants: ['Sam'] },
-        { participants: ['Sam'] },
-        { participants: ['Sam'] },
-        { participants: ['Sam'] },
-        { participants: ['Sam'] },
-        { participants: ['Sam'] },
-        { participants: ['Sam'] },
-        { participants: ['Sam'] },
-        { participants: ['Sam'] },
-        { participants: ['Sam'] },
-        { participants: ['Sam'] },
-        { participants: ['Sam'] },
-        { participants: ['Sam'] },
-        { participants: ['Sam'] },
-        { participants: ['Sam'] },
-        { participants: ['Sam'] },
-        { participants: ['Sam'] },
-        { participants: ['Sam'] },
-    ];
+function PrivateChannelList({ className = "", PrivateChannelList, AddPrivateChannelList, ChangeCurrentChat }: props) {
 
     useEffect(() => {
-        privateChannelOnClick(privateChannels[0]);
+        const privateChannels: PrivateChannel[] = [
+            { participants: ['sadsadasd| Elexir Wizard', 'Jackson Wong'] },
+            { participants: ['Jay'] },
+            { participants: ['Alex'] },
+            { participants: ['Sam'] },
+            { participants: ['Jeremy', 'Kelvin'] },
+            { participants: ['Sam', 'Lucas', 'Ming Fong', 'Desmond', 'Mun Haw'] },
+            { participants: ['Sam'] },
+            { participants: ['Sam'] },
+            { participants: ['Sam'] },
+            { participants: ['Sam'] },
+            { participants: ['Sam'] },
+            { participants: ['Sam'] },
+            { participants: ['Sam'] },
+            { participants: ['Sam'] },
+            { participants: ['Sam'] },
+            { participants: ['Sam'] },
+            { participants: ['Sam'] },
+            { participants: ['Sam'] },
+            { participants: ['Sam'] },
+            { participants: ['Sam'] },
+            { participants: ['Sam'] },
+            { participants: ['Sam'] },
+            { participants: ['Sam'] },
+            { participants: ['Sam'] },
+            { participants: ['Sam'] },
+            { participants: ['Sam'] },
+            { participants: ['Sam'] },
+            { participants: ['Sam'] },
+            { participants: ['Sam'] },
+            { participants: ['Sam'] },
+            { participants: ['Sam'] },
+            { participants: ['Sam'] },
+            { participants: ['Sam'] },
+            { participants: ['Sam'] },
+            { participants: ['Sam'] },
+            { participants: ['Sam'] },
+            { participants: ['Sam'] },
+            { participants: ['Sam'] },
+            { participants: ['Sam'] },
+            { participants: ['Sam'] },
+            { participants: ['Sam'] },
+            { participants: ['Sam'] },
+        ];
+
+        AddPrivateChannelList(privateChannels);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -82,10 +89,10 @@ function PrivateChannelList({ className = "", privateChannelOnClick }: props) {
                     <label className="text-xs tracking-[0.015625rem] h-[1.125rem] font-semibold font-display cursor-default">DIRECT MESSAGES</label>
                     <Icon.DMPlus className="w-4 h-4 cursor-pointer" />
                 </div>
-                {privateChannels.map((privateChannel, index) => (
+                {PrivateChannelList.map((privateChannel, index) => (
                     <div key={index}
                         className="flex-none rounded-[0.25rem] h-[2.625rem] flex items-center justify-start ml-[0.5rem] my-[0.0625rem] px-2  text-channel-default hover:text-interactive-hover hover:bg-modifier-hover cursor-pointer active:bg-[rgba(79,84,92,0.24)] active:text-white group"
-                        onClick={() => privateChannelOnClick(privateChannel)}>
+                        onClick={() => ChangeCurrentChat(privateChannel)}>
                         <AvatarIcon src={privateChannel.avatarSrc ? privateChannel.avatarSrc : undefined} />
                         <div className="ml-3 flex-1 flex flex-col truncate">
                             <label className="text-base leading-5 font-medium font-primary cursor-pointer truncate">{privateChannel.participants.join(", ")}</label>
@@ -120,4 +127,4 @@ function PrivateChannelList({ className = "", privateChannelOnClick }: props) {
     );
 }
 
-export default PrivateChannelList;
+export default connector(PrivateChannelList);

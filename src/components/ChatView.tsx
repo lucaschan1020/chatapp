@@ -1,13 +1,21 @@
 import { useState } from "react";
+import { connect, ConnectedProps } from "react-redux";
+import { AppState } from "../state";
 import AvatarIcon from "./AvatarIcon";
 import Icon from "./Icon";
 
-interface props {
-    className?: string,
-    currentPrivateChannel: any
+const mapStateToProps = (state: AppState) => {
+    return { CurrentChat: state.CurrentChat };
+}
+const connector = connect(mapStateToProps);
+
+type PropsFromRedux = ConnectedProps<typeof connector>
+
+interface props extends PropsFromRedux {
+    className?: string
 }
 
-function ChatView({ className = "", currentPrivateChannel = undefined }: props) {
+function ChatView({ className = "", CurrentChat }: props) {
     const [viewMemberList, setViewMemberList] = useState(false);
 
     return (
@@ -17,7 +25,7 @@ function ChatView({ className = "", currentPrivateChannel = undefined }: props) 
                     <Icon.Alias />
                 </div>
                 <div className="font-display text-header-primary font-semibold">
-                    {currentPrivateChannel?.participants.join(", ")}
+                    {CurrentChat?.participants.join(", ")}
                 </div>
                 <div className="ml-auto flex">
                     <div className="text-interactive-normal mx-2 hover:text-interactive-hover cursor-pointer">
@@ -33,7 +41,7 @@ function ChatView({ className = "", currentPrivateChannel = undefined }: props) 
                     <div className="text-interactive-normal mx-2 hover:text-interactive-hover cursor-pointer">
                         <Icon.AddMember />
                     </div>
-                    {currentPrivateChannel?.participants.length > 1 &&
+                    {CurrentChat && CurrentChat?.participants.length > 1 &&
                         <div className="text-interactive-normal mx-2 hover:text-interactive-hover cursor-pointer" onClick={() => setViewMemberList(!viewMemberList)}>
                             <Icon.Members />
                         </div>
@@ -226,11 +234,11 @@ function ChatView({ className = "", currentPrivateChannel = undefined }: props) 
                         </div>
                     </div>
                 </div>
-                {currentPrivateChannel?.participants.length > 1 && viewMemberList &&
+                {CurrentChat && CurrentChat?.participants.length > 1 && viewMemberList &&
                     <div className="flex-none flex flex-col w-60 bg-secondary overflow-y-scroll -webkit-scrollbar:w-2 -webkit-scrollbar:h-2 -webkit-scrollbar-thumb:bg-clip-padding -webkit-scrollbar-thumb:border-2 -webkit-scrollbar-thumb:border-solid -webkit-scrollbar-thumb:border-transparent -webkit-scrollbar-thumb:rounded -webkit-scrollbar-thumb:bg-transparent hover:-webkit-scrollbar-thumb:bg-scrollbar-thin-thumb -webkit-scrollbar-thumb:min-h-[2.5rem]">
-                        <label className="pt-6 pr-2 pl-4 font-display text-channel-default text-xs font-semibold tracking-[0.015625rem]">MEMBERS—{currentPrivateChannel?.participants.length}</label>
+                        <label className="pt-6 pr-2 pl-4 font-display text-channel-default text-xs font-semibold tracking-[0.015625rem]">MEMBERS—{CurrentChat?.participants.length}</label>
 
-                        {currentPrivateChannel?.participants.map((participant: string, index: any) => (
+                        {CurrentChat?.participants.map((participant: string, index: any) => (
                             <div key={index} className="flex-none flex items-center ml-2 px-2 py-[0.0625rem] h-11 rounded-[0.25rem] text-interactive-normal hover:text-interactive-hover hover:bg-modifier-hover cursor-pointer group">
                                 <AvatarIcon />
                                 <label className="ml-3 mt-[0.0625rem] text-base leading-5 font-medium font-primary text-channel-default group-hover:text-interactive-hover cursor-pointer truncate">{participant}</label>
@@ -243,4 +251,4 @@ function ChatView({ className = "", currentPrivateChannel = undefined }: props) 
     );
 }
 
-export default ChatView;
+export default connector(ChatView);
