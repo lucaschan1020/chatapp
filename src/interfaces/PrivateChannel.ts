@@ -1,4 +1,4 @@
 export default interface PrivateChannel {
-    participants: string[];
-    avatarSrc?: string;
+  participants: string[];
+  avatarSrc?: string;
 }

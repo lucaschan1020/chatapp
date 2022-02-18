@@ -1,12 +1,20 @@
 interface props {
-    className?: string,
-    children? : string
+  className?: string;
+  children?: string;
 }
 
-function Notice({className = "", children = "test"}: props) {
-    return (
-        <p className={"text-center h-9 rounded-tl-lg text-white font-primary text-sm leading-9 font-medium" + className} style={{backgroundColor: "hsl(197, 100%, 32.5%)"}}>{children}</p>
-    )
+function Notice({ className = "", children = "test" }: props) {
+  return (
+    <p
+      className={
+        "h-9 rounded-tl-lg text-center font-primary text-sm font-medium leading-9 text-white" +
+        className
+      }
+      style={{ backgroundColor: "hsl(197, 100%, 32.5%)" }}
+    >
+      {children}
+    </p>
+  );
 }
 
 export default Notice;

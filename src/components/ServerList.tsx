@@ -1,11 +1,9 @@
 interface props {
-    className?: string
+  className?: string;
 }
 
-function ServerList({className = ""}: props) {
-  return (
-    <div className={className}></div>
-  );
+function ServerList({ className = "" }: props) {
+  return <div className={className}></div>;
 }
 
 export default ServerList;

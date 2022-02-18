@@ -1,10 +1,10 @@
-import { combineReducers } from 'redux';
-import CurrentChatReducer from './CurrentChatReducer';
-import PrivateChannelListReducer from './PrivateChannelListReducer';
+import { combineReducers } from "redux";
+import CurrentChatReducer from "./CurrentChatReducer";
+import PrivateChannelListReducer from "./PrivateChannelListReducer";
 
 const reducers = combineReducers({
   PrivateChannelList: PrivateChannelListReducer,
-  CurrentChat: CurrentChatReducer
+  CurrentChat: CurrentChatReducer,
 });
 
 export default reducers;

@@ -4,13 +4,16 @@ import { PrivateChannelListAction } from "../actions/PrivateChannelListActionCre
 
 const initialState: PrivateChannel[] = [];
 
-const PrivateChannelListReducer = (state: PrivateChannel[] = initialState, action: PrivateChannelListAction): PrivateChannel[] => {
-    switch (action.type) {
-        case ActionType.AddPrivateChannels:
-            return [...state, ...action.payload]
-        default:
-            return state
-    }
-}
+const PrivateChannelListReducer = (
+  state: PrivateChannel[] = initialState,
+  action: PrivateChannelListAction
+): PrivateChannel[] => {
+  switch (action.type) {
+    case ActionType.AddPrivateChannels:
+      return [...state, ...action.payload];
+    default:
+      return state;
+  }
+};
 
 export default PrivateChannelListReducer;
