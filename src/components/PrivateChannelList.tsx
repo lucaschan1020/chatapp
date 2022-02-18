@@ -79,7 +79,7 @@ function PrivateChannelList({
 
   return (
     <div className={className}>
-      <div className="shadow-low-elevation flex h-12 w-60 flex-none">
+      <div className="shadow-elevation-low flex h-12 w-60 flex-none">
         <button className="bg-tertiary font-primary text-muted m-[0.55rem] flex-auto rounded-[0.25rem] px-[0.375rem] text-left text-sm">
           Find or start a conversation
         </button>

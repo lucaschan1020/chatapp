@@ -1,4 +1,4 @@
-import { TypedRecord } from "../utilities/TypedRecord";
+import { TypedRecord } from '../utilities/TypedRecord';
 
 interface props {
   className?: string;
@@ -9,7 +9,7 @@ interface IconFunctionalComponent {
 }
 
 const Icon = TypedRecord<IconFunctionalComponent>()({
-  Friends: function ({ className = "" }) {
+  Friends: function ({ className = '' }) {
     return (
       <svg
         className={className}
@@ -30,7 +30,7 @@ const Icon = TypedRecord<IconFunctionalComponent>()({
       </svg>
     );
   },
-  Nitro: function ({ className = "" }) {
+  Nitro: function ({ className = '' }) {
     return (
       <svg
         className={className}
@@ -46,7 +46,7 @@ const Icon = TypedRecord<IconFunctionalComponent>()({
       </svg>
     );
   },
-  DMPlus: function ({ className = "" }) {
+  DMPlus: function ({ className = '' }) {
     return (
       <svg
         className={className}
@@ -65,7 +65,7 @@ const Icon = TypedRecord<IconFunctionalComponent>()({
       </svg>
     );
   },
-  Cross: function ({ className = "" }) {
+  Cross: function ({ className = '' }) {
     return (
       <svg
         className={className}
@@ -81,7 +81,7 @@ const Icon = TypedRecord<IconFunctionalComponent>()({
       </svg>
     );
   },
-  Mute: function ({ className = "" }) {
+  Mute: function ({ className = '' }) {
     return (
       <svg
         className={className}
@@ -105,7 +105,7 @@ const Icon = TypedRecord<IconFunctionalComponent>()({
       </svg>
     );
   },
-  Deafen: function ({ className = "" }) {
+  Deafen: function ({ className = '' }) {
     return (
       <svg
         className={className}
@@ -123,7 +123,7 @@ const Icon = TypedRecord<IconFunctionalComponent>()({
       </svg>
     );
   },
-  Setting: function ({ className = "" }) {
+  Setting: function ({ className = '' }) {
     return (
       <svg
         className={className}
@@ -141,7 +141,7 @@ const Icon = TypedRecord<IconFunctionalComponent>()({
       </svg>
     );
   },
-  Alias: function ({ className = "" }) {
+  Alias: function ({ className = '' }) {
     return (
       <svg
         className={className}
@@ -159,7 +159,7 @@ const Icon = TypedRecord<IconFunctionalComponent>()({
       </svg>
     );
   },
-  AudioCall: function ({ className = "" }) {
+  AudioCall: function ({ className = '' }) {
     return (
       <svg
         className={className}
@@ -179,7 +179,7 @@ const Icon = TypedRecord<IconFunctionalComponent>()({
       </svg>
     );
   },
-  VideoCall: function ({ className = "" }) {
+  VideoCall: function ({ className = '' }) {
     return (
       <svg
         className={className}
@@ -197,7 +197,7 @@ const Icon = TypedRecord<IconFunctionalComponent>()({
       </svg>
     );
   },
-  Pin: function ({ className = "" }) {
+  Pin: function ({ className = '' }) {
     return (
       <svg
         className={className}
@@ -215,7 +215,7 @@ const Icon = TypedRecord<IconFunctionalComponent>()({
       </svg>
     );
   },
-  AddMember: function ({ className = "" }) {
+  AddMember: function ({ className = '' }) {
     return (
       <svg
         className={className}
@@ -235,7 +235,7 @@ const Icon = TypedRecord<IconFunctionalComponent>()({
       </svg>
     );
   },
-  Members: function ({ className = "" }) {
+  Members: function ({ className = '' }) {
     return (
       <svg
         className={className}
@@ -269,7 +269,7 @@ const Icon = TypedRecord<IconFunctionalComponent>()({
       </svg>
     );
   },
-  MagnifyingGlass: function ({ className = "" }) {
+  MagnifyingGlass: function ({ className = '' }) {
     return (
       <svg
         className={className}
@@ -285,7 +285,7 @@ const Icon = TypedRecord<IconFunctionalComponent>()({
       </svg>
     );
   },
-  DMInbox: function ({ className = "" }) {
+  DMInbox: function ({ className = '' }) {
     return (
       <svg
         className={className}
@@ -304,7 +304,7 @@ const Icon = TypedRecord<IconFunctionalComponent>()({
       </svg>
     );
   },
-  Help: function ({ className = "" }) {
+  Help: function ({ className = '' }) {
     return (
       <svg
         className={className}
@@ -322,7 +322,7 @@ const Icon = TypedRecord<IconFunctionalComponent>()({
       </svg>
     );
   },
-  AttachPlus: function ({ className = "" }) {
+  AttachPlus: function ({ className = '' }) {
     return (
       <svg className={className} width="24" height="24" viewBox="0 0 24 24">
         <path
@@ -332,7 +332,7 @@ const Icon = TypedRecord<IconFunctionalComponent>()({
       </svg>
     );
   },
-  Gift: function ({ className = "" }) {
+  Gift: function ({ className = '' }) {
     return (
       <svg
         className={className}
@@ -350,7 +350,7 @@ const Icon = TypedRecord<IconFunctionalComponent>()({
       </svg>
     );
   },
-  GIF: function ({ className = "" }) {
+  GIF: function ({ className = '' }) {
     return (
       <svg
         className={className}
@@ -366,7 +366,7 @@ const Icon = TypedRecord<IconFunctionalComponent>()({
       </svg>
     );
   },
-  Sticker: function ({ className = "" }) {
+  Sticker: function ({ className = '' }) {
     return (
       <svg
         className={className}
@@ -386,6 +386,74 @@ const Icon = TypedRecord<IconFunctionalComponent>()({
           fillRule="evenodd"
           clipRule="evenodd"
           d="M12.0002 0.662583V5.40204C12.0002 6.83974 13.1605 7.99981 14.5986 7.99981H19.3393C19.9245 7.99981 20.222 7.29584 19.8055 6.8794L13.1209 0.196569C12.7043 -0.219868 12.0002 0.0676718 12.0002 0.662583ZM14.5759 10.0282C12.0336 10.0282 9.96986 7.96441 9.96986 5.42209V0.0583083H1.99397C0.897287 0.0583083 0 0.955595 0 2.05228V18.0041C0 19.1007 0.897287 19.998 1.99397 19.998H17.9457C19.0424 19.998 19.9397 19.1007 19.9397 18.0041V10.0282H14.5759ZM12 13H11.2H8.8H8C8 14.1046 8.89543 15 10 15C11.1046 15 12 14.1046 12 13ZM17.7766 13.331C17.7766 13.9446 17.2793 14.442 16.6657 14.442C16.0522 14.442 15.5548 13.9446 15.5548 13.331C15.5548 12.7175 16.0522 12.2201 16.6657 12.2201C17.2793 12.2201 17.7766 12.7175 17.7766 13.331ZM2 12.2361L2.53532 11L5.62492 12.7835C5.79161 12.8797 5.79161 13.1203 5.62492 13.2165L2.53532 15L2 13.7639L3.32339 13L2 12.2361Z"
+        ></path>
+      </svg>
+    );
+  },
+  AddReaction: function ({ className = '' }) {
+    return (
+      <svg
+        className={className}
+        aria-hidden="false"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+      >
+        <path
+          fill="currentColor"
+          fill-rule="evenodd"
+          clip-rule="evenodd"
+          d="M12.2512 2.00309C12.1677 2.00104 12.084 2 12 2C6.477 2 2 6.477 2 12C2 17.522 6.477 22 12 22C17.523 22 22 17.522 22 12C22 11.916 21.999 11.8323 21.9969 11.7488C21.3586 11.9128 20.6895 12 20 12C15.5817 12 12 8.41828 12 4C12 3.31052 12.0872 2.6414 12.2512 2.00309ZM10 8C10 6.896 9.104 6 8 6C6.896 6 6 6.896 6 8C6 9.105 6.896 10 8 10C9.104 10 10 9.105 10 8ZM12 19C15.14 19 18 16.617 18 14V13H6V14C6 16.617 8.86 19 12 19Z"
+        ></path>
+        <path
+          d="M21 3V0H19V3H16V5H19V8H21V5H24V3H21Z"
+          fill="currentColor"
+        ></path>
+      </svg>
+    );
+  },
+  Reply: function ({ className = '' }) {
+    return (
+      <svg className={className} width="24" height="24" viewBox="0 0 24 24">
+        <path
+          d="M10 8.26667V4L3 11.4667L10 18.9333V14.56C15 14.56 18.5 16.2667 21 20C20 14.6667 17 9.33333 10 8.26667Z"
+          fill="currentColor"
+        ></path>
+      </svg>
+    );
+  },
+  More: function ({ className = '' }) {
+    return (
+      <svg
+        className={className}
+        aria-hidden="false"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+      >
+        <path
+          fill="currentColor"
+          fill-rule="evenodd"
+          clip-rule="evenodd"
+          d="M7 12.001C7 10.8964 6.10457 10.001 5 10.001C3.89543 10.001 3 10.8964 3 12.001C3 13.1055 3.89543 14.001 5 14.001C6.10457 14.001 7 13.1055 7 12.001ZM14 12.001C14 10.8964 13.1046 10.001 12 10.001C10.8954 10.001 10 10.8964 10 12.001C10 13.1055 10.8954 14.001 12 14.001C13.1046 14.001 14 13.1055 14 12.001ZM19 10.001C20.1046 10.001 21 10.8964 21 12.001C21 13.1055 20.1046 14.001 19 14.001C17.8954 14.001 17 13.1055 17 12.001C17 10.8964 17.8954 10.001 19 10.001Z"
+        ></path>
+      </svg>
+    );
+  },
+  Edit: function ({ className = '' }) {
+    return (
+      <svg
+        className={className}
+        aria-hidden="false"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+      >
+        <path
+          fill-rule="evenodd"
+          clip-rule="evenodd"
+          d="M19.2929 9.8299L19.9409 9.18278C21.353 7.77064 21.353 5.47197 19.9409 4.05892C18.5287 2.64678 16.2292 2.64678 14.817 4.05892L14.1699 4.70694L19.2929 9.8299ZM12.8962 5.97688L5.18469 13.6906L10.3085 18.813L18.0201 11.0992L12.8962 5.97688ZM4.11851 20.9704L8.75906 19.8112L4.18692 15.239L3.02678 19.8796C2.95028 20.1856 3.04028 20.5105 3.26349 20.7337C3.48669 20.9569 3.8116 21.046 4.11851 20.9704Z"
+          fill="currentColor"
         ></path>
       </svg>
     );
