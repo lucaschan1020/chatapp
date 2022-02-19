@@ -1,7 +1,7 @@
-import PrivateChannel from "../../interfaces/PrivateChannel";
-import { ActionType } from "../action-types";
-import { CurrentChatAction } from "../actions/CurrentChatActionCreator";
-import { PrivateChannelListAction } from "../actions/PrivateChannelListActionCreator";
+import PrivateChannel from '../../interfaces/PrivateChannel';
+import { ActionType } from '../action-types';
+import { CurrentChatAction } from '../actions/CurrentChatActionCreator';
+import { PrivateChannelListAction } from '../actions/PrivateChannelListActionCreator';
 
 const initialState: PrivateChannel | null = null;
 

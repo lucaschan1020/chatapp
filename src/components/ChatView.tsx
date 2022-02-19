@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { AppState } from '../state';
+import { SendChatMessage } from '../state/actions/ChatMessageActionCreator';
 import AvatarIcon from './AvatarIcon';
 import Icon from './Icon';
 
 const mapStateToProps = (state: AppState) => {
-  return { CurrentChat: state.CurrentChat };
+  return { CurrentChat: state.CurrentChat, ChatMessages: state.ChatMessages };
 };
-const connector = connect(mapStateToProps);
+const connector = connect(mapStateToProps, { SendChatMessage });
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
@@ -15,8 +16,14 @@ interface props extends PropsFromRedux {
   className?: string;
 }
 
-function ChatView({ className = '', CurrentChat }: props) {
+function ChatView({
+  className = '',
+  CurrentChat,
+  ChatMessages,
+  SendChatMessage,
+}: props) {
   const [viewMemberList, setViewMemberList] = useState(false);
+  const [draftMessage, setDraftMessage] = useState('');
 
   return (
     <div className={className}>
@@ -71,9 +78,12 @@ function ChatView({ className = '', CurrentChat }: props) {
         <div className="flex flex-1 flex-col">
           <div className="-webkit-scrollbar:h-4 -webkit-scrollbar:w-4 -webkit-scrollbar-thumb:min-h-[2.5rem] -webkit-scrollbar-thumb:rounded-lg -webkit-scrollbar-thumb:border-4 -webkit-scrollbar-thumb:border-solid -webkit-scrollbar-thumb:border-transparent -webkit-scrollbar-thumb:bg-tertiary -webkit-scrollbar-thumb:bg-clip-padding -webkit-scrollbar-track:rounded-lg -webkit-scrollbar-track:border-4 -webkit-scrollbar-track:border-solid -webkit-scrollbar-track:border-transparent -webkit-scrollbar-track:bg-scrollbar-auto-track -webkit-scrollbar-track:bg-clip-padding flex flex-1 flex-col-reverse overflow-y-scroll">
             <div className="min-h-[1.875rem]"></div>
-            {[...Array(200)].map(() => {
+            {ChatMessages.map((_chatMessage, index, ChatMessages) => {
               return (
-                <div className="hover:bg-message-hover group relative mt-[1.0625rem] flex min-h-[2.75rem] flex-none flex-col py-[0.125rem] pl-[4.5rem]">
+                <div
+                  key={index}
+                  className="hover:bg-message-hover group relative mt-[1.0625rem] flex min-h-[2.75rem] flex-none flex-col py-[0.125rem] pl-[4.5rem]"
+                >
                   <div className="absolute left-4">
                     <AvatarIcon
                       className="mt-[0.125rem] cursor-pointer"
@@ -89,8 +99,8 @@ function ChatView({ className = '', CurrentChat }: props) {
                       09/18/2020
                     </span>
                   </div>
-                  <div className="font-primary text-normal text-base font-normal leading-[1.375rem]">
-                    yeah
+                  <div className="font-primary text-normal whitespace-pre-line text-base font-normal leading-[1.375rem]">
+                    {ChatMessages[ChatMessages.length - 1 - index]}
                   </div>
                   <div className="shadow-elevation-stroke bg-primary absolute right-[0.875rem] top-[-1rem] hidden rounded group-hover:flex">
                     <button className="text-interactive-normal hover:text-interactive-hover p-[0.375rem]">
@@ -111,10 +121,23 @@ function ChatView({ className = '', CurrentChat }: props) {
             <span className="bg-channeltextarea-background text-interactive-normal hover:text-interactive-hover flex-none rounded-l-lg px-4 py-[0.625rem]">
               <Icon.AttachPlus className="cursor-pointer" />
             </span>
-            <div
+            <textarea
               className="bg-channeltextarea-background font-primary text-normal -webkit-scrollbar:h-3 -webkit-scrollbar:w-3 -webkit-scrollbar-thumb:rounded-lg -webkit-scrollbar-thumb:border-4 -webkit-scrollbar-thumb:border-solid -webkit-scrollbar-thumb:border-transparent -webkit-scrollbar-thumb:bg-[rgba(24,25,28,.6)] -webkit-scrollbar-thumb:bg-clip-padding max-h-[29.375rem] min-h-[2.75rem] flex-1 overflow-y-auto rounded-r-lg py-[0.625rem] outline-none"
-              contentEditable
-            ></div>
+              contentEditable={false}
+              value={draftMessage}
+              onChange={(e) => {
+                setDraftMessage((e.target as HTMLTextAreaElement).value);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  if (draftMessage) {
+                    SendChatMessage((e.target as HTMLTextAreaElement).value);
+                    setDraftMessage('');
+                  }
+                }
+              }}
+            ></textarea>
             <div className="absolute right-5 top-1 flex flex-none items-center">
               <div className="text-interactive-normal hover:text-interactive-active mx-1 cursor-pointer p-1">
                 <Icon.Gift />

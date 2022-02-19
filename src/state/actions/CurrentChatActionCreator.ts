@@ -1,5 +1,5 @@
-import PrivateChannel from "../../interfaces/PrivateChannel";
-import { ActionType } from "../action-types";
+import PrivateChannel from '../../interfaces/PrivateChannel';
+import { ActionType } from '../action-types';
 
 interface ChangeCurrentChatAction {
   type: ActionType.ChangeCurrentChat;
