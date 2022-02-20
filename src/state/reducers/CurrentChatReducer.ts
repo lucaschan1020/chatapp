@@ -1,14 +1,14 @@
-import PrivateChannel from '../../interfaces/PrivateChannel';
+import { IPrivateChannel } from '../../interfaces';
 import { ActionType } from '../action-types';
 import { CurrentChatAction } from '../actions/CurrentChatActionCreator';
 import { PrivateChannelListAction } from '../actions/PrivateChannelListActionCreator';
 
-const initialState: PrivateChannel | null = null;
+const initialState: IPrivateChannel | null = null;
 
 const CurrentChatReducer = (
-  state: PrivateChannel | null = initialState,
+  state: IPrivateChannel | null = initialState,
   action: CurrentChatAction | PrivateChannelListAction
-): PrivateChannel | null => {
+): IPrivateChannel | null => {
   switch (action.type) {
     case ActionType.ChangeCurrentChat:
       return action.payload;

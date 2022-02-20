@@ -1,13 +1,13 @@
-import PrivateChannel from "../../interfaces/PrivateChannel";
-import { ActionType } from "../action-types";
-import { PrivateChannelListAction } from "../actions/PrivateChannelListActionCreator";
+import { IPrivateChannel } from '../../interfaces';
+import { ActionType } from '../action-types';
+import { PrivateChannelListAction } from '../actions/PrivateChannelListActionCreator';
 
-const initialState: PrivateChannel[] = [];
+const initialState: IPrivateChannel[] = [];
 
 const PrivateChannelListReducer = (
-  state: PrivateChannel[] = initialState,
+  state: IPrivateChannel[] = initialState,
   action: PrivateChannelListAction
-): PrivateChannel[] => {
+): IPrivateChannel[] => {
   switch (action.type) {
     case ActionType.AddPrivateChannels:
       return [...state, ...action.payload];

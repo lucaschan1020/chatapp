@@ -1,17 +1,18 @@
 import { ThunkDispatch } from 'redux-thunk';
 import { AppState } from '..';
+import { IChatMessage } from '../../interfaces';
 import socket from '../../socketIO';
 import { ActionType } from '../action-types';
 
 interface AddChatMessageAction {
   type: ActionType.AddChatMessage;
-  payload: string;
+  payload: IChatMessage;
 }
 
-const AddChatMessage = (chatContent: string): AddChatMessageAction => {
+const AddChatMessage = (chatMessage: IChatMessage): AddChatMessageAction => {
   return {
     type: ActionType.AddChatMessage,
-    payload: chatContent,
+    payload: chatMessage,
   };
 };
 
@@ -22,7 +23,9 @@ const SendChatMessage =
     _getState: () => AppState
   ) => {
     socket.emit('SendChatMessage', chatContent);
-    dispatch(AddChatMessage(chatContent));
+    dispatch(
+      AddChatMessage({ sender: 'Me', chatContent, timeStamp: new Date() })
+    );
   };
 
 const ReceiveChatMessage =
@@ -31,7 +34,9 @@ const ReceiveChatMessage =
     dispatch: ThunkDispatch<AppState, unknown, AddChatMessageAction>,
     _getState: () => AppState
   ) => {
-    dispatch(AddChatMessage(chatContent));
+    dispatch(
+      AddChatMessage({ sender: 'Them', chatContent, timeStamp: new Date() })
+    );
   };
 
 export { AddChatMessage, SendChatMessage, ReceiveChatMessage };

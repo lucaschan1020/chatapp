@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
-import PrivateChannel from '../interfaces/PrivateChannel';
+import { IPrivateChannel } from '../interfaces';
 import { AppState } from '../state';
 import { ChangeCurrentChat } from '../state/actions/CurrentChatActionCreator';
 import { AddPrivateChannelList } from '../state/actions/PrivateChannelListActionCreator';
@@ -28,7 +28,7 @@ function PrivateChannelList({
   ChangeCurrentChat,
 }: props) {
   useEffect(() => {
-    const privateChannels: PrivateChannel[] = [
+    const privateChannels: IPrivateChannel[] = [
       { participants: ['sadsadasd| Elexir Wizard', 'Jackson Wong'] },
       { participants: ['Jay'] },
       { participants: ['Alex'] },

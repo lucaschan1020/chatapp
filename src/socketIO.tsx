@@ -6,7 +6,7 @@ import {
   ReceiveChatMessage,
 } from './state/actions/ChatMessageActionCreator';
 
-const socket = socketIOClient('http://localhost:5000');
+const socket = socketIOClient(':5000');
 
 socket.on('SendChatMessage', (chatContent: string) => {
   (store.dispatch as ThunkDispatch<AppState, unknown, ChatMessageAction>)(
