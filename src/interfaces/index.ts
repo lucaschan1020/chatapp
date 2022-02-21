@@ -1,9 +1,9 @@
-export interface IPrivateChannel {
+export interface PrivateChannelItem {
   participants: string[];
   avatarSrc?: string;
 }
 
-export interface IChatMessage {
+export interface ChatMessageItem {
   sender: string;
   chatContent: string;
   timeStamp: Date;

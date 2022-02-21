@@ -1,8 +1,8 @@
-interface props {
+interface ServerListProps {
   className?: string;
 }
 
-function ServerList({ className = "" }: props) {
+function ServerList({ className = '' }: ServerListProps) {
   return <div className={className}></div>;
 }
 

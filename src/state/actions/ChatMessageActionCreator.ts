@@ -1,15 +1,15 @@
 import { ThunkDispatch } from 'redux-thunk';
 import { AppState } from '..';
-import { IChatMessage } from '../../interfaces';
+import { ChatMessageItem } from '../../interfaces';
 import socket from '../../socketIO';
 import { ActionType } from '../action-types';
 
 interface AddChatMessageAction {
   type: ActionType.AddChatMessage;
-  payload: IChatMessage;
+  payload: ChatMessageItem;
 }
 
-const AddChatMessage = (chatMessage: IChatMessage): AddChatMessageAction => {
+const AddChatMessage = (chatMessage: ChatMessageItem): AddChatMessageAction => {
   return {
     type: ActionType.AddChatMessage,
     payload: chatMessage,

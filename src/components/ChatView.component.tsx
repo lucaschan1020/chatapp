@@ -13,7 +13,7 @@ const connector = connect(mapStateToProps, { SendChatMessage });
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-interface props extends PropsFromRedux {
+interface ChatViewProps extends PropsFromRedux {
   className?: string;
 }
 
@@ -22,7 +22,7 @@ function ChatView({
   CurrentChat,
   ChatMessages,
   SendChatMessage,
-}: props) {
+}: ChatViewProps) {
   const [viewMemberList, setViewMemberList] = useState(false);
   const [draftMessage, setDraftMessage] = useState('');
   const textAreaMessage = useRef<HTMLTextAreaElement>(null);

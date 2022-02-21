@@ -1,13 +1,13 @@
-import { IPrivateChannel } from '../../interfaces';
+import { PrivateChannelItem } from '../../interfaces';
 import { ActionType } from '../action-types';
 
 interface AddPrivateChannelListAction {
   type: ActionType.AddPrivateChannels;
-  payload: IPrivateChannel[];
+  payload: PrivateChannelItem[];
 }
 
 const AddPrivateChannelList = (
-  newPrivateChannelList: IPrivateChannel[]
+  newPrivateChannelList: PrivateChannelItem[]
 ): AddPrivateChannelListAction => {
   return {
     type: ActionType.AddPrivateChannels,

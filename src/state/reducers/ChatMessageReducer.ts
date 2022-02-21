@@ -1,13 +1,13 @@
-import { IChatMessage } from '../../interfaces';
+import { ChatMessageItem } from '../../interfaces';
 import { ActionType } from '../action-types';
 import { ChatMessageAction } from '../actions/ChatMessageActionCreator';
 
-const initialState: IChatMessage[] = [];
+const initialState: ChatMessageItem[] = [];
 
 const ChatMessageReducer = (
-  state: IChatMessage[] = initialState,
+  state: ChatMessageItem[] = initialState,
   action: ChatMessageAction
-): IChatMessage[] => {
+): ChatMessageItem[] => {
   switch (action.type) {
     case ActionType.AddChatMessage:
       return [...state, action.payload];

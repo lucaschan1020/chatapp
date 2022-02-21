@@ -1,13 +1,13 @@
-import { IPrivateChannel } from '../../interfaces';
+import { PrivateChannelItem } from '../../interfaces';
 import { ActionType } from '../action-types';
 
 interface ChangeCurrentChatAction {
   type: ActionType.ChangeCurrentChat;
-  payload: IPrivateChannel;
+  payload: PrivateChannelItem;
 }
 
 const ChangeCurrentChat = (
-  newCurrentChat: IPrivateChannel
+  newCurrentChat: PrivateChannelItem
 ): ChangeCurrentChatAction => {
   return {
     type: ActionType.ChangeCurrentChat,

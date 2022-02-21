@@ -1,4 +1,4 @@
-interface props {
+interface AvatarIconProps {
   className?: string;
   src?: string;
   width?: string;
@@ -10,7 +10,7 @@ function AvatarIcon({
   src = '/images/default-avatar.png',
   width = 'w-8',
   height = 'h-8',
-}: props) {
+}: AvatarIconProps) {
   return (
     <img
       src={src}

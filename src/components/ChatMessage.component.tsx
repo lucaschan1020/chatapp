@@ -1,14 +1,14 @@
-import { IChatMessage } from '../interfaces';
+import { ChatMessageItem } from '../interfaces';
 import AvatarIcon from './AvatarIcon.component';
 import Icon from './Icon.component';
 
-interface props {
+interface ChatMessageProps {
   key: string;
-  message: IChatMessage;
+  message: ChatMessageItem;
   isConsecutive: boolean;
 }
 
-function ChatMessage({ key, message, isConsecutive }: props) {
+function ChatMessage({ key, message, isConsecutive }: ChatMessageProps) {
   return (
     <div
       key={key}

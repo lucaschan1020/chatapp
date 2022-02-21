@@ -1,11 +1,11 @@
 import { TypedRecord } from '../utilities/TypedRecord';
 
-interface props {
+interface IconProps {
   className?: string;
 }
 
 interface IconFunctionalComponent {
-  (props: props): JSX.Element;
+  (props: IconProps): JSX.Element;
 }
 
 const Icon = TypedRecord<IconFunctionalComponent>()({
