@@ -29,6 +29,7 @@ function ChatView({
 
   useEffect(() => {
     if (textAreaMessage.current !== null) {
+      textAreaMessage.current.style.height = '0px';
       const scrollHeight = textAreaMessage.current.scrollHeight;
       textAreaMessage.current.style.height = scrollHeight + 'px';
     }
