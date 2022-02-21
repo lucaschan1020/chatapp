@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { AppState } from '../state';
 import { SendChatMessage } from '../state/actions/ChatMessageActionCreator';
-import AvatarIcon from './AvatarIcon';
-import ChatMessage from './ChatMessage';
-import Icon from './Icon';
+import AvatarIcon from './AvatarIcon.component';
+import ChatMessage from './ChatMessage.component';
+import Icon from './Icon.component';
 
 const mapStateToProps = (state: AppState) => {
   return { CurrentChat: state.CurrentChat, ChatMessages: state.ChatMessages };

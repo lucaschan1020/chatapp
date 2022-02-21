@@ -1,6 +1,6 @@
 import { IChatMessage } from '../interfaces';
-import AvatarIcon from './AvatarIcon';
-import Icon from './Icon';
+import AvatarIcon from './AvatarIcon.component';
+import Icon from './Icon.component';
 
 interface props {
   key: string;

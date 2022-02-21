@@ -1,7 +1,7 @@
-import ChatView from './components/ChatView';
-import Notice from './components/Notice';
-import PrivateChannelList from './components/PrivateChannelList';
-import ServerList from './components/ServerList';
+import ChatView from './components/ChatView.component';
+import Notice from './components/Notice.component';
+import PrivateChannelList from './components/PrivateChannelList.component';
+import ServerList from './components/ServerList.component';
 import './index.css';
 
 function App() {

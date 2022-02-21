@@ -4,8 +4,8 @@ import { IPrivateChannel } from '../interfaces';
 import { AppState } from '../state';
 import { ChangeCurrentChat } from '../state/actions/CurrentChatActionCreator';
 import { AddPrivateChannelList } from '../state/actions/PrivateChannelListActionCreator';
-import AvatarIcon from './AvatarIcon';
-import Icon from './Icon';
+import AvatarIcon from './AvatarIcon.component';
+import Icon from './Icon.component';
 
 const mapStateToProps = (state: AppState) => {
   return { PrivateChannelList: state.PrivateChannelList };

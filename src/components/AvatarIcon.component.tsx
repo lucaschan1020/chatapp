@@ -6,10 +6,10 @@ interface props {
 }
 
 function AvatarIcon({
-  className = "",
-  src = "/images/default-avatar.png",
-  width = "w-8",
-  height = "h-8",
+  className = '',
+  src = '/images/default-avatar.png',
+  width = 'w-8',
+  height = 'h-8',
 }: props) {
   return (
     <img
