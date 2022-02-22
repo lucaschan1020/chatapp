@@ -1,17 +1,11 @@
-import { ThunkDispatch } from 'redux-thunk';
 import socketIOClient from 'socket.io-client';
-import { AppState, store } from './state';
-import {
-  ChatMessageAction,
-  ReceiveChatMessage,
-} from './state/actions/ChatMessageActionCreator';
-
-const socket = socketIOClient(':5000');
+import { store } from './state';
+import { ReceiveChatMessage } from './state/actions/ChatMessageActionCreator';
+const SERVER_DOMAIN = process.env.REACT_APP_SERVER_DOMAIN ?? '';
+const socket = socketIOClient(SERVER_DOMAIN);
 
 socket.on('SendChatMessage', (chatContent: string) => {
-  (store.dispatch as ThunkDispatch<AppState, unknown, ChatMessageAction>)(
-    ReceiveChatMessage(chatContent)
-  );
+  store.dispatch(ReceiveChatMessage(chatContent));
 });
 
 export default socket;

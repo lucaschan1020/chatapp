@@ -1,26 +1,20 @@
-import ChatView from './components/ChatView.component';
-import Notice from './components/Notice.component';
-import PrivateChannelList from './components/PrivateChannelList.component';
-import ServerList from './components/ServerList.component';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Login from './components/Login.component';
+import Main from './components/Main.component';
 import './index.css';
 
 function App() {
   return (
-    <div className="flex h-screen">
-      <ServerList className=" bg-tertiary w-[4.5rem] flex-none" />
-      <div className="flex flex-1 flex-col">
-        <div className="bg-tertiary">
-          <Notice className="bg-cyan-600">
-            Want to take full advantage of Discord with better performance,
-            in-game overlay, and more? Get the desktop app!
-          </Notice>
+    <BrowserRouter>
+      <>
+        <div className="flex h-screen">
+          <Routes>
+            <Route path="/login" element={<Login />}></Route>
+            <Route path="/" element={<Main />}></Route>
+          </Routes>
         </div>
-        <div className="flex min-h-0 flex-1">
-          <PrivateChannelList className="bg-secondary flex w-60 flex-none flex-col" />
-          <ChatView className="bg-primary flex flex-1 flex-col" />
-        </div>
-      </div>
-    </div>
+      </>
+    </BrowserRouter>
   );
 }
 

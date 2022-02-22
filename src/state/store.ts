@@ -1,5 +1,10 @@
-import { applyMiddleware, createStore } from 'redux';
-import thunk from 'redux-thunk';
-import reducers from './reducers';
+import { AnyAction, applyMiddleware, createStore } from 'redux';
+import thunk, { ThunkDispatch } from 'redux-thunk';
+import reducers, { AppState } from './reducers';
 
-export const store = createStore(reducers, applyMiddleware(thunk));
+export const store = createStore(
+  reducers,
+  applyMiddleware<ThunkDispatch<AppState, undefined, AnyAction>, AppState>(
+    thunk
+  )
+);

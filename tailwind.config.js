@@ -14,7 +14,6 @@ module.exports = {
         'header-secondary': '#b9bbbe',
         'channel-default': '#8e9297',
         'channeltextarea-background': '#40444b',
-
         normal: '#dcddde',
         'interactive-normal': '#b9bbbe',
         'interactive-hover': '#dcddde',
@@ -24,11 +23,13 @@ module.exports = {
         muted: '#72767d',
         'scrollbar-thin-thumb': '#202225',
         'scrollbar-auto-track': 'hsl(210,9.8%,20%)',
+        'mobile-primary': '#36393f',
       },
       boxShadow: {
         'elevation-low':
           '0 1px 0 rgba(4,4,5,0.2),0 1.5px 0 rgba(6,6,7,0.05),0 2px 0 rgba(4,4,5,0.05)',
         'elevation-stroke': '0 0 0 1px rgba(4,4,5,0.15)',
+        login: '0 2px 10px 0 rgb(0 0 0 / 20%)',
       },
     },
     fontFamily: {
