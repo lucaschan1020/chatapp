@@ -1,28 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
-import { connect, ConnectedProps } from 'react-redux';
-import { AppState } from '../state';
-import { SendChatMessage } from '../state/actions/ChatMessageActionCreator';
+import { useAppDispatch, useAppSelector } from '../hooks';
+import { store } from '../state';
+import { SendChatMessage } from '../state/reducers/ChatMessageReducer';
 import AvatarIcon from './AvatarIcon.component';
 import ChatMessage from './ChatMessage.component';
 import Icon from './Icon.component';
 
-const mapStateToProps = (state: AppState) => {
-  return { CurrentChat: state.CurrentChat, ChatMessages: state.ChatMessages };
-};
-const connector = connect(mapStateToProps, { SendChatMessage });
-
-type PropsFromRedux = ConnectedProps<typeof connector>;
-
-interface ChatViewProps extends PropsFromRedux {
+interface ChatViewProps {
   className?: string;
 }
 
-function ChatView({
-  className = '',
-  CurrentChat,
-  ChatMessages,
-  SendChatMessage,
-}: ChatViewProps) {
+function ChatView({ className = '' }: ChatViewProps) {
   const [viewMemberList, setViewMemberList] = useState(false);
   const [draftMessage, setDraftMessage] = useState('');
   const textAreaMessage = useRef<HTMLTextAreaElement>(null);
@@ -35,10 +23,17 @@ function ChatView({
     }
   }, [draftMessage]);
 
+  const CurrentChat = useAppSelector((state) => state.CurrentChat);
+  const ChatMessages = useAppSelector((state) => state.ChatMessages);
+  const dispatch = useAppDispatch();
+
   return (
     <div className={className}>
       <div className="shadow-elevation-low z-[2] flex h-12 flex-none items-center px-2">
-        <div className="text-muted mx-2">
+        <div
+          className="text-muted mx-2"
+          onClick={() => console.log(store.getState())}
+        >
           <Icon.Alias />
         </div>
         <div className="font-display text-header-primary font-semibold">
@@ -120,13 +115,6 @@ function ChatView({
                 setDraftMessage((e.target as HTMLTextAreaElement).value);
               }}
               onKeyDown={(e) => {
-                // if (e.key === 'Enter' && !e.shiftKey) {
-                //   e.preventDefault();
-                //   if (draftMessage) {
-                //     SendChatMessage((e.target as HTMLTextAreaElement).value);
-                //     setDraftMessage('');
-                //   }
-                // }
                 if (e.key !== 'Enter') {
                   return;
                 }
@@ -139,7 +127,11 @@ function ChatView({
                   return;
                 }
 
-                SendChatMessage((e.target as HTMLTextAreaElement).value.trim());
+                dispatch(
+                  SendChatMessage(
+                    (e.target as HTMLTextAreaElement).value.trim()
+                  )
+                );
                 setDraftMessage('');
               }}
             ></textarea>
@@ -182,4 +174,4 @@ function ChatView({
   );
 }
 
-export default connector(ChatView);
+export default ChatView;

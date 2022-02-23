@@ -1,19 +1,39 @@
+import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { ChatMessageItem } from '../../interfaces';
-import { ActionType } from '../action-types';
-import { ChatMessageAction } from '../actions/ChatMessageActionCreator';
+import socket from '../../socketIO';
+
+const SendChatMessage = createAsyncThunk(
+  'ChatMessage/SendChatMessage',
+  (chatContent: string, thunkAPI) => {
+    socket.emit('SendChatMessage', chatContent);
+    thunkAPI.dispatch(
+      AddChatMessage({ sender: 'Me', chatContent, timeStamp: new Date() })
+    );
+  }
+);
+
+const ReceiveChatMessage = createAsyncThunk(
+  'ChatMessage/ReceiveChatMessage',
+  (chatContent: string, thunkAPI) => {
+    thunkAPI.dispatch(
+      AddChatMessage({ sender: 'Them', chatContent, timeStamp: new Date() })
+    );
+  }
+);
 
 const initialState: ChatMessageItem[] = [];
 
-const ChatMessageReducer = (
-  state: ChatMessageItem[] = initialState,
-  action: ChatMessageAction
-): ChatMessageItem[] => {
-  switch (action.type) {
-    case ActionType.AddChatMessage:
-      return [...state, action.payload];
-    default:
-      return state;
-  }
-};
+export const ChatMessageSlice = createSlice({
+  name: 'ChatMessage',
+  initialState,
+  reducers: {
+    AddChatMessage: (state, action: PayloadAction<ChatMessageItem>) => {
+      state.push(action.payload);
+    },
+  },
+});
 
-export default ChatMessageReducer;
+export { SendChatMessage, ReceiveChatMessage };
+export const { AddChatMessage } = ChatMessageSlice.actions;
+
+export default ChatMessageSlice.reducer;

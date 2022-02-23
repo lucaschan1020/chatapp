@@ -1,7 +1,6 @@
 import React from 'react';
 import { ChatMessageItem } from '../interfaces';
 import AvatarIcon from './AvatarIcon.component';
-import ChatDivider from './ChatDivider';
 import Icon from './Icon.component';
 
 interface ChatMessageProps {

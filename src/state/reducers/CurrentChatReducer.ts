@@ -1,25 +1,30 @@
+import { createAction, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { PrivateChannelItem } from '../../interfaces';
-import { ActionType } from '../action-types';
-import { CurrentChatAction } from '../actions/CurrentChatActionCreator';
-import { PrivateChannelListAction } from '../actions/PrivateChannelListActionCreator';
+const AddPrivateChannels = createAction<PrivateChannelItem[]>(
+  'PrivateChannelList/AddPrivateChannels'
+);
 
-const initialState: PrivateChannelItem | null = null;
+const initialState: PrivateChannelItem | null =
+  null as PrivateChannelItem | null;
 
-const CurrentChatReducer = (
-  state: PrivateChannelItem | null = initialState,
-  action: CurrentChatAction | PrivateChannelListAction
-): PrivateChannelItem | null => {
-  switch (action.type) {
-    case ActionType.ChangeCurrentChat:
-      return action.payload;
-    case ActionType.AddPrivateChannels:
+export const CurrentChatSlice = createSlice({
+  name: 'CurrentChat',
+  initialState,
+  reducers: {
+    ChangeCurrentChat: (_state, action: PayloadAction<PrivateChannelItem>) => {
+      return { ...action.payload };
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(AddPrivateChannels, (state, action) => {
       if (state) {
-        return state;
+        return;
       }
-      return action.payload[0];
-    default:
-      return state;
-  }
-};
+      return { ...action.payload[0] };
+    });
+  },
+});
 
-export default CurrentChatReducer;
+export const { ChangeCurrentChat } = CurrentChatSlice.actions;
+
+export default CurrentChatSlice.reducer;

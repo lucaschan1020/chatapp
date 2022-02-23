@@ -1,32 +1,16 @@
 import { useEffect } from 'react';
-import { connect, ConnectedProps } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '../hooks';
 import { PrivateChannelItem } from '../interfaces';
-import { AppState } from '../state';
-import { ChangeCurrentChat } from '../state/actions/CurrentChatActionCreator';
-import { AddPrivateChannelList } from '../state/actions/PrivateChannelListActionCreator';
+import { ChangeCurrentChat } from '../state/reducers/CurrentChatReducer';
+import { AddPrivateChannels } from '../state/reducers/PrivateChannelListReducer';
 import AvatarIcon from './AvatarIcon.component';
 import Icon from './Icon.component';
 
-const mapStateToProps = (state: AppState) => {
-  return { PrivateChannelList: state.PrivateChannelList };
-};
-const connector = connect(mapStateToProps, {
-  AddPrivateChannelList,
-  ChangeCurrentChat,
-});
-
-type PropsFromRedux = ConnectedProps<typeof connector>;
-
-interface PrivateChannelListProps extends PropsFromRedux {
+interface PrivateChannelListProps {
   className?: string;
 }
 
-function PrivateChannelList({
-  className = '',
-  PrivateChannelList,
-  AddPrivateChannelList,
-  ChangeCurrentChat,
-}: PrivateChannelListProps) {
+function PrivateChannelList({ className = '' }: PrivateChannelListProps) {
   useEffect(() => {
     const privateChannels: PrivateChannelItem[] = [
       { participants: ['sadsadasd| Elexir Wizard', 'Jackson Wong'] },
@@ -73,9 +57,14 @@ function PrivateChannelList({
       // { participants: ['Sam'] },
     ];
 
-    AddPrivateChannelList(privateChannels);
+    dispatch(AddPrivateChannels(privateChannels));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const dispatch = useAppDispatch();
+  const PrivateChannelList = useAppSelector(
+    (state) => state.PrivateChannelList
+  );
 
   return (
     <div className={className}>
@@ -103,7 +92,7 @@ function PrivateChannelList({
           <div
             key={index}
             className="group text-channel-default hover:bg-modifier-hover hover:text-interactive-hover my-[0.0625rem] ml-[0.5rem] flex h-[2.625rem] flex-none  cursor-pointer items-center justify-start rounded-[0.25rem] px-2 active:bg-[rgba(79,84,92,0.24)] active:text-white"
-            onClick={() => ChangeCurrentChat(privateChannel)}
+            onClick={() => dispatch(ChangeCurrentChat(privateChannel))}
           >
             <AvatarIcon
               src={
@@ -151,4 +140,4 @@ function PrivateChannelList({
   );
 }
 
-export default connector(PrivateChannelList);
+export default PrivateChannelList;

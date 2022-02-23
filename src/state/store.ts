@@ -1,10 +1,16 @@
-import { AnyAction, applyMiddleware, createStore } from 'redux';
-import thunk, { ThunkDispatch } from 'redux-thunk';
-import reducers, { AppState } from './reducers';
+import { configureStore } from '@reduxjs/toolkit';
+import ChatMessageReducer from './reducers/ChatMessageReducer';
+import CurrentChatReducer from './reducers/CurrentChatReducer';
+import PrivateChannelListReducer from './reducers/PrivateChannelListReducer';
 
-export const store = createStore(
-  reducers,
-  applyMiddleware<ThunkDispatch<AppState, undefined, AnyAction>, AppState>(
-    thunk
-  )
-);
+export const store = configureStore({
+  reducer: {
+    PrivateChannelList: PrivateChannelListReducer,
+    CurrentChat: CurrentChatReducer,
+    ChatMessages: ChatMessageReducer,
+  },
+});
+
+export type AppState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+export default store;
