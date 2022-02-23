@@ -1,8 +1,7 @@
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { PrivateChannelItem } from '../interfaces';
-import { ChangeCurrentChat } from '../state/reducers/CurrentChatReducer';
-import { AddPrivateChannels } from '../state/reducers/PrivateChannelListReducer';
+import { CurrentChatSlice, PrivateChannelListSlice } from '../state';
 import AvatarIcon from './AvatarIcon.component';
 import Icon from './Icon.component';
 
@@ -57,7 +56,7 @@ function PrivateChannelList({ className = '' }: PrivateChannelListProps) {
       // { participants: ['Sam'] },
     ];
 
-    dispatch(AddPrivateChannels(privateChannels));
+    dispatch(PrivateChannelListSlice.AddPrivateChannels(privateChannels));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -92,7 +91,9 @@ function PrivateChannelList({ className = '' }: PrivateChannelListProps) {
           <div
             key={index}
             className="group text-channel-default hover:bg-modifier-hover hover:text-interactive-hover my-[0.0625rem] ml-[0.5rem] flex h-[2.625rem] flex-none  cursor-pointer items-center justify-start rounded-[0.25rem] px-2 active:bg-[rgba(79,84,92,0.24)] active:text-white"
-            onClick={() => dispatch(ChangeCurrentChat(privateChannel))}
+            onClick={() =>
+              dispatch(CurrentChatSlice.ChangeCurrentChat(privateChannel))
+            }
           >
             <AvatarIcon
               src={

@@ -1,4 +1,4 @@
-export * as ChatMessageReducer from './reducers/ChatMessageReducer';
-export * as CurrentChatReducer from './reducers/CurrentChatReducer';
-export * as PrivateChannelListReducer from './reducers/PrivateChannelListReducer';
+export * as ChatMessageSlice from './reducers/ChatMessageSlice';
+export * as CurrentChatSlice from './reducers/CurrentChatSlice';
+export * as PrivateChannelListSlice from './reducers/PrivateChannelListSlice';
 export * from './store';

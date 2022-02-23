@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { store } from '../state';
-import { SendChatMessage } from '../state/reducers/ChatMessageReducer';
+import { SendChatMessage } from '../state/reducers/ChatMessageSlice';
 import AvatarIcon from './AvatarIcon.component';
 import ChatMessage from './ChatMessage.component';
 import Icon from './Icon.component';

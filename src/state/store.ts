@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
-import ChatMessageReducer from './reducers/ChatMessageReducer';
-import CurrentChatReducer from './reducers/CurrentChatReducer';
-import PrivateChannelListReducer from './reducers/PrivateChannelListReducer';
+import ChatMessageReducer from './reducers/ChatMessageSlice';
+import CurrentChatReducer from './reducers/CurrentChatSlice';
+import PrivateChannelListReducer from './reducers/PrivateChannelListSlice';
 
 export const store = configureStore({
   reducer: {
