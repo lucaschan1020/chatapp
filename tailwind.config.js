@@ -18,6 +18,7 @@ module.exports = {
         'interactive-normal': '#b9bbbe',
         'interactive-hover': '#dcddde',
         'interactive-active': '#ffffff',
+        'modifier-accent': 'hsla(0,0%,100%,0.06)',
         'modifier-hover': 'rgba(79,84,92,0.16)',
         'message-hover': 'rgba(4,4,5,0.07)',
         muted: '#72767d',
