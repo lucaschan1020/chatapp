@@ -1,6 +1,16 @@
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useAppDispatch } from '../hooks';
+import { store } from '../state';
+import { SignIn } from '../state/reducers/AuthSlice';
 import Icon from './Icon.component';
 
 function Login() {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const state = location.state as { from: Location };
+  const from = state ? state.from.pathname : '/';
   return (
     <div className="bg-tertiary relative flex h-full w-full justify-center">
       <Icon.Artwork className="absolute top-0 left-0 h-full w-full" />
@@ -15,15 +25,11 @@ function Login() {
           <button
             className="font-primary hover:bg-interactive-hover bg-interactive-active mt-5 flex h-9 w-full items-center justify-center rounded-[0.1875rem] text-base font-medium text-black"
             onClick={async () => {
-              await new Promise((res, rej) => {
-                gapi.load('client:auth2', { callback: res, onerror: rej });
-              });
-              await gapi.client.init({
-                clientId: process.env.REACT_APP_GAPI_CLIENTID,
-                scope: 'email',
-              });
-              const auth = gapi.auth2.getAuthInstance();
-              auth.signIn();
+              await dispatch(SignIn());
+              const IsAuth = store.getState().Auth.IsAuth;
+              if (IsAuth) {
+                navigate(from, { replace: true });
+              }
             }}
           >
             <Icon.Google className="mr-2 h-5 w-5" />

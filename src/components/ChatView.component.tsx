@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { store } from '../state';
 import { SendChatMessage } from '../state/reducers/ChatMessageSlice';
 import AvatarIcon from './AvatarIcon.component';
 import ChatMessage from './ChatMessage.component';
@@ -30,10 +29,7 @@ function ChatView({ className = '' }: ChatViewProps) {
   return (
     <div className={className}>
       <div className="shadow-elevation-low z-[2] flex h-12 flex-none items-center px-2">
-        <div
-          className="text-muted mx-2"
-          onClick={() => console.log(store.getState())}
-        >
+        <div className="text-muted mx-2">
           <Icon.Alias />
         </div>
         <div className="font-display text-header-primary font-semibold">

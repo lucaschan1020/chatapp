@@ -1,13 +1,11 @@
-import { createAction, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { PrivateChannelItem } from '../../interfaces';
-const AddPrivateChannels = createAction<PrivateChannelItem[]>(
-  'PrivateChannelList/AddPrivateChannels'
-);
+import { AddPrivateChannels } from './PrivateChannelListSlice';
 
 const initialState: PrivateChannelItem | null =
   null as PrivateChannelItem | null;
 
-export const CurrentChatSlice = createSlice({
+export const CurrentChatSlicer = createSlice({
   name: 'CurrentChat',
   initialState,
   reducers: {
@@ -25,6 +23,6 @@ export const CurrentChatSlice = createSlice({
   },
 });
 
-export const { ChangeCurrentChat } = CurrentChatSlice.actions;
+export const { ChangeCurrentChat } = CurrentChatSlicer.actions;
 
-export default CurrentChatSlice.reducer;
+export default CurrentChatSlicer.reducer;
