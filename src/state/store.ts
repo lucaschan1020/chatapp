@@ -1,8 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
+import AuthReducer from './reducers/AuthSlice';
 import ChatMessageReducer from './reducers/ChatMessageSlice';
 import CurrentChatReducer from './reducers/CurrentChatSlice';
+import CurrentUserReducer from './reducers/CurrentUserSlice';
 import PrivateChannelListReducer from './reducers/PrivateChannelListSlice';
-import AuthReducer from './reducers/AuthSlice';
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     CurrentChat: CurrentChatReducer,
     ChatMessages: ChatMessageReducer,
     Auth: AuthReducer,
+    CurrentUser: CurrentUserReducer,
   },
 });
 

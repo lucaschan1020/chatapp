@@ -1,24 +1,12 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AxiosResponse } from 'axios';
 import auth from '../../apis/auth';
+import getGapiAuthInstance from '../../apis/gapiAuth';
+import { ChangeCurrentUser } from './CurrentUserSlice';
 
 interface AuthState {
   IsAuth: boolean | null;
 }
-
-const getGapiAuthInstance = async () => {
-  if (gapi.auth2 === undefined) {
-    await new Promise((res, rej) => {
-      gapi.load('client:auth2', { callback: res, onerror: rej });
-    });
-    await gapi.client.init({
-      clientId: process.env.REACT_APP_GAPI_CLIENTID,
-      scope: 'email',
-    });
-  }
-
-  return gapi.auth2.getAuthInstance();
-};
 
 const SignIn = createAsyncThunk('Auth/SignIn', async (_, thunkAPI) => {
   let response: AxiosResponse | null = null;
@@ -28,6 +16,19 @@ const SignIn = createAsyncThunk('Auth/SignIn', async (_, thunkAPI) => {
   response = await auth.post('/login', {
     userToken: gapiAuth.currentUser.get().getAuthResponse().id_token,
   });
+
+  thunkAPI.dispatch(
+    ChangeAuthState({
+      IsAuth: gapiAuth.isSignedIn.get() && response?.status === 200,
+    })
+  );
+
+  thunkAPI.dispatch(
+    ChangeCurrentUser({
+      ...response?.data,
+    })
+  );
+
   gapiAuth.isSignedIn.listen((isSignedIn) => {
     if (!isSignedIn) {
       gapiAuth.signOut();
@@ -38,12 +39,6 @@ const SignIn = createAsyncThunk('Auth/SignIn', async (_, thunkAPI) => {
       })
     );
   });
-
-  thunkAPI.dispatch(
-    ChangeAuthState({
-      IsAuth: gapiAuth.isSignedIn.get() && response?.status === 200,
-    })
-  );
 });
 
 const SignOut = createAsyncThunk('Auth/SignOut', async (_, thunkAPI) => {
@@ -60,11 +55,11 @@ const SignOut = createAsyncThunk('Auth/SignOut', async (_, thunkAPI) => {
 const UpdateAuthState = createAsyncThunk(
   'Auth/UpdateAuthState',
   async (_, thunkAPI) => {
-    const auth = await getGapiAuthInstance();
+    const gapiAuth = await getGapiAuthInstance();
 
     thunkAPI.dispatch(
       ChangeAuthState({
-        IsAuth: auth.isSignedIn.get(),
+        IsAuth: gapiAuth.isSignedIn.get(),
       })
     );
   }

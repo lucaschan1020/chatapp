@@ -10,6 +10,7 @@ interface PrivateChannelListProps {
 }
 
 function PrivateChannelList({ className = '' }: PrivateChannelListProps) {
+  const currentUser = useAppSelector((state) => state.CurrentUser);
   useEffect(() => {
     const privateChannels: PrivateChannelItem[] = [
       { participants: ['sadsadasd| Elexir Wizard', 'Jackson Wong'] },
@@ -116,10 +117,10 @@ function PrivateChannelList({ className = '' }: PrivateChannelListProps) {
         ))}
       </div>
       <div className="bg-secondary-alt mt-auto flex h-[3.3125rem] flex-none items-center px-2">
-        <AvatarIcon />
+        <AvatarIcon src={currentUser?.avatar} />
         <span className="font-primary ml-2 mr-1 flex w-[5.25rem] flex-col justify-center">
           <label className="text-header-primary truncate text-sm font-semibold leading-[1.125rem]">
-            GhostShadow
+            {currentUser?.name}
           </label>
           <label className="text-header-secondary text-xs font-medium leading-[0.8125rem]">
             #9005
