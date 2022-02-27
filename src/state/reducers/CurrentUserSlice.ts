@@ -8,7 +8,9 @@ const UpdateCurrentUserState = createAsyncThunk(
   'CurrentUser/UpdateCurrentUserState',
   async (_, thunkAPI) => {
     const gapiAuth = await getGapiAuthInstance();
-
+    if (!gapiAuth.isSignedIn.get()) {
+      return;
+    }
     let response: AxiosResponse | null = null;
     response = await auth.post('/login', {
       userToken: gapiAuth.currentUser.get().getAuthResponse().id_token,

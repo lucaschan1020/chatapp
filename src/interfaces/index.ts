@@ -10,7 +10,6 @@ export interface ChatMessageItem {
 }
 
 export interface CurrentUser {
-  _id: string;
   sub: string;
   email: string;
   email_verified: boolean;
