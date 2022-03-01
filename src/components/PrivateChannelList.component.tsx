@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { PrivateChannelItem } from '../interfaces';
-import { CurrentChatSlice, PrivateChannelListSlice } from '../state';
+import { ViewStateSlice, PrivateChannelListSlice } from '../state';
 import AvatarIcon from './AvatarIcon.component';
 import Icon from './Icon.component';
 
@@ -74,10 +75,12 @@ function PrivateChannelList({ className = '' }: PrivateChannelListProps) {
         </button>
       </div>
       <div className="-webkit-scrollbar:h-2 -webkit-scrollbar:w-2 -webkit-scrollbar-thumb:min-h-[2.5rem] -webkit-scrollbar-thumb:rounded -webkit-scrollbar-thumb:border-2 -webkit-scrollbar-thumb:border-solid -webkit-scrollbar-thumb:border-transparent -webkit-scrollbar-thumb:bg-transparent -webkit-scrollbar-thumb:bg-clip-padding hover:-webkit-scrollbar-thumb:bg-scrollbar-thin-thumb flex flex-col overflow-y-scroll pt-2">
-        <div className="text-channel-default hover:bg-modifier-hover hover:text-interactive-hover my-[0.0625rem] ml-[0.5rem] flex h-[2.625rem] flex-none  cursor-pointer items-center justify-start rounded-[0.25rem] active:bg-[rgba(79,84,92,0.24)] active:text-white">
-          <Icon.Friends className="ml-3 h-6 w-6" />
-          <label className="font-primary ml-4 font-medium">Friends</label>
-        </div>
+        <Link to="/channels/@me/">
+          <div className="text-channel-default hover:bg-modifier-hover hover:text-interactive-hover my-[0.0625rem] ml-[0.5rem] flex h-[2.625rem] flex-none  cursor-pointer items-center justify-start rounded-[0.25rem] active:bg-[rgba(79,84,92,0.24)] active:text-white">
+            <Icon.Friends className="ml-3 h-6 w-6" />
+            <label className="font-primary ml-4 font-medium">Friends</label>
+          </div>
+        </Link>
         <div className="text-channel-default hover:bg-modifier-hover hover:text-interactive-hover my-[0.0625rem] ml-[0.5rem] flex h-[2.625rem] flex-none cursor-pointer items-center justify-start rounded-[0.25rem] active:bg-[rgba(79,84,92,0.24)] active:text-white">
           <Icon.Nitro className="ml-3 h-6 w-6" />
           <label className="font-primary ml-4 font-medium">Nitro</label>
@@ -89,31 +92,34 @@ function PrivateChannelList({ className = '' }: PrivateChannelListProps) {
           <Icon.DMPlus className="h-4 w-4 cursor-pointer" />
         </div>
         {PrivateChannelList.map((privateChannel, index) => (
-          <div
-            key={index}
-            className="group text-channel-default hover:bg-modifier-hover hover:text-interactive-hover my-[0.0625rem] ml-[0.5rem] flex h-[2.625rem] flex-none  cursor-pointer items-center justify-start rounded-[0.25rem] px-2 active:bg-[rgba(79,84,92,0.24)] active:text-white"
-            onClick={() =>
-              dispatch(CurrentChatSlice.ChangeCurrentChat(privateChannel))
-            }
-          >
-            <AvatarIcon
-              src={
-                privateChannel.avatarSrc ? privateChannel.avatarSrc : undefined
+          <Link to={`/channels/@me/${index}`} key={index}>
+            <div
+              className="group text-channel-default hover:bg-modifier-hover hover:text-interactive-hover my-[0.0625rem] ml-[0.5rem] flex h-[2.625rem] flex-none cursor-pointer items-center justify-start rounded-[0.25rem] px-2 active:bg-[rgba(79,84,92,0.24)] active:text-white"
+              onClick={() =>
+                dispatch(ViewStateSlice.ChangeCurrentChat(privateChannel))
               }
-            />
-            <div className="ml-3 flex flex-1 flex-col truncate">
-              <label className="font-primary cursor-pointer truncate text-base font-medium leading-5">
-                {privateChannel.participants.join(', ')}
-              </label>
-              {privateChannel.participants.length > 1 && (
-                <label className="font-primary mt-[-0.125rem] cursor-pointer truncate text-xs font-medium">
-                  {privateChannel.participants.length} Members
+            >
+              <AvatarIcon
+                src={
+                  privateChannel.avatarSrc
+                    ? privateChannel.avatarSrc
+                    : undefined
+                }
+              />
+              <div className="ml-3 flex flex-1 flex-col truncate">
+                <label className="font-primary cursor-pointer truncate text-base font-medium leading-5">
+                  {privateChannel.participants.join(', ')}
                 </label>
-              )}
-            </div>
+                {privateChannel.participants.length > 1 && (
+                  <label className="font-primary mt-[-0.125rem] cursor-pointer truncate text-xs font-medium">
+                    {privateChannel.participants.length} Members
+                  </label>
+                )}
+              </div>
 
-            <Icon.Cross className="text-channel-default hover:text-interactive-hover active:text-interactive-active ml-auto mr-[0.125rem] hidden h-4 w-4 flex-none group-hover:block" />
-          </div>
+              <Icon.Cross className="text-channel-default hover:text-interactive-hover active:text-interactive-active ml-auto mr-[0.125rem] hidden h-4 w-4 flex-none group-hover:block" />
+            </div>
+          </Link>
         ))}
       </div>
       <div className="bg-secondary-alt mt-auto flex h-[3.3125rem] flex-none items-center px-2">

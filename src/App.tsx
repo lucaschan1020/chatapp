@@ -1,17 +1,21 @@
 import { useEffect } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import FriendList from './components/FriendList.component';
 import Login from './components/Login.component';
 import Logout from './components/Logout.component';
 import Main from './components/Main.component';
 import RequireAuth from './components/RequireAuth.component';
 import { useAppDispatch } from './hooks';
 import './index.css';
+import { UpdateAuthState } from './state/reducers/AuthSlice';
 import { UpdateCurrentUserState } from './state/reducers/CurrentUserSlice';
+import ChatView from './components/ChatView.component';
 
 function App() {
   const dispatch = useAppDispatch();
   useEffect(() => {
     const initialize = async () => {
+      await dispatch(UpdateAuthState());
       await dispatch(UpdateCurrentUserState());
     };
     initialize();
@@ -32,7 +36,20 @@ function App() {
                   <Main />
                 </RequireAuth>
               }
-            />
+            >
+              <Route
+                path="channels/@me"
+                element={
+                  <FriendList className="bg-primary flex flex-1 flex-col" />
+                }
+              ></Route>
+              <Route
+                path="channels/@me/*"
+                element={
+                  <ChatView className="bg-primary flex flex-1 flex-col" />
+                }
+              ></Route>
+            </Route>
           </Routes>
         </div>
       </>

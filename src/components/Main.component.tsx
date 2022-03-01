@@ -1,7 +1,7 @@
+import { Outlet } from 'react-router-dom';
 import Notice from './Notice.component';
-import ServerList from './ServerList.component';
 import PrivateChannelList from './PrivateChannelList.component';
-import ChatView from './ChatView.component';
+import ServerList from './ServerList.component';
 
 function Main() {
   return (
@@ -16,7 +16,7 @@ function Main() {
         </div>
         <div className="flex min-h-0 flex-1">
           <PrivateChannelList className="bg-secondary flex w-60 flex-none flex-col" />
-          <ChatView className="bg-primary flex flex-1 flex-col" />
+          <Outlet />
         </div>
       </div>
     </>

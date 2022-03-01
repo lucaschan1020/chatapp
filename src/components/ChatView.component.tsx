@@ -22,7 +22,7 @@ function ChatView({ className = '' }: ChatViewProps) {
     }
   }, [draftMessage]);
 
-  const CurrentChat = useAppSelector((state) => state.CurrentChat);
+  const CurrentChat = useAppSelector((state) => state.ViewState.CurrentChat);
   const ChatMessages = useAppSelector((state) => state.ChatMessages);
   const dispatch = useAppDispatch();
 
@@ -45,7 +45,6 @@ function ChatView({ className = '' }: ChatViewProps) {
           <div className="text-interactive-normal hover:text-interactive-hover mx-2 cursor-pointer">
             <Icon.Pin />
           </div>
-
           <div className="text-interactive-normal hover:text-interactive-hover mx-2 cursor-pointer">
             <Icon.AddMember />
           </div>
@@ -114,7 +113,6 @@ function ChatView({ className = '' }: ChatViewProps) {
                 if (e.key !== 'Enter') {
                   return;
                 }
-
                 if (e.shiftKey) {
                   return;
                 }
@@ -122,7 +120,6 @@ function ChatView({ className = '' }: ChatViewProps) {
                 if (!draftMessage.trim()) {
                   return;
                 }
-
                 dispatch(
                   SendChatMessage(
                     (e.target as HTMLTextAreaElement).value.trim()

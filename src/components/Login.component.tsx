@@ -10,7 +10,7 @@ function Login() {
   const location = useLocation();
 
   const state = location.state as { from: Location };
-  const from = state ? state.from.pathname : '/';
+  const from = state ? state.from.pathname : '/channels/@me';
   return (
     <div className="bg-tertiary relative flex h-full w-full justify-center">
       <Icon.Artwork className="absolute top-0 left-0 h-full w-full" />
