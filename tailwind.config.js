@@ -29,6 +29,10 @@ module.exports = {
         'scrollbar-thin-thumb': '#202225',
         'scrollbar-auto-track': 'hsl(210,9.8%,20%)',
         'mobile-primary': '#36393f',
+        'deprecated-text-input-bg': 'rgba(0,0,0,0.1)',
+        'deprecated-text-input-border': 'rgba(0,0,0,0.3)',
+        'brand-experiment': 'hsl(235,85.6%,64.7%)',
+        'text-link': 'hsl(197,100%,47.8%)',
       },
       boxShadow: {
         'elevation-low':
