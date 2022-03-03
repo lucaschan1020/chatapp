@@ -74,8 +74,8 @@ function PrivateChannelList({ className = '' }: PrivateChannelListProps) {
           Find or start a conversation
         </button>
       </div>
-      <div className="-webkit-scrollbar:h-2 -webkit-scrollbar:w-2 -webkit-scrollbar-thumb:min-h-[2.5rem] -webkit-scrollbar-thumb:rounded -webkit-scrollbar-thumb:border-2 -webkit-scrollbar-thumb:border-solid -webkit-scrollbar-thumb:border-transparent -webkit-scrollbar-thumb:bg-transparent -webkit-scrollbar-thumb:bg-clip-padding hover:-webkit-scrollbar-thumb:bg-scrollbar-thin-thumb flex flex-col overflow-y-scroll pt-2">
-        <Link to="/channels/@me/">
+      <div className="scrollbar-2 -webkit-scrollbar-thumb:min-h-[2.5rem] scrollbar-thumb-rounded -webkit-scrollbar-thumb:bg-transparent scrollbar-thumb-border hover-scrollbar-thumb flex flex-col overflow-y-scroll pt-2">
+        <Link to="/channels/@me">
           <div className="text-channel-default hover:bg-modifier-hover hover:text-interactive-hover my-[0.0625rem] ml-[0.5rem] flex h-[2.625rem] flex-none  cursor-pointer items-center justify-start rounded-[0.25rem] active:bg-[rgba(79,84,92,0.24)] active:text-white">
             <Icon.Friends className="ml-3 h-6 w-6" />
             <label className="font-primary ml-4 font-medium">Friends</label>
@@ -86,8 +86,8 @@ function PrivateChannelList({ className = '' }: PrivateChannelListProps) {
           <label className="font-primary ml-4 font-medium">Nitro</label>
         </div>
         <div className="text-channel-default hover:text-interactive-hover flex h-10 flex-none items-center justify-between pt-[1.125rem] pr-[0.5rem] pb-[0.25rem] pl-[1.125rem]">
-          <label className="font-display h-[1.125rem] cursor-default text-xs font-semibold tracking-[0.015625rem]">
-            DIRECT MESSAGES
+          <label className="font-display h-[1.125rem] cursor-default text-xs font-semibold uppercase tracking-[0.015625rem]">
+            Direct Messages
           </label>
           <Icon.DMPlus className="h-4 w-4 cursor-pointer" />
         </div>
@@ -133,13 +133,13 @@ function PrivateChannelList({ className = '' }: PrivateChannelListProps) {
           </label>
         </span>
         <div className="flex flex-1 justify-around">
-          <button className="text-interactive-normal hover:bg-modifier-hover hover:text-interactive-hover h-8 w-8 rounded-[0.25rem]">
+          <button className="text-interactive hover:bg-modifier-hover h-8 w-8 rounded-[0.25rem]">
             <Icon.Mute className="mx-auto" />
           </button>
-          <button className="text-interactive-normal hover:bg-modifier-hover hover:text-interactive-hover h-8 w-8 rounded-[0.25rem]">
+          <button className="text-interactive hover:bg-modifier-hover h-8 w-8 rounded-[0.25rem]">
             <Icon.Deafen className="mx-auto" />
           </button>
-          <button className="text-interactive-normal hover:bg-modifier-hover hover:text-interactive-hover h-8 w-8 rounded-[0.25rem]">
+          <button className="text-interactive hover:bg-modifier-hover h-8 w-8 rounded-[0.25rem]">
             <Icon.Setting className="mx-auto" />
           </button>
         </div>

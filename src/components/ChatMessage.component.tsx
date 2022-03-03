@@ -42,13 +42,13 @@ function ChatMessage({ key, message, isConsecutive }: ChatMessageProps) {
           {message.chatContent}
         </div>
         <div className="shadow-elevation-stroke bg-primary absolute right-[0.875rem] top-[-1rem] hidden rounded group-hover:flex">
-          <button className="text-interactive-normal hover:text-interactive-hover p-[0.375rem]">
+          <button className="text-interactive p-[0.375rem]">
             <Icon.AddReaction className="h-5 w-5" />
           </button>
-          <button className="text-interactive-normal hover:text-interactive-hover p-[0.375rem]">
+          <button className="text-interactive p-[0.375rem]">
             <Icon.Reply className="h-5 w-5" />
           </button>
-          <button className="text-interactive-normal hover:text-interactive-hover p-[0.375rem]">
+          <button className="text-interactive p-[0.375rem]">
             <Icon.More className="h-5 w-5" />
           </button>
         </div>

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import FriendList from './components/FriendList.component';
 import Login from './components/Login.component';
 import Logout from './components/Logout.component';
@@ -37,6 +37,10 @@ function App() {
                 </RequireAuth>
               }
             >
+              <Route
+                path="/"
+                element={<Navigate to="/channels/@me" replace />}
+              />
               <Route
                 path="channels/@me"
                 element={
