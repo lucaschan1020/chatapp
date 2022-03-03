@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
-import FriendList from './components/FriendList.component';
+import FriendView from './components/FriendView.component';
 import Login from './components/Login.component';
 import Logout from './components/Logout.component';
 import Main from './components/Main.component';
@@ -44,7 +44,7 @@ function App() {
               <Route
                 path="channels/@me"
                 element={
-                  <FriendList className="bg-primary flex flex-1 flex-col" />
+                  <FriendView className="bg-primary flex flex-1 flex-col" />
                 }
               ></Route>
               <Route

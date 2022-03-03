@@ -15,7 +15,7 @@ enum PageEnum {
   Blocked,
 }
 
-function FriendList({ className = '' }: FriendListProps) {
+function FriendView({ className = '' }: FriendListProps) {
   const selectedIndex = useAppSelector(
     (state) => state.ViewState.FriendListSelectedIndex
   );
@@ -163,4 +163,4 @@ function FriendList({ className = '' }: FriendListProps) {
   );
 }
 
-export default FriendList;
+export default FriendView;
