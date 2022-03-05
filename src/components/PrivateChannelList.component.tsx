@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { PrivateChannelItem } from '../interfaces';
 import { ViewStateSlice, PrivateChannelListSlice } from '../state';
+import leadingZero from '../utilities/leading-zero';
 import AvatarIcon from './AvatarIcon.component';
 import Icon from './Icon.component';
 
@@ -129,7 +130,7 @@ function PrivateChannelList({ className = '' }: PrivateChannelListProps) {
             {currentUser?.name}
           </label>
           <label className="text-header-secondary text-xs font-medium leading-[0.8125rem]">
-            #9005
+            #{leadingZero(currentUser?.discriminator ?? 0, 4)}
           </label>
         </span>
         <div className="flex flex-1 justify-around">

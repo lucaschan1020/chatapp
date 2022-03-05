@@ -87,7 +87,7 @@ function FriendView({ className = '' }: FriendViewProps) {
       <div className="flex min-h-0 flex-1">
         <div className="flex flex-1 flex-col">
           {selectedIndex < 4 && <FriendList index={selectedIndex} />}
-          {selectedIndex == 4 && <FriendSearch />}
+          {selectedIndex === 4 && <FriendSearch />}
         </div>
         <div className="hidden min-w-[22.5rem] max-w-[26.25rem] flex-[0_1_30%] lg:flex">
           <div className="-webkit-scrollbar-thumb:min-h-[2.5rem] -webkit-scrollbar-thumb:bg-scrollbar-thin-thumb scrollbar-2 scrollbar-thumb-border border-modifier-accent scrollbar-thumb-rounded ml-[0.125rem] flex flex-1 flex-col overflow-x-hidden overflow-y-scroll border-l-[0.0625rem] border-solid pr-2 pt-4 pb-4 pl-4">

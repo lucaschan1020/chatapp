@@ -12,9 +12,7 @@ const UpdateCurrentUserState = createAsyncThunk(
       return;
     }
     let response: AxiosResponse | null = null;
-    response = await auth.post('/login', {
-      userToken: gapiAuth.currentUser.get().getAuthResponse().id_token,
-    });
+    response = await auth.get('/login');
 
     thunkAPI.dispatch(
       ChangeCurrentUser({

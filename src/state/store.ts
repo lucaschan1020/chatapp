@@ -3,6 +3,7 @@ import AuthReducer from './reducers/AuthSlice';
 import ChatMessageReducer from './reducers/ChatMessageSlice';
 import ViewStateReducer from './reducers/ViewStateSlice';
 import CurrentUserReducer from './reducers/CurrentUserSlice';
+import FriendReducer from './reducers/FriendSlice';
 import PrivateChannelListReducer from './reducers/PrivateChannelListSlice';
 
 export const store = configureStore({
@@ -12,6 +13,7 @@ export const store = configureStore({
     ChatMessages: ChatMessageReducer,
     Auth: AuthReducer,
     CurrentUser: CurrentUserReducer,
+    Friends: FriendReducer,
   },
 });
 

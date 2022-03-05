@@ -10,6 +10,7 @@ import './index.css';
 import { UpdateAuthState } from './state/reducers/AuthSlice';
 import { UpdateCurrentUserState } from './state/reducers/CurrentUserSlice';
 import ChatView from './components/ChatView.component';
+import { UpdateFriendState } from './state/reducers/FriendSlice';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -17,6 +18,7 @@ function App() {
     const initialize = async () => {
       await dispatch(UpdateAuthState());
       await dispatch(UpdateCurrentUserState());
+      await dispatch(UpdateFriendState());
     };
     initialize();
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -1,10 +1,10 @@
 import axios from 'axios';
 import authorizationInterceptor from '../utilities/authorization-interceptor';
 const SERVER_DOMAIN = process.env.REACT_APP_SERVER_DOMAIN ?? '';
-const authAPI = axios.create({
-  baseURL: `${SERVER_DOMAIN}/api/auth`,
+const friendAPI = axios.create({
+  baseURL: `${SERVER_DOMAIN}/api/friend`,
 });
 
-authAPI.interceptors.request.use(authorizationInterceptor);
+friendAPI.interceptors.request.use(authorizationInterceptor);
 
-export default authAPI;
+export default friendAPI;
