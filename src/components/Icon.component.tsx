@@ -1,4 +1,4 @@
-import { TypedRecord } from '../utilities/TypedRecord';
+import { TypedRecord } from '../utilities/typed-record';
 
 interface IconProps {
   className?: string;
