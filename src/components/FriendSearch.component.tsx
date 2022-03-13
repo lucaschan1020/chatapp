@@ -61,7 +61,10 @@ function FriendSearch() {
             if (discriminator.length !== 5) return;
             const username = friendTag.slice(0, index);
             await dispatch(
-              AddFriend({ username, discriminator: discriminator.slice(1) })
+              AddFriend({
+                username,
+                discriminator: parseInt(discriminator.slice(1)),
+              })
             );
           }}
         >

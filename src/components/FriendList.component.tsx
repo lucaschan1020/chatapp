@@ -1,5 +1,6 @@
-import { useAppSelector } from '../hooks';
+import { useAppDispatch, useAppSelector } from '../hooks';
 import { FriendshipEnum } from '../interfaces';
+import { DeleteFriend, UpdateFriend } from '../state/reducers/FriendSlice';
 import leadingZero from '../utilities/leading-zero';
 import AvatarIcon from './AvatarIcon.component';
 import Icon from './Icon.component';
@@ -31,6 +32,8 @@ function FriendList({ index }: FriendListProps) {
       )
     );
   });
+
+  const dispatch = useAppDispatch();
   return (
     <>
       <div className="flex">
@@ -95,11 +98,32 @@ function FriendList({ index }: FriendListProps) {
             {index === PageEnum.Pending && (
               <div className="ml-2 flex">
                 {friend.friendship_status === FriendshipEnum.Requested && (
-                  <div className="bg-secondary text-interactive hover:text-interactive-green-normal active:bg-modifier-active active:text-interactive-active flex h-9 w-9 items-center justify-center rounded-[50%]">
+                  <div
+                    className="bg-secondary text-interactive hover:text-interactive-green-normal active:bg-modifier-active active:text-interactive-active flex h-9 w-9 items-center justify-center rounded-[50%]"
+                    onClick={async (e) => {
+                      dispatch(
+                        UpdateFriend({
+                          username: friend.username,
+                          discriminator: friend.discriminator,
+                          friendship_status: FriendshipEnum.Friend,
+                        })
+                      );
+                    }}
+                  >
                     <Icon.ActionAccept className="h-5 w-5" />
                   </div>
                 )}
-                <div className="bg-secondary text-interactive hover:text-interactive-red-normal active:bg-modifier-active active:text-interactive-active ml-[0.625rem] flex h-9 w-9 items-center justify-center rounded-[50%]">
+                <div
+                  className="bg-secondary text-interactive hover:text-interactive-red-normal active:bg-modifier-active active:text-interactive-active ml-[0.625rem] flex h-9 w-9 items-center justify-center rounded-[50%]"
+                  onClick={(e) => {
+                    dispatch(
+                      DeleteFriend({
+                        username: friend.username,
+                        discriminator: friend.discriminator,
+                      })
+                    );
+                  }}
+                >
                   <Icon.ActionDeny className="h-5 w-5" />
                 </div>
               </div>

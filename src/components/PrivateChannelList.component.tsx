@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { PrivateChannelItem } from '../interfaces';
 import { ViewStateSlice, PrivateChannelListSlice } from '../state';
@@ -71,18 +71,26 @@ function PrivateChannelList({ className = '' }: PrivateChannelListProps) {
   return (
     <div className={className}>
       <div className="shadow-elevation-low flex h-12 w-60 flex-none">
-        <button className="bg-tertiary font-primary text-muted m-[0.55rem] flex-auto rounded-[0.25rem] px-[0.375rem] text-left text-sm">
+        <button className="bg-tertiary font-primary text-muted m-[0.55rem] flex-auto rounded-[0.25rem] px-[0.375rem] text-left text-sm font-medium leading-6">
           Find or start a conversation
         </button>
       </div>
       <div className="scrollbar-2 -webkit-scrollbar-thumb:min-h-[2.5rem] scrollbar-thumb-rounded -webkit-scrollbar-thumb:bg-transparent scrollbar-thumb-border hover-scrollbar-thumb flex flex-col overflow-y-scroll pt-2">
-        <Link to="/channels/@me">
-          <div className="text-channel-default hover:bg-modifier-hover hover:text-interactive-hover my-[0.0625rem] ml-[0.5rem] flex h-[2.625rem] flex-none  cursor-pointer items-center justify-start rounded-[0.25rem] active:bg-[rgba(79,84,92,0.24)] active:text-white">
-            <Icon.Friends className="ml-3 h-6 w-6" />
-            <label className="font-primary ml-4 font-medium">Friends</label>
-          </div>
-        </Link>
-        <div className="text-channel-default hover:bg-modifier-hover hover:text-interactive-hover my-[0.0625rem] ml-[0.5rem] flex h-[2.625rem] flex-none cursor-pointer items-center justify-start rounded-[0.25rem] active:bg-[rgba(79,84,92,0.24)] active:text-white">
+        <NavLink to="/channels/@me" end>
+          {({ isActive }) => (
+            <div
+              className={`${
+                isActive
+                  ? 'bg-modifier-active text-interactive-active'
+                  : 'text-channel-default'
+              } hover:bg-modifier-hover hover:text-interactive-hover my-[0.0625rem] ml-[0.5rem] flex h-[2.625rem] flex-none cursor-pointer items-center justify-start rounded-[0.25rem]`}
+            >
+              <Icon.Friends className="ml-3 h-6 w-6" />
+              <label className="font-primary ml-4 font-medium">Friends</label>
+            </div>
+          )}
+        </NavLink>
+        <div className="text-channel-default hover:bg-modifier-hover hover:text-interactive-hover active:bg-modifier-active active:text-interactive-active my-[0.0625rem] ml-[0.5rem] flex h-[2.625rem] flex-none cursor-pointer items-center justify-start rounded-[0.25rem]">
           <Icon.Nitro className="ml-3 h-6 w-6" />
           <label className="font-primary ml-4 font-medium">Nitro</label>
         </div>
@@ -92,36 +100,46 @@ function PrivateChannelList({ className = '' }: PrivateChannelListProps) {
           </label>
           <Icon.DMPlus className="h-4 w-4 cursor-pointer" />
         </div>
-        {PrivateChannelList.map((privateChannel, index) => (
-          <Link to={`/channels/@me/${index}`} key={index}>
-            <div
-              className="group text-channel-default hover:bg-modifier-hover hover:text-interactive-hover my-[0.0625rem] ml-[0.5rem] flex h-[2.625rem] flex-none cursor-pointer items-center justify-start rounded-[0.25rem] px-2 active:bg-[rgba(79,84,92,0.24)] active:text-white"
-              onClick={() =>
-                dispatch(ViewStateSlice.ChangeCurrentChat(privateChannel))
-              }
-            >
-              <AvatarIcon
-                src={
-                  privateChannel.avatarSrc
-                    ? privateChannel.avatarSrc
-                    : undefined
-                }
-              />
-              <div className="ml-3 flex flex-1 flex-col truncate">
-                <label className="font-primary cursor-pointer truncate text-base font-medium leading-5">
-                  {privateChannel.participants.join(', ')}
-                </label>
-                {privateChannel.participants.length > 1 && (
-                  <label className="font-primary mt-[-0.125rem] cursor-pointer truncate text-xs font-medium">
-                    {privateChannel.participants.length} Members
-                  </label>
-                )}
-              </div>
+        {PrivateChannelList.length === 0 && (
+          <Icon.EmptyPrivateChannelList className="fill-primary p-4" />
+        )}
+        {PrivateChannelList.length > 0 &&
+          PrivateChannelList.map((privateChannel, index) => (
+            <NavLink to={`/channels/@me/${index}`} key={index}>
+              {({ isActive }) => (
+                <div
+                  className={`${
+                    isActive
+                      ? 'bg-modifier-active text-interactive-active'
+                      : 'text-channel-default'
+                  } group hover:bg-modifier-hover hover:text-interactive-hover my-[0.0625rem] ml-[0.5rem] flex h-[2.625rem] flex-none cursor-pointer items-center justify-start rounded-[0.25rem] px-2`}
+                  onClick={() =>
+                    dispatch(ViewStateSlice.ChangeCurrentChat(privateChannel))
+                  }
+                >
+                  <AvatarIcon
+                    src={
+                      privateChannel.avatarSrc
+                        ? privateChannel.avatarSrc
+                        : undefined
+                    }
+                  />
+                  <div className="ml-3 flex flex-1 flex-col truncate">
+                    <label className="font-primary cursor-pointer truncate text-base font-medium leading-5">
+                      {privateChannel.participants.join(', ')}
+                    </label>
+                    {privateChannel.participants.length > 1 && (
+                      <label className="font-primary mt-[-0.125rem] cursor-pointer truncate text-xs font-medium">
+                        {privateChannel.participants.length} Members
+                      </label>
+                    )}
+                  </div>
 
-              <Icon.Cross className="text-channel-default hover:text-interactive-hover active:text-interactive-active ml-auto mr-[0.125rem] hidden h-4 w-4 flex-none group-hover:block" />
-            </div>
-          </Link>
-        ))}
+                  <Icon.Cross className="text-channel-default hover:text-interactive-hover active:text-interactive-active ml-auto mr-[0.125rem] hidden h-4 w-4 flex-none group-hover:block" />
+                </div>
+              )}
+            </NavLink>
+          ))}
       </div>
       <div className="bg-secondary-alt mt-auto flex h-[3.3125rem] flex-none items-center px-2">
         <AvatarIcon src={currentUser?.avatar} />

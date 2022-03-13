@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../hooks';
 import { store } from '../state';
 import { SignIn } from '../state/reducers/AuthSlice';
+import { UpdateFriendState } from '../state/reducers/FriendSlice';
 import Icon from './Icon.component';
 
 function Login() {
@@ -28,6 +29,7 @@ function Login() {
               await dispatch(SignIn());
               const IsAuth = store.getState().Auth.IsAuth;
               if (IsAuth) {
+                await dispatch(UpdateFriendState());
                 navigate(from, { replace: true });
               }
             }}
