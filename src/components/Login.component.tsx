@@ -27,7 +27,7 @@ function Login() {
             className="font-primary hover:bg-interactive-hover bg-interactive-active mt-5 flex h-9 w-full items-center justify-center rounded-[0.1875rem] text-base font-medium text-black"
             onClick={async () => {
               await dispatch(SignIn());
-              const IsAuth = store.getState().Auth.IsAuth;
+              const IsAuth = store.getState().Auth.isAuth;
               if (IsAuth) {
                 await dispatch(UpdateFriendState());
                 navigate(from, { replace: true });

@@ -6,7 +6,7 @@ interface RequireAuthProps {
 }
 
 function RequireAuth({ children }: RequireAuthProps) {
-  const isAuth = useAppSelector((state) => state.Auth.IsAuth);
+  const isAuth = useAppSelector((state) => state.Auth.isAuth);
   const location = useLocation();
 
   if (isAuth === null) {

@@ -5,7 +5,7 @@ import getGapiAuthInstance from '../../apis/gapiAuth';
 import { ChangeCurrentUser } from './CurrentUserSlice';
 
 interface AuthState {
-  IsAuth: boolean | null;
+  isAuth: boolean | null;
 }
 
 const SignIn = createAsyncThunk('Auth/SignIn', async (_, thunkAPI) => {
@@ -19,7 +19,7 @@ const SignIn = createAsyncThunk('Auth/SignIn', async (_, thunkAPI) => {
 
   thunkAPI.dispatch(
     ChangeAuthState({
-      IsAuth:
+      isAuth:
         gapiAuth.isSignedIn.get() &&
         (response?.status === 200 || response?.status === 201),
     })
@@ -37,7 +37,7 @@ const SignIn = createAsyncThunk('Auth/SignIn', async (_, thunkAPI) => {
     }
     thunkAPI.dispatch(
       ChangeAuthState({
-        IsAuth: isSignedIn,
+        isAuth: isSignedIn,
       })
     );
   });
@@ -49,7 +49,7 @@ const SignOut = createAsyncThunk('Auth/SignOut', async (_, thunkAPI) => {
 
   thunkAPI.dispatch(
     ChangeAuthState({
-      IsAuth: gapiAuth.isSignedIn.get(),
+      isAuth: gapiAuth.isSignedIn.get(),
     })
   );
 });
@@ -61,13 +61,13 @@ const UpdateAuthState = createAsyncThunk(
 
     thunkAPI.dispatch(
       ChangeAuthState({
-        IsAuth: gapiAuth.isSignedIn.get(),
+        isAuth: gapiAuth.isSignedIn.get(),
       })
     );
   }
 );
 
-const initialState: AuthState = { IsAuth: null };
+const initialState: AuthState = { isAuth: null };
 
 export const AuthSlice = createSlice({
   name: 'Auth',

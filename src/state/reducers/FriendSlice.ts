@@ -63,7 +63,7 @@ const UpdateFriendState = createAsyncThunk(
   'Friend/UpdateFriendState',
   async (_, thunkAPI) => {
     const state = thunkAPI.getState() as AppState;
-    if (!state.Auth.IsAuth) return;
+    if (!state.Auth.isAuth) return;
     let response: AxiosResponse | null = null;
     response = await friendAPI.get('');
     const friends = {} as Record<string, FriendItem>;
