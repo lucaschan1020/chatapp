@@ -13,11 +13,11 @@ export interface CurrentUser {
   _id: string;
   sub: string;
   email: string;
-  email_verified: boolean;
+  emailVerified: boolean;
   name: string;
   avatar: string;
-  given_name: string;
-  family_name: string;
+  givenName: string;
+  familyName: string;
   locale: string;
   username: string;
   discriminator: number;
@@ -25,7 +25,7 @@ export interface CurrentUser {
 
 export interface FriendItem {
   _id: string;
-  friendship_status: FriendshipEnum;
+  friendshipStatus: FriendshipEnum;
   avatar: string;
   username: string;
   discriminator: number;

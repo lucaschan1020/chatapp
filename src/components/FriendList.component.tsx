@@ -28,7 +28,7 @@ function FriendList({ index }: FriendListProps) {
     if (!state.Friends) return;
     return Object.values(state.Friends).filter((friend) =>
       IndexFriendshipMapping[index].some(
-        (friendship) => friendship === friend.friendship_status
+        (friendship) => friendship === friend.friendshipStatus
       )
     );
   });
@@ -78,7 +78,7 @@ function FriendList({ index }: FriendListProps) {
 
                 {index === PageEnum.Pending && (
                   <span className="font-primary text-header-secondary text-xs font-medium leading-5">
-                    {friend.friendship_status === FriendshipEnum.Pending
+                    {friend.friendshipStatus === FriendshipEnum.Pending
                       ? 'Outgoing Friend Request'
                       : 'Incoming Friend Request'}
                   </span>
@@ -97,7 +97,7 @@ function FriendList({ index }: FriendListProps) {
             )}
             {index === PageEnum.Pending && (
               <div className="ml-2 flex">
-                {friend.friendship_status === FriendshipEnum.Requested && (
+                {friend.friendshipStatus === FriendshipEnum.Requested && (
                   <div
                     className="bg-secondary text-interactive hover:text-interactive-green-normal active:bg-modifier-active active:text-interactive-active flex h-9 w-9 items-center justify-center rounded-[50%]"
                     onClick={async (e) => {
@@ -105,7 +105,7 @@ function FriendList({ index }: FriendListProps) {
                         UpdateFriend({
                           username: friend.username,
                           discriminator: friend.discriminator,
-                          friendship_status: FriendshipEnum.Friend,
+                          friendshipStatus: FriendshipEnum.Friend,
                         })
                       );
                     }}

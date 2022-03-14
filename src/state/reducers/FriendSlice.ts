@@ -11,7 +11,7 @@ interface FriendOperation {
 }
 
 interface UpdateFriendOperation extends FriendOperation {
-  friendship_status: FriendshipEnum;
+  friendshipStatus: FriendshipEnum;
 }
 
 const AddFriend = createAsyncThunk(
@@ -36,7 +36,7 @@ const UpdateFriend = createAsyncThunk(
     let response: AxiosResponse | null = null;
     response = await friendAPI.put(
       `/${friend.username}/${friend.discriminator}`,
-      { friendship_status: friend.friendship_status }
+      { friendshipStatus: friend.friendshipStatus }
     );
 
     thunkAPI.dispatch(
