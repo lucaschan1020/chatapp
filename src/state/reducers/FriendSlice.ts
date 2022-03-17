@@ -55,7 +55,7 @@ const DeleteFriend = createAsyncThunk(
       `/${friend.username}/${friend.discriminator}`
     );
 
-    thunkAPI.dispatch(DeleteFriendFromList(response?.data._id));
+    thunkAPI.dispatch(DeleteFriendFromList(response?.data));
   }
 );
 
