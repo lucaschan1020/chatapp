@@ -66,12 +66,8 @@ const UpdateFriendState = createAsyncThunk(
     if (!state.Auth.isAuth) return;
     let response: AxiosResponse | null = null;
     response = await friendAPI.get('');
-    const friends = {} as Record<string, FriendItem>;
-    (response?.data as FriendItem[]).forEach((friend) => {
-      friends[friend._id] = friend;
-    });
 
-    thunkAPI.dispatch(AddFriendsToList(friends));
+    thunkAPI.dispatch(AddFriendsToList(response?.data));
   }
 );
 

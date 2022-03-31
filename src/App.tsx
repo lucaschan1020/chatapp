@@ -11,11 +11,13 @@ import { UpdateAuthState } from './state/reducers/AuthSlice';
 import { UpdateCurrentUserState } from './state/reducers/CurrentUserSlice';
 import ChatView from './components/ChatView.component';
 import { UpdateFriendState } from './state/reducers/FriendSlice';
+import { connectSocket } from './socketIO';
 
 function App() {
   const dispatch = useAppDispatch();
   useEffect(() => {
     const initialize = async () => {
+      await connectSocket();
       await dispatch(UpdateAuthState());
       await dispatch(UpdateCurrentUserState());
       await dispatch(UpdateFriendState());

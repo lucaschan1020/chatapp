@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { SendChatMessage } from '../state/reducers/ChatMessageSlice';
 import AvatarIcon from './AvatarIcon.component';
 import ChatMessage from './ChatMessage.component';
 import Icon from './Icon.component';
@@ -120,11 +119,7 @@ function ChatView({ className = '' }: ChatViewProps) {
                 if (!draftMessage.trim()) {
                   return;
                 }
-                dispatch(
-                  SendChatMessage(
-                    (e.target as HTMLTextAreaElement).value.trim()
-                  )
-                );
+
                 setDraftMessage('');
               }}
             ></textarea>

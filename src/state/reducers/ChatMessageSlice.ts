@@ -1,27 +1,9 @@
-import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ChatMessageItem } from '../../interfaces';
 import socket from '../../socketIO';
 
-const SendChatMessage = createAsyncThunk(
-  'ChatMessage/SendChatMessage',
-  (chatContent: string, thunkAPI) => {
-    socket.emit('SendChatMessage', chatContent);
-    thunkAPI.dispatch(
-      AddChatMessage({ sender: 'Me', chatContent, timeStamp: new Date() })
-    );
-  }
-);
-
-const ReceiveChatMessage = createAsyncThunk(
-  'ChatMessage/ReceiveChatMessage',
-  (chatContent: string, thunkAPI) => {
-    thunkAPI.dispatch(
-      AddChatMessage({ sender: 'Them', chatContent, timeStamp: new Date() })
-    );
-  }
-);
-
 const initialState: ChatMessageItem[] = [];
+socket.on('sendPrivateChannelChat', () => {});
 
 export const ChatMessageSlice = createSlice({
   name: 'ChatMessage',
@@ -33,7 +15,6 @@ export const ChatMessageSlice = createSlice({
   },
 });
 
-export { SendChatMessage, ReceiveChatMessage };
 export const { AddChatMessage } = ChatMessageSlice.actions;
 
 export default ChatMessageSlice.reducer;
