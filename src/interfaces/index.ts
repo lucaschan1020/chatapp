@@ -1,12 +1,24 @@
 export interface PrivateChannelItem {
-  participants: string[];
-  avatarSrc?: string;
+  _id: string;
+  participants: {
+    avatar: string;
+    username: string;
+    discriminator: number;
+  }[];
+  privateChannelName: string;
+  dateCreated: Date;
+  isGroup: boolean;
 }
 
 export interface ChatMessageItem {
-  sender: string;
-  chatContent: string;
-  timeStamp: Date;
+  channelId: string;
+  bucketId: number;
+  chatMessages: {
+    _id: string;
+    timestamp: Date;
+    senderId: string;
+    content: string | null;
+  }[];
 }
 
 export interface CurrentUser {
@@ -25,7 +37,7 @@ export interface CurrentUser {
 
 export interface FriendItem {
   _id: string;
-  friendshipStatus: FriendshipEnum;
+  friendshipStatus?: FriendshipEnum | null;
   avatar: string;
   username: string;
   discriminator: number;

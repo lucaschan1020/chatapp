@@ -16,9 +16,6 @@ export const ViewStateSlice = createSlice({
   name: 'ViewState',
   initialState,
   reducers: {
-    ChangeCurrentChat: (state, action: PayloadAction<PrivateChannelItem>) => {
-      return { ...state, CurrentChat: { ...action.payload } };
-    },
     ChangeFriendListSelectedIndex: (state, action: PayloadAction<number>) => {
       return { ...state, FriendListSelectedIndex: action.payload };
     },
@@ -33,7 +30,6 @@ export const ViewStateSlice = createSlice({
   },
 });
 
-export const { ChangeCurrentChat, ChangeFriendListSelectedIndex } =
-  ViewStateSlice.actions;
+export const { ChangeFriendListSelectedIndex } = ViewStateSlice.actions;
 
 export default ViewStateSlice.reducer;

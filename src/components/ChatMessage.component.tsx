@@ -1,17 +1,32 @@
 import React from 'react';
-import { ChatMessageItem } from '../interfaces';
+import { useAppSelector } from '../hooks';
 import AvatarIcon from './AvatarIcon.component';
 import Icon from './Icon.component';
 
 interface ChatMessageProps {
-  key: string;
-  message: ChatMessageItem;
+  message: {
+    channelId: string;
+    bucketId: number;
+    timestamp: Date;
+    senderId: string;
+    content: string | null;
+  };
   isConsecutive: boolean;
 }
 
-function ChatMessage({ key, message, isConsecutive }: ChatMessageProps) {
+function ChatMessage({ message, isConsecutive }: ChatMessageProps) {
+  const sender = useAppSelector((state) => {
+    const currentUser = state.CurrentUser;
+    if (!currentUser) return null;
+    if (message.senderId !== currentUser._id) {
+      const friend = state.Friends[message.senderId];
+      if (!friend) return null;
+      return friend;
+    }
+    return currentUser;
+  });
   return (
-    <React.Fragment key={key}>
+    <>
       <div
         className={`hover:bg-message-hover group relative ${
           !isConsecutive
@@ -26,20 +41,21 @@ function ChatMessage({ key, message, isConsecutive }: ChatMessageProps) {
                 className="mt-[0.125rem] cursor-pointer"
                 height="h-10"
                 width="w-10"
+                src={sender !== null ? sender.avatar : undefined}
               />
             </div>
             <div className="flex">
               <span className="font-primary text-header-primary cursor-pointer text-base font-medium leading-[1.375rem] hover:underline">
-                {message.sender}
+                {sender?.username}
               </span>
               <span className="font-primary text-muted mt-[0.0625rem] ml-2 h-4 text-xs font-medium leading-[1.375rem]">
-                {message.timeStamp.toISOString()}
+                {message.timestamp.toISOString()}
               </span>
             </div>
           </>
         )}
         <div className="font-primary text-normal whitespace-pre-line text-base font-normal leading-[1.375rem]">
-          {message.chatContent}
+          {message.content}
         </div>
         <div className="shadow-elevation-stroke bg-primary absolute right-[0.875rem] top-[-1rem] hidden rounded group-hover:flex">
           <button className="text-interactive p-[0.375rem]">
@@ -56,7 +72,7 @@ function ChatMessage({ key, message, isConsecutive }: ChatMessageProps) {
       {/* {!isConsecutive && (
         <ChatDivider content={message.timeStamp.toISOString()} />
       )} */}
-    </React.Fragment>
+    </>
   );
 }
 

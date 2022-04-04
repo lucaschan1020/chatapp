@@ -1,8 +1,10 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../hooks';
+import { connectSocket } from '../socketIO';
 import { store } from '../state';
 import { SignIn } from '../state/reducers/AuthSlice';
 import { UpdateFriendState } from '../state/reducers/FriendSlice';
+import { UpdatePrivateChannelListState } from '../state/reducers/PrivateChannelListSlice';
 import Icon from './Icon.component';
 
 function Login() {
@@ -29,7 +31,9 @@ function Login() {
               await dispatch(SignIn());
               const IsAuth = store.getState().Auth.isAuth;
               if (IsAuth) {
+                await connectSocket();
                 await dispatch(UpdateFriendState());
+                await dispatch(UpdatePrivateChannelListState());
                 navigate(from, { replace: true });
               }
             }}

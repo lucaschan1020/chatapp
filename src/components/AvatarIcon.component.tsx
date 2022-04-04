@@ -16,6 +16,7 @@ function AvatarIcon({
       src={src}
       className={`rounded-full ${width} ${height} ${className}`}
       alt="avatar"
+      referrerPolicy="no-referrer"
     ></img>
   );
 }

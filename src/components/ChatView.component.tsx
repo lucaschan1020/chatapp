@@ -1,5 +1,14 @@
+import { parseJSON } from 'date-fns';
 import { useEffect, useRef, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../hooks';
+import { store } from '../state';
+import {
+  GetBucketPrivateChannelChatMessage,
+  GetPrivateChannelChatMessage,
+  SendPrivateChannelChat,
+} from '../state/reducers/ChatMessageSlice';
+import leadingZero from '../utilities/leading-zero';
 import AvatarIcon from './AvatarIcon.component';
 import ChatMessage from './ChatMessage.component';
 import Icon from './Icon.component';
@@ -12,6 +21,63 @@ function ChatView({ className = '' }: ChatViewProps) {
   const [viewMemberList, setViewMemberList] = useState(false);
   const [draftMessage, setDraftMessage] = useState('');
   const textAreaMessage = useRef<HTMLTextAreaElement>(null);
+  const { privateChannelId } = useParams();
+  const dispatch = useAppDispatch();
+  const CurrentPrivateChannel = useAppSelector((state) => {
+    if (!state.PrivateChannelList) return null;
+    if (!privateChannelId) return null;
+    const privateChannel = state.PrivateChannelList[privateChannelId];
+    if (!privateChannel) return null;
+    return privateChannel;
+  });
+  const CurrentUser = useAppSelector((state) => state.CurrentUser);
+  const BucketChatMessages = useAppSelector((state) => {
+    if (!privateChannelId) return null;
+    if (!state.ChatMessages) return null;
+    const bucketChat = state.ChatMessages[privateChannelId];
+    if (!bucketChat) return null;
+    return bucketChat;
+  });
+
+  const newBucketDiv = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!BucketChatMessages || Object.keys(BucketChatMessages).length === 0)
+      return;
+    if (!newBucketDiv.current) return;
+    const availableBuckets = Object.keys(BucketChatMessages).map((bucketId) =>
+      parseInt(bucketId)
+    );
+    const smallestBucketId = Math.min(...availableBuckets);
+    if (smallestBucketId === 0) return;
+    const smallestBucket = BucketChatMessages[smallestBucketId];
+    let observer: IntersectionObserver | null = null;
+    if (smallestBucket === undefined || smallestBucket !== null) {
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting && privateChannelId) {
+            dispatch(
+              GetBucketPrivateChannelChatMessage({
+                privateChannelId,
+                bucketId: smallestBucketId - 1,
+              })
+            );
+            observer!.unobserve(entry.target);
+          }
+        },
+        {
+          rootMargin: '10px',
+        }
+      );
+      observer.observe(newBucketDiv.current);
+    }
+
+    return () => {
+      if (newBucketDiv.current && observer)
+        observer.unobserve(newBucketDiv.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [BucketChatMessages, privateChannelId]);
 
   useEffect(() => {
     if (textAreaMessage.current !== null) {
@@ -21,18 +87,35 @@ function ChatView({ className = '' }: ChatViewProps) {
     }
   }, [draftMessage]);
 
-  const CurrentChat = useAppSelector((state) => state.ViewState.CurrentChat);
-  const ChatMessages = useAppSelector((state) => state.ChatMessages);
-  const dispatch = useAppDispatch();
+  useEffect(() => {
+    if (!privateChannelId) return;
+    const state = store.getState();
+
+    if (
+      state.ChatMessages === null ||
+      state.ChatMessages[privateChannelId] === undefined
+    )
+      dispatch(GetPrivateChannelChatMessage(privateChannelId));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [privateChannelId]);
 
   return (
     <div className={className}>
       <div className="shadow-elevation-low z-[2] flex h-12 flex-none items-center px-2">
-        <div className="text-muted mx-2">
+        <div
+          className="text-muted mx-2"
+          onClick={() => {
+            console.log(store.getState().ChatMessages);
+          }}
+        >
           <Icon.Alias />
         </div>
         <div className="font-display text-header-primary text-base font-semibold leading-5">
-          {CurrentChat?.participants.join(', ')}
+          {CurrentPrivateChannel !== null
+            ? CurrentPrivateChannel.isGroup
+              ? CurrentPrivateChannel.privateChannelName
+              : CurrentPrivateChannel.participants[0].username
+            : ''}
         </div>
         <div className="ml-auto flex">
           <div className="text-interactive mx-2 cursor-pointer">
@@ -47,7 +130,7 @@ function ChatView({ className = '' }: ChatViewProps) {
           <div className="text-interactive mx-2 cursor-pointer">
             <Icon.AddMember />
           </div>
-          {CurrentChat && CurrentChat?.participants.length > 1 && (
+          {CurrentPrivateChannel && CurrentPrivateChannel.isGroup && (
             <div
               className="text-interactive mx-2 cursor-pointer"
               onClick={() => setViewMemberList(!viewMemberList)}
@@ -77,22 +160,39 @@ function ChatView({ className = '' }: ChatViewProps) {
         <div className="flex flex-1 flex-col">
           <div className="scrollbar-4 -webkit-scrollbar-thumb:min-h-[2.5rem] scrollbar-thumb-rounded-lg -webkit-scrollbar-thumb:bg-tertiary scrollbar-track scrollbar-thumb-border flex flex-1 flex-col-reverse overflow-y-scroll">
             <div className="min-h-[1.875rem]"></div>
-            {ChatMessages.map((_chatMessage, index, ChatMessages) => {
-              const currentChatMessage =
-                ChatMessages[ChatMessages.length - 1 - index];
-              const previousChatMessage =
-                ChatMessages[ChatMessages.length - 2 - index] ?? null;
-              const isConsecutive =
-                previousChatMessage !== null &&
-                previousChatMessage?.sender === currentChatMessage.sender;
-              return (
-                <ChatMessage
-                  key={index.toString()}
-                  message={currentChatMessage}
-                  isConsecutive={isConsecutive}
-                />
-              );
-            })}
+            {BucketChatMessages &&
+              Object.keys(BucketChatMessages)
+                .filter((bucketId) => BucketChatMessages[bucketId])
+                .flatMap((bucketId) =>
+                  BucketChatMessages[bucketId]!.chatMessages.map(
+                    ({ _id, timestamp, senderId, content }) => ({
+                      channelId: BucketChatMessages[bucketId]!.channelId,
+                      bucketId: BucketChatMessages[bucketId]!.bucketId,
+                      _id,
+                      timestamp: parseJSON(timestamp),
+                      senderId,
+                      content,
+                    })
+                  )
+                )
+                .map((_chatMessage, index, ChatMessages) => {
+                  const currentChatMessage =
+                    ChatMessages[ChatMessages.length - 1 - index];
+                  const previousChatMessage =
+                    ChatMessages[ChatMessages.length - 2 - index] ?? null;
+                  const isConsecutive =
+                    previousChatMessage !== null &&
+                    previousChatMessage.senderId ===
+                      currentChatMessage.senderId;
+                  return (
+                    <ChatMessage
+                      key={currentChatMessage._id}
+                      message={currentChatMessage}
+                      isConsecutive={isConsecutive}
+                    />
+                  );
+                })}
+            <div ref={newBucketDiv}></div>
           </div>
           <div className="relative mb-6 mt-[-0.5rem] flex flex-none px-4">
             <span className="bg-channeltextarea-background flex-none rounded-l-lg px-4 py-[0.625rem]">
@@ -109,17 +209,22 @@ function ChatView({ className = '' }: ChatViewProps) {
                 setDraftMessage((e.target as HTMLTextAreaElement).value);
               }}
               onKeyDown={(e) => {
-                if (e.key !== 'Enter') {
-                  return;
-                }
-                if (e.shiftKey) {
-                  return;
-                }
+                if (
+                  !BucketChatMessages ||
+                  Object.keys(BucketChatMessages).length === 0 ||
+                  !privateChannelId
+                )
+                  return e.preventDefault();
+                if (e.key !== 'Enter') return;
+                if (e.shiftKey) return;
                 e.preventDefault();
-                if (!draftMessage.trim()) {
-                  return;
-                }
-
+                if (!draftMessage.trim()) return;
+                dispatch(
+                  SendPrivateChannelChat({
+                    privateChannelId,
+                    content: (e.target as HTMLTextAreaElement).value,
+                  })
+                );
                 setDraftMessage('');
               }}
             ></textarea>
@@ -136,27 +241,38 @@ function ChatView({ className = '' }: ChatViewProps) {
             </div>
           </div>
         </div>
-        {CurrentChat && CurrentChat?.participants.length > 1 && viewMemberList && (
-          <div className="bg-secondary scrollbar-2 -webkit-scrollbar-thumb:min-h-[2.5rem] scrollbar-thumb-rounded -webkit-scrollbar-thumb:bg-transparent scrollbar-thumb-border hover-scrollbar-thumb flex w-60 flex-none flex-col overflow-y-scroll">
-            <label className="font-display text-channel-default pt-6 pr-2 pl-4 text-xs font-semibold uppercase tracking-[0.015625rem]">
-              Members—{CurrentChat?.participants.length}
-            </label>
+        {CurrentPrivateChannel &&
+          CurrentPrivateChannel.isGroup &&
+          viewMemberList &&
+          CurrentUser && (
+            <div className="bg-secondary scrollbar-2 -webkit-scrollbar-thumb:min-h-[2.5rem] scrollbar-thumb-rounded -webkit-scrollbar-thumb:bg-transparent scrollbar-thumb-border hover-scrollbar-thumb flex w-60 flex-none flex-col overflow-y-scroll">
+              <label className="font-display text-channel-default pt-6 pr-2 pl-4 text-xs font-semibold uppercase tracking-[0.015625rem]">
+                Members—{CurrentPrivateChannel.participants.length}
+              </label>
 
-            {CurrentChat?.participants.map(
-              (participant: string, index: any) => (
+              {[
+                ...CurrentPrivateChannel.participants,
+                {
+                  avatar: CurrentUser.avatar,
+                  username: CurrentUser.username,
+                  discriminator: CurrentUser.discriminator,
+                },
+              ].map((participant) => (
                 <div
-                  key={index}
+                  key={`${participant.username}#${leadingZero(
+                    participant.discriminator,
+                    4
+                  )}`}
                   className="group text-interactive hover:bg-modifier-hover ml-2 flex h-11 flex-none cursor-pointer items-center rounded-[0.25rem] px-2 py-[0.0625rem]"
                 >
-                  <AvatarIcon />
+                  <AvatarIcon src={participant.avatar} />
                   <label className="font-primary text-channel-default group-hover:text-interactive-hover ml-3 mt-[0.0625rem] cursor-pointer truncate text-base font-medium leading-5">
-                    {participant}
+                    {participant.username}
                   </label>
                 </div>
-              )
-            )}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
       </div>
     </div>
   );

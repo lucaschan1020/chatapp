@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../hooks';
+import socket from '../socketIO';
 import { SignOut } from '../state/reducers/AuthSlice';
 
 function Logout() {
@@ -9,6 +10,7 @@ function Logout() {
   useEffect(() => {
     const signOut = async () => {
       await dispatch(SignOut());
+      socket.disconnect();
       navigate('/');
     };
     signOut();

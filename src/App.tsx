@@ -12,6 +12,7 @@ import { UpdateCurrentUserState } from './state/reducers/CurrentUserSlice';
 import ChatView from './components/ChatView.component';
 import { UpdateFriendState } from './state/reducers/FriendSlice';
 import { connectSocket } from './socketIO';
+import { UpdatePrivateChannelListState } from './state/reducers/PrivateChannelListSlice';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -21,6 +22,7 @@ function App() {
       await dispatch(UpdateAuthState());
       await dispatch(UpdateCurrentUserState());
       await dispatch(UpdateFriendState());
+      await dispatch(UpdatePrivateChannelListState());
     };
     initialize();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -52,7 +54,7 @@ function App() {
                 }
               ></Route>
               <Route
-                path="channels/@me/*"
+                path="channels/@me/:privateChannelId"
                 element={
                   <ChatView className="bg-primary flex flex-1 flex-col" />
                 }

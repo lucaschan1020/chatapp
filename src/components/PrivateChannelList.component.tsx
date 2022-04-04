@@ -1,8 +1,5 @@
-import { useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../hooks';
-import { PrivateChannelItem } from '../interfaces';
-import { ViewStateSlice, PrivateChannelListSlice } from '../state';
+import { useAppSelector } from '../hooks';
 import leadingZero from '../utilities/leading-zero';
 import AvatarIcon from './AvatarIcon.component';
 import Icon from './Icon.component';
@@ -12,58 +9,7 @@ interface PrivateChannelListProps {
 }
 
 function PrivateChannelList({ className = '' }: PrivateChannelListProps) {
-  const currentUser = useAppSelector((state) => state.CurrentUser);
-  useEffect(() => {
-    const privateChannels: PrivateChannelItem[] = [
-      { participants: ['sadsadasd| Elexir Wizard', 'Jackson Wong'] },
-      { participants: ['Jay'] },
-      { participants: ['Alex'] },
-      { participants: ['Sam'] },
-      { participants: ['Jeremy', 'Kelvin'] },
-      { participants: ['Sam', 'Lucas', 'Ming Fong', 'Desmond', 'Mun Haw'] },
-      { participants: ['Sam'] },
-      { participants: ['Sam'] },
-      // { participants: ['Sam'] },
-      // { participants: ['Sam'] },
-      // { participants: ['Sam'] },
-      // { participants: ['Sam'] },
-      // { participants: ['Sam'] },
-      // { participants: ['Sam'] },
-      // { participants: ['Sam'] },
-      // { participants: ['Sam'] },
-      // { participants: ['Sam'] },
-      // { participants: ['Sam'] },
-      // { participants: ['Sam'] },
-      // { participants: ['Sam'] },
-      // { participants: ['Sam'] },
-      // { participants: ['Sam'] },
-      // { participants: ['Sam'] },
-      // { participants: ['Sam'] },
-      // { participants: ['Sam'] },
-      // { participants: ['Sam'] },
-      // { participants: ['Sam'] },
-      // { participants: ['Sam'] },
-      // { participants: ['Sam'] },
-      // { participants: ['Sam'] },
-      // { participants: ['Sam'] },
-      // { participants: ['Sam'] },
-      // { participants: ['Sam'] },
-      // { participants: ['Sam'] },
-      // { participants: ['Sam'] },
-      // { participants: ['Sam'] },
-      // { participants: ['Sam'] },
-      // { participants: ['Sam'] },
-      // { participants: ['Sam'] },
-      // { participants: ['Sam'] },
-      // { participants: ['Sam'] },
-      // { participants: ['Sam'] },
-    ];
-
-    dispatch(PrivateChannelListSlice.AddPrivateChannels(privateChannels));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const dispatch = useAppDispatch();
+  const CurrentUser = useAppSelector((state) => state.CurrentUser);
   const PrivateChannelList = useAppSelector(
     (state) => state.PrivateChannelList
   );
@@ -100,12 +46,17 @@ function PrivateChannelList({ className = '' }: PrivateChannelListProps) {
           </label>
           <Icon.DMPlus className="h-4 w-4 cursor-pointer" />
         </div>
-        {PrivateChannelList.length === 0 && (
-          <Icon.EmptyPrivateChannelList className="fill-primary p-4" />
-        )}
-        {PrivateChannelList.length > 0 &&
-          PrivateChannelList.map((privateChannel, index) => (
-            <NavLink to={`/channels/@me/${index}`} key={index}>
+        {!PrivateChannelList ||
+          (Object.keys(PrivateChannelList).length === 0 && (
+            <Icon.EmptyPrivateChannelList className="fill-primary p-4" />
+          ))}
+        {PrivateChannelList &&
+          Object.keys(PrivateChannelList).length > 0 &&
+          Object.values(PrivateChannelList).map((privateChannel) => (
+            <NavLink
+              to={`/channels/@me/${privateChannel._id}`}
+              key={privateChannel._id}
+            >
               {({ isActive }) => (
                 <div
                   className={`${
@@ -113,20 +64,19 @@ function PrivateChannelList({ className = '' }: PrivateChannelListProps) {
                       ? 'bg-modifier-active text-interactive-active'
                       : 'text-channel-default'
                   } group hover:bg-modifier-hover hover:text-interactive-hover my-[0.0625rem] ml-[0.5rem] flex h-[2.625rem] flex-none cursor-pointer items-center justify-start rounded-[0.25rem] px-2`}
-                  onClick={() =>
-                    dispatch(ViewStateSlice.ChangeCurrentChat(privateChannel))
-                  }
                 >
                   <AvatarIcon
                     src={
-                      privateChannel.avatarSrc
-                        ? privateChannel.avatarSrc
+                      !privateChannel.isGroup
+                        ? privateChannel.participants[0].avatar
                         : undefined
                     }
                   />
                   <div className="ml-3 flex flex-1 flex-col truncate">
                     <label className="font-primary cursor-pointer truncate text-base font-medium leading-5">
-                      {privateChannel.participants.join(', ')}
+                      {privateChannel.isGroup
+                        ? privateChannel.privateChannelName
+                        : privateChannel.participants[0].username}
                     </label>
                     {privateChannel.participants.length > 1 && (
                       <label className="font-primary mt-[-0.125rem] cursor-pointer truncate text-xs font-medium">
@@ -142,13 +92,13 @@ function PrivateChannelList({ className = '' }: PrivateChannelListProps) {
           ))}
       </div>
       <div className="bg-secondary-alt mt-auto flex h-[3.3125rem] flex-none items-center px-2">
-        <AvatarIcon src={currentUser?.avatar} />
+        <AvatarIcon src={CurrentUser?.avatar} />
         <span className="font-primary ml-2 mr-1 flex w-[5.25rem] flex-col justify-center">
           <label className="text-header-primary truncate text-sm font-semibold leading-[1.125rem]">
-            {currentUser?.name}
+            {CurrentUser?.name}
           </label>
           <label className="text-header-secondary text-xs font-medium leading-[0.8125rem]">
-            #{leadingZero(currentUser?.discriminator ?? 0, 4)}
+            #{leadingZero(CurrentUser?.discriminator ?? 0, 4)}
           </label>
         </span>
         <div className="flex flex-1 justify-around">
