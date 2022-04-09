@@ -1,6 +1,7 @@
 export interface PrivateChannelItem {
   _id: string;
   participants: {
+    _id: string;
     avatar: string;
     username: string;
     discriminator: number;
@@ -37,7 +38,8 @@ export interface CurrentUser {
 
 export interface FriendItem {
   _id: string;
-  friendshipStatus?: FriendshipEnum | null;
+  friendshipStatus: FriendshipEnum | null;
+  privateChannelId?: string;
   avatar: string;
   username: string;
   discriminator: number;

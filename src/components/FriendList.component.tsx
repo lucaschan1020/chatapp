@@ -1,6 +1,13 @@
+import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { FriendshipEnum } from '../interfaces';
+import { store } from '../state';
 import { DeleteFriend, UpdateFriend } from '../state/reducers/FriendSlice';
+import {
+  CreatePrivateChannel,
+  GetPrivateChannel,
+  UpdatePrivateChannelListState,
+} from '../state/reducers/PrivateChannelListSlice';
 import leadingZero from '../utilities/leading-zero';
 import AvatarIcon from './AvatarIcon.component';
 import Icon from './Icon.component';
@@ -34,6 +41,7 @@ function FriendList({ index }: FriendListProps) {
   });
 
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   return (
     <>
       <div className="flex">
@@ -58,25 +66,30 @@ function FriendList({ index }: FriendListProps) {
             className="border-modifier-accent group hover:bg-modifier-hover ml-[1.875rem] mr-5 flex h-[3.875rem] cursor-pointer items-center justify-between border-t-[0.0625rem] border-solid hover:mr-[0.625rem] hover:ml-[1.25rem] hover:rounded-lg hover:border-transparent hover:py-4 hover:px-[0.625rem]"
           >
             <div className="item flex">
-              <AvatarIcon />
+              <AvatarIcon src={friend.avatar} />
               <div className="ml-3 flex flex-col">
                 <div className="flex items-end">
                   <span className="text-header-primary font-primary text-base font-semibold leading-[1.1]">
                     {friend.username}
                   </span>
-                  {index !== PageEnum.Pending && (
+                  {(index === 0 || index === 1 || index === 3) && (
                     <span className="text-header-secondary font-primary hidden text-sm font-medium leading-4 group-hover:block">
                       #{leadingZero(friend.discriminator ?? 0, 4)}
                     </span>
                   )}
                 </div>
-                {index !== PageEnum.Pending && (
+                {(index === 0 || index === 1) && (
                   <span className="font-primary text-header-secondary text-sm font-medium leading-5">
                     Online
                   </span>
                 )}
+                {index === 3 && (
+                  <span className="font-primary text-header-secondary text-xs font-medium leading-5">
+                    Blocked
+                  </span>
+                )}
 
-                {index === PageEnum.Pending && (
+                {index === 2 && (
                   <span className="font-primary text-header-secondary text-xs font-medium leading-5">
                     {friend.friendshipStatus === FriendshipEnum.Pending
                       ? 'Outgoing Friend Request'
@@ -85,9 +98,41 @@ function FriendList({ index }: FriendListProps) {
                 )}
               </div>
             </div>
-            {index !== PageEnum.Pending && (
+            {(index === 0 || index === 1) && (
               <div className="ml-2 flex">
-                <div className="bg-secondary group-hover:bg-tertiary text-interactive group-hover:active:bg-modifier-active active:text-interactive-active flex h-9 w-9 items-center justify-center rounded-[50%]">
+                <div
+                  className="bg-secondary group-hover:bg-tertiary text-interactive group-hover:active:bg-modifier-active active:text-interactive-active flex h-9 w-9 items-center justify-center rounded-[50%]"
+                  onClick={async (e) => {
+                    let state = store.getState();
+                    if (!friend.privateChannelId) {
+                      await dispatch(
+                        CreatePrivateChannel({
+                          participants: [friend._id],
+                          privateChannelName: '',
+                        })
+                      );
+                      state = store.getState();
+                    }
+
+                    if (!state.PrivateChannelList) {
+                      await dispatch(UpdatePrivateChannelListState());
+                    }
+
+                    const privateChannel =
+                      state.PrivateChannelList![friend.privateChannelId!];
+
+                    if (!privateChannel) {
+                      await dispatch(
+                        GetPrivateChannel(friend.privateChannelId!)
+                      );
+                    }
+                    navigate(
+                      `/channels/@me/${
+                        state.Friends[friend._id].privateChannelId
+                      }`
+                    );
+                  }}
+                >
                   <Icon.FriendMessage className="h-5 w-5" />
                 </div>
                 <div className="bg-secondary group-hover:bg-tertiary text-interactive group-hover:active:bg-modifier-active active:text-interactive-active ml-[0.625rem] flex h-9 w-9 items-center justify-center rounded-[50%]">
@@ -95,7 +140,7 @@ function FriendList({ index }: FriendListProps) {
                 </div>
               </div>
             )}
-            {index === PageEnum.Pending && (
+            {index === 2 && (
               <div className="ml-2 flex">
                 {friend.friendshipStatus === FriendshipEnum.Requested && (
                   <div
@@ -125,6 +170,23 @@ function FriendList({ index }: FriendListProps) {
                   }}
                 >
                   <Icon.ActionDeny className="h-5 w-5" />
+                </div>
+              </div>
+            )}
+            {index === 3 && (
+              <div className="ml-2 flex">
+                <div
+                  className="bg-secondary text-interactive hover:text-status-danger active:bg-modifier-active active:text-interactive-active flex h-9 w-9 items-center justify-center rounded-[50%]"
+                  onClick={async (e) => {
+                    dispatch(
+                      DeleteFriend({
+                        username: friend.username,
+                        discriminator: friend.discriminator,
+                      })
+                    );
+                  }}
+                >
+                  <Icon.FriendBlock className="h-5 w-5" />
                 </div>
               </div>
             )}

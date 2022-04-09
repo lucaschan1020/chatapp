@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AxiosResponse } from 'axios';
 import authAPI from '../../apis/auth';
 import getGapiAuthInstance from '../../apis/gapiAuth';
+import { CurrentUser } from '../../interfaces';
 import { ChangeCurrentUser } from './CurrentUserSlice';
 
 interface AuthState {
@@ -9,11 +9,10 @@ interface AuthState {
 }
 
 const SignIn = createAsyncThunk('Auth/SignIn', async (_, thunkAPI) => {
-  let response: AxiosResponse | null = null;
   const gapiAuth = await getGapiAuthInstance();
   await gapiAuth.signIn();
 
-  response = await authAPI.post('/login', {
+  const response = await authAPI.post<CurrentUser>('/login', {
     userToken: gapiAuth.currentUser.get().getAuthResponse().id_token,
   });
 

@@ -1,6 +1,5 @@
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { ChangeFriendListSelectedIndex } from '../state/reducers/ViewStateSlice';
-import AvatarIcon from './AvatarIcon.component';
 import FriendList from './FriendList.component';
 import FriendSearch from './FriendSearch.component';
 import Icon from './Icon.component';
@@ -94,21 +93,14 @@ function FriendView({ className = '' }: FriendViewProps) {
             <label className="font-display text-header-primary mt-2 mb-4 text-xl font-bold leading-6">
               Active Now
             </label>
-            <div className="border-modifier-accent bg-secondary flex cursor-pointer items-center gap-3 rounded-lg border-[0.0625rem] border-solid p-4 hover:bg-[#18191c]">
-              <AvatarIcon />
-              <div className="flex flex-1 flex-col">
-                <label className="text-normal font-primary truncate text-base font-semibold leading-5">
-                  Bassism
-                </label>
-                <label className="text-header-secondary font-primary truncate text-sm font-normal leading-[1.125rem]">
-                  <span className="uppercase">Valorant</span> - 25m
-                </label>
-              </div>
-              <img
-                className="h-6 w-6 rounded"
-                src="https://cdn.discordapp.com/app-icons/700136079562375258/e55fc8259df1548328f977d302779ab7.webp?size=64"
-                alt="appIcon"
-              />
+            <div className="flex flex-col p-4 text-center">
+              <label className="font-display text-header-primary mb-1 text-base font-semibold leading-5">
+                It's quiet for now...
+              </label>
+              <label className="font-primary text-interactive-normal text-sm leading-[1.125rem]">
+                When a friend starts an activity—like playing a game or hanging
+                out on voice—we'll show it here!
+              </label>
             </div>
           </div>
         </div>

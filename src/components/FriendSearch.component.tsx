@@ -1,11 +1,15 @@
+import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useAppDispatch } from '../hooks';
-import { AddFriend } from '../state/reducers/FriendSlice';
+import friendAPI from '../apis/friend';
+import { FriendItem } from '../interfaces';
 
 function FriendSearch() {
   const [friendTag, setFriendTag] = useState<string>('');
   const [placeholderContent, setPlaceholderContent] = useState<string>('#0000');
-  const dispatch = useAppDispatch();
+  const [formMessage, setFormMessage] = useState<{
+    content: JSX.Element | null;
+    isSuccess: boolean | null;
+  }>({ content: null, isSuccess: null });
 
   useEffect(() => {
     const index = friendTag.indexOf('#');
@@ -17,6 +21,12 @@ function FriendSearch() {
     setPlaceholderContent('#0000'.slice(endings.length));
   }, [friendTag]);
 
+  const borderColor = () => {
+    if (formMessage.isSuccess === null) return 'focus-within:border-text-link';
+    if (formMessage.isSuccess) return 'focus-within:border-status-positive';
+    return 'focus-within:border-status-danger';
+  };
+
   return (
     <div className="border-modifier-accent flex flex-shrink-0 flex-col border-b-[0.0625rem] border-solid py-[1.25rem] px-[1.875rem]">
       <label className="font-display text-header-primary mb-2 text-base font-semibold uppercase leading-5">
@@ -25,7 +35,9 @@ function FriendSearch() {
       <label className="text-header-secondary font-primary text-sm font-normal">
         You can add a friend with their Discord Tag. It's cAsE sEnSitIvE!
       </label>
-      <div className="bg-deprecated-text-input-bg border-deprecated-text-input-border focus-within:border-text-link relative mt-4 flex items-center rounded-lg border-[0.0625rem] border-solid px-3">
+      <div
+        className={`${borderColor()} bg-deprecated-text-input-bg border-deprecated-text-input-border relative mt-4 flex items-center rounded-lg border-[0.0625rem] border-solid px-3`}
+      >
         <input
           maxLength={37}
           className="text-normal font-primary placeholder:text-muted mr-4 h-12 flex-1 bg-transparent py-1 text-base font-medium leading-5 tracking-[0.04rem] outline-none placeholder:font-normal placeholder:tracking-[0.04rem]"
@@ -60,16 +72,47 @@ function FriendSearch() {
             let discriminator = friendTag.slice(index);
             if (discriminator.length !== 5) return;
             const username = friendTag.slice(0, index);
-            await dispatch(
-              AddFriend({
-                username,
-                discriminator: parseInt(discriminator.slice(1)),
-              })
-            );
+            setFormMessage({ content: null, isSuccess: true });
+            try {
+              const response = await friendAPI.post<FriendItem>(
+                `/${username}/${discriminator.slice(1)}`
+              );
+
+              if (response.status === 201) {
+                setFormMessage({
+                  content: (
+                    <label className="text-positive">
+                      Success! Your friend request to
+                      <strong> {friendTag} </strong>was sent.
+                    </label>
+                  ),
+                  isSuccess: true,
+                });
+
+                setFriendTag('');
+              }
+            } catch (err) {
+              if (axios.isAxiosError(err)) {
+                setFormMessage({
+                  content: (
+                    <label className="text-danger">
+                      Hm, didn't work. Double check that the capitalization,
+                      spelling, any spaces, and numbers are correct.
+                    </label>
+                  ),
+                  isSuccess: false,
+                });
+              } else {
+                throw err;
+              }
+            }
           }}
         >
           Send Friend Request
         </button>
+      </div>
+      <div className={`font-primary mt-2 text-sm font-normal`}>
+        {formMessage.content}
       </div>
     </div>
   );

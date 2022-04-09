@@ -14,6 +14,7 @@ module.exports = {
         'header-secondary': '#b9bbbe',
         'channel-default': '#8e9297',
         'channeltextarea-background': '#40444b',
+        'channeltextarea-placeholder': '#72767d',
         normal: '#dcddde',
         'interactive-normal': '#b9bbbe',
         'interactive-hover': '#dcddde',
@@ -34,7 +35,13 @@ module.exports = {
         'deprecated-text-input-bg': 'rgba(0,0,0,0.1)',
         'deprecated-text-input-border': 'rgba(0,0,0,0.3)',
         'brand-experiment': 'hsl(235,85.6%,64.7%)',
+        'brand-experiment-560': 'hsl(235,51.4%,52.4%)',
+        'brand-experiment-600': 'hsl(235,46.7%,44.1%);',
         'text-link': 'hsl(197,100%,47.8%)',
+        positive: 'hsl(139,51.6%,52.2%)',
+        danger: 'hsl(359,82%,73.9%)',
+        'status-positive': 'hsl(139,47.3%,43.9%)',
+        'status-danger': 'hsl(359,82.6%,59.4%);',
       },
       boxShadow: {
         'elevation-low':

@@ -1,25 +1,17 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AxiosResponse } from 'axios';
 import friendAPI from '../../apis/friend';
 import { FriendItem, FriendshipEnum } from '../../interfaces';
 import omit from '../../utilities/omit';
 import { AppState } from '../store';
 
-interface FriendOperation {
+interface FriendRequest {
   username: string;
   discriminator: number;
 }
 
-interface UpdateFriendOperation extends FriendOperation {
+interface UpdateFriendOperation extends FriendRequest {
   friendshipStatus: FriendshipEnum;
 }
-
-const AddFriend = createAsyncThunk(
-  'Friend/AddFriend',
-  async (friend: FriendOperation, thunkAPI) => {
-    await friendAPI.post(`/${friend.username}/${friend.discriminator}`);
-  }
-);
 
 const UpdateFriend = createAsyncThunk(
   'Friend/UpdateFriend',
@@ -32,7 +24,7 @@ const UpdateFriend = createAsyncThunk(
 
 const DeleteFriend = createAsyncThunk(
   'Friend/DeleteFriend',
-  async (friend: FriendOperation, thunkAPI) => {
+  async (friend: FriendRequest, thunkAPI) => {
     await friendAPI.delete(`/${friend.username}/${friend.discriminator}`);
   }
 );
@@ -42,8 +34,7 @@ const UpdateFriendState = createAsyncThunk(
   async (_, thunkAPI) => {
     const state = thunkAPI.getState() as AppState;
     if (!state.Auth.isAuth) return;
-    let response: AxiosResponse | null = null;
-    response = await friendAPI.get('');
+    const response = await friendAPI.get<Record<string, FriendItem>>('');
 
     thunkAPI.dispatch(AddFriendsToList(response?.data));
   }
@@ -69,7 +60,7 @@ export const FriendSlice = createSlice({
     },
   },
 });
-export { AddFriend, UpdateFriend, DeleteFriend, UpdateFriendState };
+export { UpdateFriend, DeleteFriend, UpdateFriendState };
 export const { AddFriendsToList, DeleteFriendFromList } = FriendSlice.actions;
 
 export default FriendSlice.reducer;

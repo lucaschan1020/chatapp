@@ -1,14 +1,16 @@
 import { parseJSON } from 'date-fns';
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import friendAPI from '../apis/friend';
 import { useAppDispatch, useAppSelector } from '../hooks';
+import { FriendshipEnum } from '../interfaces';
 import { store } from '../state';
 import {
   GetBucketPrivateChannelChatMessage,
   GetPrivateChannelChatMessage,
   SendPrivateChannelChat,
 } from '../state/reducers/ChatMessageSlice';
-import leadingZero from '../utilities/leading-zero';
+import { DeleteFriend, UpdateFriend } from '../state/reducers/FriendSlice';
 import AvatarIcon from './AvatarIcon.component';
 import ChatMessage from './ChatMessage.component';
 import Icon from './Icon.component';
@@ -37,6 +39,13 @@ function ChatView({ className = '' }: ChatViewProps) {
     const bucketChat = state.ChatMessages[privateChannelId];
     if (!bucketChat) return null;
     return bucketChat;
+  });
+
+  const Friendship = useAppSelector((state) => {
+    if (!CurrentPrivateChannel) return null;
+    if (CurrentPrivateChannel.isGroup) return null;
+    return state.Friends[CurrentPrivateChannel.participants[0]._id]
+      .friendshipStatus;
   });
 
   const newBucketDiv = useRef<HTMLDivElement>(null);
@@ -90,7 +99,7 @@ function ChatView({ className = '' }: ChatViewProps) {
   useEffect(() => {
     if (!privateChannelId) return;
     const state = store.getState();
-
+    setDraftMessage('');
     if (
       state.ChatMessages === null ||
       state.ChatMessages[privateChannelId] === undefined
@@ -193,6 +202,169 @@ function ChatView({ className = '' }: ChatViewProps) {
                   );
                 })}
             <div ref={newBucketDiv}></div>
+
+            <div className="m-4 flex flex-col">
+              <AvatarIcon
+                src={
+                  CurrentPrivateChannel && !CurrentPrivateChannel.isGroup
+                    ? CurrentPrivateChannel.participants[0].avatar
+                    : undefined
+                }
+                width="w-20"
+                height="h-20"
+              />
+              <label
+                className="text-header-primary font-display my-2 text-[2rem] font-bold leading-10"
+                onClick={() => {
+                  console.log(Friendship);
+                }}
+              >
+                {CurrentPrivateChannel && CurrentPrivateChannel.isGroup
+                  ? CurrentPrivateChannel.privateChannelName
+                  : CurrentPrivateChannel?.participants[0].username}
+              </label>
+              {CurrentPrivateChannel && !CurrentPrivateChannel.isGroup && (
+                <>
+                  <label className="text-header-secondary font-primary text-base leading-5">
+                    This is the beginning of your direct message history with
+                    <strong className="font-semibold">
+                      {` @${CurrentPrivateChannel.participants[0].username} `}
+                    </strong>
+                    .
+                  </label>
+                  <div className="mt-4 flex items-center">
+                    <label className="text-header-secondary font-primary text-sm leading-[1.125rem]">
+                      No servers in common
+                    </label>
+                    <div className="bg-interactive-muted mx-4 h-1 w-1 rounded-[50%]"></div>
+                    {Friendship === null && (
+                      <button
+                        className="text-interactive-active font-primary bg-brand-experiment active:bg-brand-experiment-600 hover:bg-brand-experiment-560 mr-2 h-6 min-h-[1.5rem] min-w-[3.25rem] rounded-[0.1875rem] px-4 py-[0.125rem] text-sm font-medium leading-4"
+                        onClick={async (e) => {
+                          await friendAPI.post(
+                            `/${CurrentPrivateChannel.participants[0].username}/${CurrentPrivateChannel.participants[0].discriminator}`
+                          );
+                        }}
+                      >
+                        Add Friend
+                      </button>
+                    )}
+                    {Friendship === FriendshipEnum.Pending && (
+                      <button className="text-interactive-active font-primary bg-brand-experiment mr-2 h-6 min-h-[1.5rem] min-w-[3.25rem] cursor-not-allowed rounded-[0.1875rem] px-4 py-[0.125rem] text-sm font-medium leading-4 opacity-50">
+                        Friend Request Sent
+                      </button>
+                    )}
+                    {Friendship === FriendshipEnum.Requested && (
+                      <>
+                        <label className="text-header-secondary font-primary mr-2 text-sm leading-[1.125rem]">
+                          Sent you a friend request:
+                        </label>
+                        <button
+                          className="text-interactive-active font-primary bg-brand-experiment active:bg-brand-experiment-600 hover:bg-brand-experiment-560 mr-2 h-6 min-h-[1.5rem] min-w-[3.25rem] rounded-[0.1875rem] px-4 py-[0.125rem] text-sm font-medium leading-4"
+                          onClick={async (e) => {
+                            await dispatch(
+                              UpdateFriend({
+                                username:
+                                  CurrentPrivateChannel.participants[0]
+                                    .username,
+                                discriminator:
+                                  CurrentPrivateChannel.participants[0]
+                                    .discriminator,
+                                friendshipStatus: FriendshipEnum.Friend,
+                              })
+                            );
+                          }}
+                        >
+                          Accept
+                        </button>
+                        <button
+                          className="text-interactive-active font-primary bg-interactive-muted active:bg-muted mr-2 h-6 min-h-[1.5rem] min-w-[3.25rem] rounded-[0.1875rem] px-4 py-[0.125rem] text-sm font-medium leading-4 hover:bg-[#686d73]"
+                          onClick={async (e) => {
+                            await dispatch(
+                              DeleteFriend({
+                                username:
+                                  CurrentPrivateChannel.participants[0]
+                                    .username,
+                                discriminator:
+                                  CurrentPrivateChannel.participants[0]
+                                    .discriminator,
+                              })
+                            );
+                          }}
+                        >
+                          Ignore
+                        </button>
+                      </>
+                    )}
+                    {Friendship === FriendshipEnum.Friend && (
+                      <button
+                        className="text-interactive-active font-primary bg-interactive-muted active:bg-muted mr-2 h-6 min-h-[1.5rem] min-w-[3.25rem] rounded-[0.1875rem] px-4 py-[0.125rem] text-sm font-medium leading-4 hover:bg-[#686d73]"
+                        onClick={async (e) => {
+                          await dispatch(
+                            DeleteFriend({
+                              username:
+                                CurrentPrivateChannel.participants[0].username,
+                              discriminator:
+                                CurrentPrivateChannel.participants[0]
+                                  .discriminator,
+                            })
+                          );
+                        }}
+                      >
+                        Remove Friend
+                      </button>
+                    )}
+                    {Friendship !== FriendshipEnum.Blocked && (
+                      <button
+                        className="text-interactive-active font-primary bg-interactive-muted active:bg-muted mr-2 h-6 min-h-[1.5rem] min-w-[3.25rem] rounded-[0.1875rem] px-4 py-[0.125rem] text-sm font-medium leading-4 hover:bg-[#686d73]"
+                        onClick={async (e) => {
+                          await dispatch(
+                            UpdateFriend({
+                              username:
+                                CurrentPrivateChannel.participants[0].username,
+                              discriminator:
+                                CurrentPrivateChannel.participants[0]
+                                  .discriminator,
+                              friendshipStatus: FriendshipEnum.Blocked,
+                            })
+                          );
+                        }}
+                      >
+                        Block
+                      </button>
+                    )}
+
+                    {Friendship === FriendshipEnum.Blocked && (
+                      <button
+                        className="text-interactive-active font-primary bg-interactive-muted active:bg-muted mr-2 h-6 min-h-[1.5rem] min-w-[3.25rem] rounded-[0.1875rem] px-4 py-[0.125rem] text-sm font-medium leading-4 hover:bg-[#686d73]"
+                        onClick={async (e) => {
+                          await dispatch(
+                            DeleteFriend({
+                              username:
+                                CurrentPrivateChannel.participants[0].username,
+                              discriminator:
+                                CurrentPrivateChannel.participants[0]
+                                  .discriminator,
+                            })
+                          );
+                        }}
+                      >
+                        Unblock
+                      </button>
+                    )}
+                  </div>
+                </>
+              )}
+              {CurrentPrivateChannel && CurrentPrivateChannel.isGroup && (
+                <label className="text-header-secondary font-primary text-base leading-5">
+                  Welcome to the beginning of the
+                  <strong className="font-semibold">
+                    {` ${CurrentPrivateChannel.privateChannelName} `}
+                  </strong>
+                  group.
+                </label>
+              )}
+            </div>
           </div>
           <div className="relative mb-6 mt-[-0.5rem] flex flex-none px-4">
             <span className="bg-channeltextarea-background flex-none rounded-l-lg px-4 py-[0.625rem]">
@@ -201,8 +373,15 @@ function ChatView({ className = '' }: ChatViewProps) {
               </div>
             </span>
             <textarea
-              className="bg-channeltextarea-background font-primary text-normal scrollbar-3 scrollbar-thumb-rounded-lg -webkit-scrollbar-thumb:bg-[rgba(24,25,28,.6)] scrollbar-thumb-border max-h-[29.375rem] min-h-[2.75rem] flex-1 resize-none overflow-y-auto rounded-r-lg py-[0.625rem] outline-none"
+              className="bg-channeltextarea-background font-primary text-normal scrollbar-3 scrollbar-thumb-rounded-lg -webkit-scrollbar-thumb:bg-[rgba(24,25,28,.6)] scrollbar-thumb-border placeholder:text-channeltextarea-placeholder max-h-[29.375rem] min-h-[2.75rem] flex-1 resize-none overflow-y-auto rounded-r-lg py-[0.625rem] outline-none"
               rows={1}
+              placeholder={`Message ${
+                CurrentPrivateChannel !== null
+                  ? CurrentPrivateChannel.isGroup
+                    ? CurrentPrivateChannel.privateChannelName
+                    : `@${CurrentPrivateChannel.participants[0].username}`
+                  : ''
+              }`}
               ref={textAreaMessage}
               value={draftMessage}
               onChange={(e) => {
@@ -218,7 +397,11 @@ function ChatView({ className = '' }: ChatViewProps) {
                 if (e.key !== 'Enter') return;
                 if (e.shiftKey) return;
                 e.preventDefault();
-                if (!draftMessage.trim()) return;
+                if (
+                  !draftMessage.trim() &&
+                  Friendship === FriendshipEnum.Friend
+                )
+                  return;
                 dispatch(
                   SendPrivateChannelChat({
                     privateChannelId,
@@ -249,20 +432,17 @@ function ChatView({ className = '' }: ChatViewProps) {
               <label className="font-display text-channel-default pt-6 pr-2 pl-4 text-xs font-semibold uppercase tracking-[0.015625rem]">
                 Members—{CurrentPrivateChannel.participants.length}
               </label>
-
               {[
                 ...CurrentPrivateChannel.participants,
                 {
+                  _id: CurrentUser._id,
                   avatar: CurrentUser.avatar,
                   username: CurrentUser.username,
                   discriminator: CurrentUser.discriminator,
                 },
               ].map((participant) => (
                 <div
-                  key={`${participant.username}#${leadingZero(
-                    participant.discriminator,
-                    4
-                  )}`}
+                  key={participant._id}
                   className="group text-interactive hover:bg-modifier-hover ml-2 flex h-11 flex-none cursor-pointer items-center rounded-[0.25rem] px-2 py-[0.0625rem]"
                 >
                   <AvatarIcon src={participant.avatar} />
