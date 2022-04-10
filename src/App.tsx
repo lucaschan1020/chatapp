@@ -50,13 +50,13 @@ function App() {
               <Route
                 path="channels/@me"
                 element={
-                  <FriendView className="bg-primary flex flex-1 flex-col" />
+                  <FriendView className="bg-primary flex min-w-0 flex-1 flex-col" />
                 }
               ></Route>
               <Route
                 path="channels/@me/:privateChannelId"
                 element={
-                  <ChatView className="bg-primary flex flex-1 flex-col" />
+                  <ChatView className="bg-primary flex min-w-0 flex-1 flex-col" />
                 }
               ></Route>
             </Route>

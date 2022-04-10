@@ -40,7 +40,7 @@ function FriendSearch() {
       >
         <input
           maxLength={37}
-          className="text-normal font-primary placeholder:text-muted mr-4 h-12 flex-1 bg-transparent py-1 text-base font-medium leading-5 tracking-[0.04rem] outline-none placeholder:font-normal placeholder:tracking-[0.04rem]"
+          className="text-normal font-primary placeholder:text-muted mr-4 h-12 min-w-0 flex-1 bg-transparent py-1 text-base font-medium leading-5 tracking-[0.04rem] outline-none placeholder:font-normal placeholder:tracking-[0.04rem]"
           placeholder="Enter a Username#0000"
           value={friendTag}
           onChange={(e) => {
@@ -64,7 +64,7 @@ function FriendSearch() {
           </label>
         )}
         <button
-          className="font-primary text-header-primary bg-brand-experiment h-8 min-h-[2rem] min-w-[3.75rem] rounded-[0.1875rem] px-4 py-[0.125rem] text-sm font-medium leading-4"
+          className="font-primary text-header-primary bg-brand-experiment h-8 min-h-[2rem] min-w-[3.75rem] truncate rounded-[0.1875rem] px-4 py-[0.125rem] text-sm font-medium leading-4"
           onClick={async () => {
             if (!friendTag) return;
             const index = friendTag.indexOf('#');

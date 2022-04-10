@@ -84,7 +84,7 @@ function FriendView({ className = '' }: FriendViewProps) {
         </div>
       </div>
       <div className="flex min-h-0 flex-1">
-        <div className="flex flex-1 flex-col">
+        <div className="flex min-w-0 flex-1 flex-col overflow-y-hidden">
           {selectedIndex < 4 && <FriendList index={selectedIndex} />}
           {selectedIndex === 4 && <FriendSearch />}
         </div>

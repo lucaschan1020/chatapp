@@ -45,16 +45,16 @@ function ChatMessage({ message, isConsecutive }: ChatMessageProps) {
               />
             </div>
             <div className="flex">
-              <span className="font-primary text-header-primary cursor-pointer text-base font-medium leading-[1.375rem] hover:underline">
+              <span className="font-primary text-header-primary cursor-pointer truncate text-base font-medium leading-[1.375rem] hover:underline">
                 {sender?.username}
               </span>
-              <span className="font-primary text-muted mt-[0.0625rem] ml-2 h-4 text-xs font-medium leading-[1.375rem]">
+              <span className="font-primary text-muted mt-[0.0625rem] ml-2 h-4 truncate text-xs font-medium leading-[1.375rem]">
                 {message.timestamp.toISOString()}
               </span>
             </div>
           </>
         )}
-        <div className="font-primary text-normal whitespace-pre-line text-base font-normal leading-[1.375rem]">
+        <div className="font-primary text-normal whitespace-pre-line break-words text-base font-normal leading-[1.375rem]">
           {message.content}
         </div>
         <div className="shadow-elevation-stroke bg-primary absolute right-[0.875rem] top-[-1rem] hidden rounded group-hover:flex">

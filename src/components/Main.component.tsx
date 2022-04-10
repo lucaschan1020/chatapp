@@ -7,7 +7,7 @@ function Main() {
   return (
     <>
       <ServerList className="bg-tertiary w-[4.5rem] flex-none" />
-      <div className="flex flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col overflow-y-hidden">
         <div className="bg-tertiary">
           <Notice className="bg-cyan-600">
             Want to take full advantage of Discord with better performance,

@@ -110,21 +110,18 @@ function ChatView({ className = '' }: ChatViewProps) {
 
   return (
     <div className={className}>
-      <div className="shadow-elevation-low z-[2] flex h-12 flex-none items-center px-2">
-        <div
-          className="text-muted mx-2"
-          onClick={() => {
-            console.log(store.getState().ChatMessages);
-          }}
-        >
-          <Icon.Alias />
-        </div>
-        <div className="font-display text-header-primary text-base font-semibold leading-5">
-          {CurrentPrivateChannel !== null
-            ? CurrentPrivateChannel.isGroup
-              ? CurrentPrivateChannel.privateChannelName
-              : CurrentPrivateChannel.participants[0].username
-            : ''}
+      <div className="shadow-elevation-low z-[2] flex h-12 flex-none items-center overflow-hidden px-2">
+        <div className="flex items-center overflow-hidden">
+          <div className="text-muted mx-2">
+            <Icon.Alias />
+          </div>
+          <div className="font-display text-header-primary whitespace-nowrap text-base font-semibold leading-5">
+            {CurrentPrivateChannel !== null
+              ? CurrentPrivateChannel.isGroup
+                ? CurrentPrivateChannel.privateChannelName
+                : CurrentPrivateChannel.participants[0].username
+              : ''}
+          </div>
         </div>
         <div className="ml-auto flex">
           <div className="text-interactive mx-2 cursor-pointer">
@@ -166,7 +163,7 @@ function ChatView({ className = '' }: ChatViewProps) {
         </div>
       </div>
       <div className="flex min-h-0 flex-1">
-        <div className="flex flex-1 flex-col">
+        <div className="flex min-w-0 flex-1 flex-col">
           <div className="scrollbar-4 -webkit-scrollbar-thumb:min-h-[2.5rem] scrollbar-thumb-rounded-lg -webkit-scrollbar-thumb:bg-tertiary scrollbar-track scrollbar-thumb-border flex flex-1 flex-col-reverse overflow-y-scroll">
             <div className="min-h-[1.875rem]"></div>
             {BucketChatMessages &&
@@ -232,14 +229,14 @@ function ChatView({ className = '' }: ChatViewProps) {
                     </strong>
                     .
                   </label>
-                  <div className="mt-4 flex items-center">
-                    <label className="text-header-secondary font-primary text-sm leading-[1.125rem]">
+                  <div className="mt-4 flex flex-wrap items-center gap-y-1">
+                    <label className="text-header-secondary font-primary my-[0.1875rem] text-sm leading-[1.125rem]">
                       No servers in common
                     </label>
-                    <div className="bg-interactive-muted mx-4 h-1 w-1 rounded-[50%]"></div>
+                    <div className="bg-interactive-muted mx-4 my-[0.625rem] h-1 w-1 rounded-[50%]"></div>
                     {Friendship === null && (
                       <button
-                        className="text-interactive-active font-primary bg-brand-experiment active:bg-brand-experiment-600 hover:bg-brand-experiment-560 mr-2 h-6 min-h-[1.5rem] min-w-[3.25rem] rounded-[0.1875rem] px-4 py-[0.125rem] text-sm font-medium leading-4"
+                        className="text-interactive-active font-primary bg-brand-experiment active:bg-brand-experiment-600 hover:bg-brand-experiment-560 mr-2 h-6 min-h-[1.5rem] min-w-[3.25rem] flex-none rounded-[0.1875rem] px-4 py-[0.125rem] text-sm font-medium leading-4"
                         onClick={async (e) => {
                           await friendAPI.post(
                             `/${CurrentPrivateChannel.participants[0].username}/${CurrentPrivateChannel.participants[0].discriminator}`
@@ -250,7 +247,7 @@ function ChatView({ className = '' }: ChatViewProps) {
                       </button>
                     )}
                     {Friendship === FriendshipEnum.Pending && (
-                      <button className="text-interactive-active font-primary bg-brand-experiment mr-2 h-6 min-h-[1.5rem] min-w-[3.25rem] cursor-not-allowed rounded-[0.1875rem] px-4 py-[0.125rem] text-sm font-medium leading-4 opacity-50">
+                      <button className="text-interactive-active font-primary bg-brand-experiment mr-2 h-6 min-h-[1.5rem] min-w-[3.25rem] flex-none cursor-not-allowed rounded-[0.1875rem] px-4 py-[0.125rem] text-sm font-medium leading-4 opacity-50">
                         Friend Request Sent
                       </button>
                     )}
@@ -260,7 +257,7 @@ function ChatView({ className = '' }: ChatViewProps) {
                           Sent you a friend request:
                         </label>
                         <button
-                          className="text-interactive-active font-primary bg-brand-experiment active:bg-brand-experiment-600 hover:bg-brand-experiment-560 mr-2 h-6 min-h-[1.5rem] min-w-[3.25rem] rounded-[0.1875rem] px-4 py-[0.125rem] text-sm font-medium leading-4"
+                          className="text-interactive-active font-primary bg-brand-experiment active:bg-brand-experiment-600 hover:bg-brand-experiment-560 mr-2 h-6 min-h-[1.5rem] min-w-[3.25rem] flex-none rounded-[0.1875rem] px-4 py-[0.125rem] text-sm font-medium leading-4"
                           onClick={async (e) => {
                             await dispatch(
                               UpdateFriend({
@@ -278,7 +275,7 @@ function ChatView({ className = '' }: ChatViewProps) {
                           Accept
                         </button>
                         <button
-                          className="text-interactive-active font-primary bg-interactive-muted active:bg-muted mr-2 h-6 min-h-[1.5rem] min-w-[3.25rem] rounded-[0.1875rem] px-4 py-[0.125rem] text-sm font-medium leading-4 hover:bg-[#686d73]"
+                          className="text-interactive-active font-primary bg-interactive-muted active:bg-muted mr-2 h-6 min-h-[1.5rem] min-w-[3.25rem] flex-none rounded-[0.1875rem] px-4 py-[0.125rem] text-sm font-medium leading-4 hover:bg-[#686d73]"
                           onClick={async (e) => {
                             await dispatch(
                               DeleteFriend({
@@ -298,7 +295,7 @@ function ChatView({ className = '' }: ChatViewProps) {
                     )}
                     {Friendship === FriendshipEnum.Friend && (
                       <button
-                        className="text-interactive-active font-primary bg-interactive-muted active:bg-muted mr-2 h-6 min-h-[1.5rem] min-w-[3.25rem] rounded-[0.1875rem] px-4 py-[0.125rem] text-sm font-medium leading-4 hover:bg-[#686d73]"
+                        className="text-interactive-active font-primary bg-interactive-muted active:bg-muted mr-2 h-6 min-h-[1.5rem] min-w-[3.25rem] flex-none rounded-[0.1875rem] px-4 py-[0.125rem] text-sm font-medium leading-4 hover:bg-[#686d73]"
                         onClick={async (e) => {
                           await dispatch(
                             DeleteFriend({
@@ -316,7 +313,7 @@ function ChatView({ className = '' }: ChatViewProps) {
                     )}
                     {Friendship !== FriendshipEnum.Blocked && (
                       <button
-                        className="text-interactive-active font-primary bg-interactive-muted active:bg-muted mr-2 h-6 min-h-[1.5rem] min-w-[3.25rem] rounded-[0.1875rem] px-4 py-[0.125rem] text-sm font-medium leading-4 hover:bg-[#686d73]"
+                        className="text-interactive-active font-primary bg-interactive-muted active:bg-muted mr-2 h-6 min-h-[1.5rem] min-w-[3.25rem] flex-none rounded-[0.1875rem] px-4 py-[0.125rem] text-sm font-medium leading-4 hover:bg-[#686d73]"
                         onClick={async (e) => {
                           await dispatch(
                             UpdateFriend({
@@ -336,7 +333,7 @@ function ChatView({ className = '' }: ChatViewProps) {
 
                     {Friendship === FriendshipEnum.Blocked && (
                       <button
-                        className="text-interactive-active font-primary bg-interactive-muted active:bg-muted mr-2 h-6 min-h-[1.5rem] min-w-[3.25rem] rounded-[0.1875rem] px-4 py-[0.125rem] text-sm font-medium leading-4 hover:bg-[#686d73]"
+                        className="text-interactive-active font-primary bg-interactive-muted active:bg-muted mr-2 h-6 min-h-[1.5rem] min-w-[3.25rem] flex-none rounded-[0.1875rem] px-4 py-[0.125rem] text-sm font-medium leading-4 hover:bg-[#686d73]"
                         onClick={async (e) => {
                           await dispatch(
                             DeleteFriend({
@@ -373,7 +370,7 @@ function ChatView({ className = '' }: ChatViewProps) {
               </div>
             </span>
             <textarea
-              className="bg-channeltextarea-background font-primary text-normal scrollbar-3 scrollbar-thumb-rounded-lg -webkit-scrollbar-thumb:bg-[rgba(24,25,28,.6)] scrollbar-thumb-border placeholder:text-channeltextarea-placeholder max-h-[29.375rem] min-h-[2.75rem] flex-1 resize-none overflow-y-auto rounded-r-lg py-[0.625rem] outline-none"
+              className="bg-channeltextarea-background font-primary text-normal scrollbar-3 scrollbar-thumb-rounded-lg -webkit-scrollbar-thumb:bg-[rgba(24,25,28,.6)] scrollbar-thumb-border placeholder:text-channeltextarea-placeholder max-h-[29.375rem] min-h-[2.75rem] flex-1 resize-none overflow-y-auto overflow-x-hidden rounded-r-lg py-[0.625rem] outline-none placeholder:whitespace-nowrap"
               rows={1}
               placeholder={`Message ${
                 CurrentPrivateChannel !== null

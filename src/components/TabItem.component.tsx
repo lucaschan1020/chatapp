@@ -25,7 +25,7 @@ function TabItem({
         isSelected
           ? `${selectedColor} ${selectedBackgroundColor}`
           : `${color} ${backgroundColor}`
-      } font-primary mx-2 min-w-[2.5rem] cursor-pointer select-none rounded py-[0.125rem] px-2 text-center text-base font-medium leading-5`}
+      } font-primary mx-2 min-w-[2.5rem] flex-none cursor-pointer select-none rounded py-[0.125rem] px-2 text-center text-base font-medium leading-5`}
       onClick={() => {
         onClick(index);
       }}

@@ -45,9 +45,9 @@ function FriendList({ index }: FriendListProps) {
   return (
     <>
       <div className="flex">
-        <div className="bg-tertiary m-[0.0625rem] mt-4 mb-2 ml-[1.875rem] mr-5 flex flex-1 rounded p-[0.0625rem]">
+        <div className="bg-tertiary m-[0.0625rem] mt-4 mb-2 ml-[1.875rem] mr-5 flex min-w-0 flex-1 rounded p-[0.0625rem]">
           <input
-            className="font-primary placeholder:text-muted text-normal m-[0.0625rem] h-[1.875rem] flex-1 bg-inherit py-[0.125rem] px-2 text-base font-normal leading-8 outline-none"
+            className="font-primary placeholder:text-muted text-normal m-[0.0625rem] h-[1.875rem] min-w-0 flex-1 bg-inherit py-[0.125rem] px-2 text-base font-normal leading-8 outline-none"
             placeholder="Search"
             type="text"
           />
@@ -63,13 +63,13 @@ function FriendList({ index }: FriendListProps) {
         {friends?.map((friend) => (
           <div
             key={friend._id}
-            className="border-modifier-accent group hover:bg-modifier-hover ml-[1.875rem] mr-5 flex h-[3.875rem] cursor-pointer items-center justify-between border-t-[0.0625rem] border-solid hover:mr-[0.625rem] hover:ml-[1.25rem] hover:rounded-lg hover:border-transparent hover:py-4 hover:px-[0.625rem]"
+            className="border-modifier-accent group hover:bg-modifier-hover ml-[1.875rem] mr-5 flex h-[3.875rem] flex-none cursor-pointer items-center justify-between border-t-[0.0625rem] border-solid hover:mr-[0.625rem] hover:ml-[1.25rem] hover:rounded-lg hover:border-transparent hover:py-4 hover:px-[0.625rem]"
           >
-            <div className="item flex">
+            <div className="item flex min-w-0">
               <AvatarIcon src={friend.avatar} />
-              <div className="ml-3 flex flex-col">
+              <div className="ml-3 flex flex-col overflow-x-hidden">
                 <div className="flex items-end">
-                  <span className="text-header-primary font-primary text-base font-semibold leading-[1.1]">
+                  <span className="text-header-primary font-primary truncate text-base font-semibold leading-[1.1]">
                     {friend.username}
                   </span>
                   {(index === 0 || index === 1 || index === 3) && (
@@ -79,7 +79,7 @@ function FriendList({ index }: FriendListProps) {
                   )}
                 </div>
                 {(index === 0 || index === 1) && (
-                  <span className="font-primary text-header-secondary text-sm font-medium leading-5">
+                  <span className="font-primary text-header-secondary truncate text-sm font-medium leading-5">
                     Online
                   </span>
                 )}
