@@ -1,0 +1,5 @@
+.gitignore
+.env.production
+README.md
+tailwind.config.js
+tsconfig.json
