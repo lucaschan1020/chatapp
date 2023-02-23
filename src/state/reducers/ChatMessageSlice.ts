@@ -26,7 +26,8 @@ const GetPrivateChannelChatMessage = createAsyncThunk(
   async (privateChannelId: string, thunkAPI) => {
     try {
       const response = await chatAPI.get<ChatMessageItem>(
-        `/private/${privateChannelId}`
+        `/private/${privateChannelId}`,
+        { signal: thunkAPI.signal }
       );
       thunkAPI.dispatch(AddChatMessage(response?.data));
     } catch (err) {

@@ -2,13 +2,13 @@ import AvatarIcon from './AvatarIcon.component';
 
 function ActivityCard() {
   return (
-    <div className="border-modifier-accent bg-secondary flex cursor-pointer items-center gap-3 rounded-lg border-[0.0625rem] border-solid p-4 hover:bg-[#18191c]">
+    <div className="flex cursor-pointer items-center gap-3 rounded-lg border-[0.0625rem] border-solid border-modifier-accent bg-secondary p-4 hover:bg-[#18191c]">
       <AvatarIcon />
       <div className="flex flex-1 flex-col">
-        <label className="text-normal font-primary truncate text-base font-semibold leading-5">
+        <label className="truncate font-primary text-base font-semibold leading-5 text-normal">
           Bassism
         </label>
-        <label className="text-header-secondary font-primary truncate text-sm font-normal leading-[1.125rem]">
+        <label className="truncate font-primary text-sm font-normal leading-[1.125rem] text-header-secondary">
           <span className="uppercase">Valorant</span> - 25m
         </label>
       </div>

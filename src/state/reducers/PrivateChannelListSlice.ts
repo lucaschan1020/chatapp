@@ -31,15 +31,15 @@ const GetPrivateChannel = createAsyncThunk(
   }
 );
 
-const UpdatePrivateChannelListState = createAsyncThunk(
-  'Friend/UpdatePrivateChannelListState',
+const InitializePrivateChannelListState = createAsyncThunk(
+  'Friend/InitializePrivateChannelListState',
   async (_, thunkAPI) => {
     const state = thunkAPI.getState() as AppState;
     if (!state.Auth.isAuth) return;
     const response = await privateChannelAPI.get<
       Record<string, PrivateChannelItem>
     >('');
-    thunkAPI.dispatch(AddPrivateChannels(response?.data));
+    thunkAPI.dispatch(InitializePrivateChannelList(response?.data));
   }
 );
 
@@ -52,6 +52,12 @@ export const PrivateChannelListSlice = createSlice({
   name: 'PrivateChannelList',
   initialState,
   reducers: {
+    InitializePrivateChannelList: (
+      _state,
+      action: PayloadAction<Record<string, PrivateChannelItem>>
+    ) => {
+      return { ...action.payload };
+    },
     AddPrivateChannels: (
       state,
       action: PayloadAction<Record<string, PrivateChannelItem>>
@@ -64,8 +70,9 @@ export const PrivateChannelListSlice = createSlice({
 export {
   CreatePrivateChannel,
   GetPrivateChannel,
-  UpdatePrivateChannelListState,
+  InitializePrivateChannelListState,
 };
-export const { AddPrivateChannels } = PrivateChannelListSlice.actions;
+export const { InitializePrivateChannelList, AddPrivateChannels } =
+  PrivateChannelListSlice.actions;
 
 export default PrivateChannelListSlice.reducer;

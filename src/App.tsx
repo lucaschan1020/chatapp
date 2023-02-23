@@ -10,9 +10,9 @@ import './index.css';
 import { UpdateAuthState } from './state/reducers/AuthSlice';
 import { UpdateCurrentUserState } from './state/reducers/CurrentUserSlice';
 import ChatView from './components/ChatView.component';
-import { UpdateFriendState } from './state/reducers/FriendSlice';
+import { InitializeFriendState } from './state/reducers/FriendSlice';
 import { connectSocket } from './socketIO';
-import { UpdatePrivateChannelListState } from './state/reducers/PrivateChannelListSlice';
+import { InitializePrivateChannelListState } from './state/reducers/PrivateChannelListSlice';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -21,8 +21,8 @@ function App() {
       await connectSocket();
       await dispatch(UpdateAuthState());
       await dispatch(UpdateCurrentUserState());
-      await dispatch(UpdateFriendState());
-      await dispatch(UpdatePrivateChannelListState());
+      await dispatch(InitializeFriendState());
+      await dispatch(InitializePrivateChannelListState());
     };
     initialize();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -50,13 +50,13 @@ function App() {
               <Route
                 path="channels/@me"
                 element={
-                  <FriendView className="bg-primary flex min-w-0 flex-1 flex-col" />
+                  <FriendView className="flex min-w-0 flex-1 flex-col bg-primary" />
                 }
               ></Route>
               <Route
                 path="channels/@me/:privateChannelId"
                 element={
-                  <ChatView className="bg-primary flex min-w-0 flex-1 flex-col" />
+                  <ChatView className="flex min-w-0 flex-1 flex-col bg-primary" />
                 }
               ></Route>
             </Route>

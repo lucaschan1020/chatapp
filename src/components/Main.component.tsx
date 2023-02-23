@@ -6,7 +6,7 @@ import ServerList from './ServerList.component';
 function Main() {
   return (
     <>
-      <ServerList className="bg-tertiary w-[4.5rem] flex-none" />
+      <ServerList className="w-[4.5rem] flex-none bg-tertiary" />
       <div className="flex min-w-0 flex-1 flex-col overflow-y-hidden">
         <div className="bg-tertiary">
           <Notice className="bg-cyan-600">
@@ -15,7 +15,7 @@ function Main() {
           </Notice>
         </div>
         <div className="flex min-h-0 flex-1">
-          <PrivateChannelList className="bg-secondary flex w-60 flex-none flex-col" />
+          <PrivateChannelList className="flex w-60 flex-none flex-col bg-secondary" />
           <Outlet />
         </div>
       </div>

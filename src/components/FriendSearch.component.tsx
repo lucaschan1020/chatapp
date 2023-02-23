@@ -28,19 +28,19 @@ function FriendSearch() {
   };
 
   return (
-    <div className="border-modifier-accent flex flex-shrink-0 flex-col border-b-[0.0625rem] border-solid py-[1.25rem] px-[1.875rem]">
-      <label className="font-display text-header-primary mb-2 text-base font-semibold uppercase leading-5">
+    <div className="flex flex-shrink-0 flex-col border-b-[0.0625rem] border-solid border-modifier-accent py-[1.25rem] px-[1.875rem]">
+      <label className="mb-2 font-display text-base font-semibold uppercase leading-5 text-header-primary">
         Add Friend
       </label>
-      <label className="text-header-secondary font-primary text-sm font-normal">
+      <label className="font-primary text-sm font-normal text-header-secondary">
         You can add a friend with their Discord Tag. It's cAsE sEnSitIvE!
       </label>
       <div
-        className={`${borderColor()} bg-deprecated-text-input-bg border-deprecated-text-input-border relative mt-4 flex items-center rounded-lg border-[0.0625rem] border-solid px-3`}
+        className={`${borderColor()} relative mt-4 flex items-center rounded-lg border-[0.0625rem] border-solid border-deprecated-text-input-border bg-deprecated-text-input-bg px-3`}
       >
         <input
           maxLength={37}
-          className="text-normal font-primary placeholder:text-muted mr-4 h-12 min-w-0 flex-1 bg-transparent py-1 text-base font-medium leading-5 tracking-[0.04rem] outline-none placeholder:font-normal placeholder:tracking-[0.04rem]"
+          className="mr-4 h-12 min-w-0 flex-1 bg-transparent py-1 font-primary text-base font-medium leading-5 tracking-[0.04rem] text-normal outline-none placeholder:font-normal placeholder:tracking-[0.04rem] placeholder:text-muted"
           placeholder="Enter a Username#0000"
           value={friendTag}
           onChange={(e) => {
@@ -56,7 +56,7 @@ function FriendSearch() {
           }}
         />
         {friendTag.length !== 0 && (
-          <label className="text-interactive-muted font-primary pointer-events-none absolute top-[15px] left-[12px] text-base font-medium leading-5 tracking-[0.04rem]">
+          <label className="pointer-events-none absolute top-[15px] left-[12px] font-primary text-base font-medium leading-5 tracking-[0.04rem] text-interactive-muted">
             <span className="pointer-events-none text-transparent">
               {friendTag}
             </span>
@@ -64,7 +64,7 @@ function FriendSearch() {
           </label>
         )}
         <button
-          className="font-primary text-header-primary bg-brand-experiment h-8 min-h-[2rem] min-w-[3.75rem] truncate rounded-[0.1875rem] px-4 py-[0.125rem] text-sm font-medium leading-4"
+          className="h-8 min-h-[2rem] min-w-[3.75rem] truncate rounded-[0.1875rem] bg-brand-experiment px-4 py-[0.125rem] font-primary text-sm font-medium leading-4 text-header-primary"
           onClick={async () => {
             if (!friendTag) return;
             const index = friendTag.indexOf('#');
@@ -111,7 +111,7 @@ function FriendSearch() {
           Send Friend Request
         </button>
       </div>
-      <div className={`font-primary mt-2 text-sm font-normal`}>
+      <div className={`mt-2 font-primary text-sm font-normal`}>
         {formMessage.content}
       </div>
     </div>
