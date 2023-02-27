@@ -1,4 +1,3 @@
-import React from 'react';
 import { useAppSelector } from '../hooks';
 import AvatarIcon from './AvatarIcon.component';
 import Icon from './Icon.component';
@@ -28,7 +27,7 @@ function ChatMessage({ message, isConsecutive }: ChatMessageProps) {
   return (
     <>
       <div
-        className={`hover:bg-message-hover group relative ${
+        className={`group relative hover:bg-message-hover ${
           !isConsecutive
             ? 'mt-[1.0625rem] min-h-[2.75rem] '
             : 'min-h-[1.375rem]'
@@ -45,19 +44,19 @@ function ChatMessage({ message, isConsecutive }: ChatMessageProps) {
               />
             </div>
             <div className="flex">
-              <span className="font-primary text-header-primary cursor-pointer truncate text-base font-medium leading-[1.375rem] hover:underline">
+              <span className="cursor-pointer truncate font-primary text-base font-medium leading-[1.375rem] text-header-primary hover:underline">
                 {sender?.username}
               </span>
-              <span className="font-primary text-muted mt-[0.0625rem] ml-2 h-4 truncate text-xs font-medium leading-[1.375rem]">
+              <span className="mt-[0.0625rem] ml-2 h-4 truncate font-primary text-xs font-medium leading-[1.375rem] text-muted">
                 {message.timestamp.toISOString()}
               </span>
             </div>
           </>
         )}
-        <div className="font-primary text-normal whitespace-pre-line break-words text-base font-normal leading-[1.375rem]">
+        <div className="whitespace-pre-line break-words font-primary text-base font-normal leading-[1.375rem] text-normal">
           {message.content}
         </div>
-        <div className="shadow-elevation-stroke bg-primary absolute right-[0.875rem] top-[-1rem] hidden rounded group-hover:flex">
+        <div className="absolute right-[0.875rem] top-[-1rem] hidden rounded bg-primary shadow-elevation-stroke group-hover:flex">
           <button className="text-interactive p-[0.375rem]">
             <Icon.AddReaction className="h-5 w-5" />
           </button>

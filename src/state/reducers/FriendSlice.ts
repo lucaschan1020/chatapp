@@ -29,14 +29,14 @@ const DeleteFriend = createAsyncThunk(
   }
 );
 
-const UpdateFriendState = createAsyncThunk(
-  'Friend/UpdateFriendState',
+const InitializeFriendState = createAsyncThunk(
+  'Friend/InitializeFriendState',
   async (_, thunkAPI) => {
     const state = thunkAPI.getState() as AppState;
     if (!state.Auth.isAuth) return;
     const response = await friendAPI.get<Record<string, FriendItem>>('');
 
-    thunkAPI.dispatch(AddFriendsToList(response?.data));
+    thunkAPI.dispatch(InitializeFriendList(response?.data));
   }
 );
 
@@ -46,6 +46,12 @@ export const FriendSlice = createSlice({
   name: 'Friend',
   initialState,
   reducers: {
+    InitializeFriendList: (
+      _state,
+      action: PayloadAction<Record<string, FriendItem>>
+    ) => {
+      return { ...action.payload };
+    },
     AddFriendsToList: (
       state,
       action: PayloadAction<Record<string, FriendItem>>
@@ -60,7 +66,8 @@ export const FriendSlice = createSlice({
     },
   },
 });
-export { UpdateFriend, DeleteFriend, UpdateFriendState };
-export const { AddFriendsToList, DeleteFriendFromList } = FriendSlice.actions;
+export { UpdateFriend, DeleteFriend, InitializeFriendState };
+export const { InitializeFriendList, AddFriendsToList, DeleteFriendFromList } =
+  FriendSlice.actions;
 
 export default FriendSlice.reducer;

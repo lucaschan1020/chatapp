@@ -1,6 +1,6 @@
 /node_modules
 .gitignore
+.prettierignore
+.prettierrc
 .env.production
 README.md
-tailwind.config.js
-tsconfig.json

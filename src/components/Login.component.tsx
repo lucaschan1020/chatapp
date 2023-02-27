@@ -3,8 +3,8 @@ import { useAppDispatch } from '../hooks';
 import { connectSocket } from '../socketIO';
 import { store } from '../state';
 import { SignIn } from '../state/reducers/AuthSlice';
-import { UpdateFriendState } from '../state/reducers/FriendSlice';
-import { UpdatePrivateChannelListState } from '../state/reducers/PrivateChannelListSlice';
+import { InitializeFriendState } from '../state/reducers/FriendSlice';
+import { InitializePrivateChannelListState } from '../state/reducers/PrivateChannelListSlice';
 import Icon from './Icon.component';
 
 function Login() {
@@ -15,25 +15,25 @@ function Login() {
   const state = location.state as { from: Location };
   const from = state ? state.from.pathname : '/channels/@me';
   return (
-    <div className="bg-tertiary relative flex h-full w-full justify-center">
+    <div className="relative flex h-full w-full justify-center bg-tertiary">
       <Icon.Artwork className="absolute top-0 left-0 h-full w-full" />
       <div className="z-10 flex items-center">
-        <div className="bg-mobile-primary shadow-login mx-auto flex flex-col items-center rounded-[0.3125rem] px-16 py-8">
-          <label className="font-display text-header-primary text-2xl font-semibold leading-[1.875rem]">
+        <div className="mx-auto flex flex-col items-center rounded-[0.3125rem] bg-mobile-primary px-16 py-8 shadow-login">
+          <label className="font-display text-2xl font-semibold leading-[1.875rem] text-header-primary">
             Welcome back!
           </label>
-          <label className="text-header-secondary font-primary text-base font-normal leading-5">
+          <label className="font-primary text-base font-normal leading-5 text-header-secondary">
             We're so excited to see you again!
           </label>
           <button
-            className="font-primary hover:bg-interactive-hover bg-interactive-active mt-5 flex h-9 w-full items-center justify-center rounded-[0.1875rem] text-base font-medium text-black"
+            className="mt-5 flex h-9 w-full items-center justify-center rounded-[0.1875rem] bg-interactive-active font-primary text-base font-medium text-black hover:bg-interactive-hover"
             onClick={async () => {
               await dispatch(SignIn());
               const IsAuth = store.getState().Auth.isAuth;
               if (IsAuth) {
                 await connectSocket();
-                await dispatch(UpdateFriendState());
-                await dispatch(UpdatePrivateChannelListState());
+                await dispatch(InitializeFriendState());
+                await dispatch(InitializePrivateChannelListState());
                 navigate(from, { replace: true });
               }
             }}

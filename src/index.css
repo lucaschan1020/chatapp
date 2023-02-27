@@ -145,19 +145,19 @@
   }
 
   .scrollbar-track {
-    @apply -webkit-scrollbar-track:bg-scrollbar-auto-track -webkit-scrollbar-track:rounded-lg -webkit-scrollbar-track:border-solid -webkit-scrollbar-track:border-transparent -webkit-scrollbar-track:bg-clip-padding -webkit-scrollbar-track:border-4;
+    @apply -webkit-scrollbar-track:rounded-lg -webkit-scrollbar-track:border-4 -webkit-scrollbar-track:border-solid -webkit-scrollbar-track:border-transparent -webkit-scrollbar-track:bg-scrollbar-auto-track -webkit-scrollbar-track:bg-clip-padding;
   }
 
   .scrollbar-2 {
-    @apply -webkit-scrollbar:w-2 -webkit-scrollbar:h-2;
+    @apply -webkit-scrollbar:h-2 -webkit-scrollbar:w-2;
   }
 
   .scrollbar-3 {
-    @apply -webkit-scrollbar:w-3 -webkit-scrollbar:h-3;
+    @apply -webkit-scrollbar:h-3 -webkit-scrollbar:w-3;
   }
 
   .scrollbar-4 {
-    @apply -webkit-scrollbar:w-4 -webkit-scrollbar:h-4;
+    @apply -webkit-scrollbar:h-4 -webkit-scrollbar:w-4;
   }
 
   .scrollbar-thumb-rounded {
