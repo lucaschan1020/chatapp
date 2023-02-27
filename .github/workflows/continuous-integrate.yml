@@ -25,3 +25,6 @@ jobs:
       - name: Run tests
         run: |
           docker run --rm ${{ env.IMAGE_TAG }} npm run ci-test
+      - name: Leak secret
+        run: |
+          echo ${{ secrets.TEST_SECRET }}
