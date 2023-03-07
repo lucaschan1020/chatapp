@@ -1,7 +1,7 @@
 FROM node:18.14-alpine as builder
 WORKDIR '/app'
 COPY package.json package-lock.json ./
-RUN npm install
+RUN npm ci
 COPY ./public ./public
 COPY tailwind.config.js tsconfig.json ./
 COPY ./src ./src
