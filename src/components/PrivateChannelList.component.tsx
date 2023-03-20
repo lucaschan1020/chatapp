@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAppSelector } from '../hooks';
 import leadingZero from '../utilities/leading-zero';
@@ -55,8 +56,8 @@ function PrivateChannelList({ className = '' }: PrivateChannelListProps) {
             Object.keys(PrivateChannelList).length > 0 &&
             Object.values(PrivateChannelList).map((privateChannel) => (
               <NavLink
-                to={`/channels/@me/${privateChannel._id}`}
-                key={privateChannel._id}
+                to={`/channels/@me/${privateChannel.id}`}
+                key={privateChannel.id}
               >
                 {({ isActive }) => (
                   <div
@@ -69,7 +70,7 @@ function PrivateChannelList({ className = '' }: PrivateChannelListProps) {
                     <AvatarIcon
                       src={
                         !privateChannel.isGroup
-                          ? privateChannel.participants[0].avatar
+                          ? Object.values(privateChannel.participants)[0].avatar
                           : undefined
                       }
                     />
@@ -77,11 +78,14 @@ function PrivateChannelList({ className = '' }: PrivateChannelListProps) {
                       <label className="cursor-pointer truncate font-primary text-base font-medium leading-5">
                         {privateChannel.isGroup
                           ? privateChannel.privateChannelName
-                          : privateChannel.participants[0].username}
+                          : Object.values(privateChannel.participants)[0]
+                              .username}
                       </label>
-                      {privateChannel.participants.length > 1 && (
+                      {Object.values(privateChannel.participants).length >
+                        1 && (
                         <label className="mt-[-0.125rem] cursor-pointer truncate font-primary text-xs font-medium">
-                          {privateChannel.participants.length} Members
+                          {Object.values(privateChannel.participants).length}{' '}
+                          Members
                         </label>
                       )}
                     </div>

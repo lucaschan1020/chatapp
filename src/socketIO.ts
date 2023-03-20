@@ -1,13 +1,13 @@
 import { io, Socket } from 'socket.io-client';
 import getGapiAuthInstance from './apis/gapiAuth';
-import { FriendItem, PrivateChannelItem } from './interfaces';
+import { ChatMessageItem, FriendItem, PrivateChannelItem } from './interfaces';
 import { store } from './state';
 import { AddChatMessage } from './state/reducers/ChatMessageSlice';
 import { AddFriendsToList } from './state/reducers/FriendSlice';
 import { AddPrivateChannels } from './state/reducers/PrivateChannelListSlice';
 const SERVER_DOMAIN = process.env.REACT_APP_SERVER_DOMAIN ?? '';
 interface ServerToClientEvents {
-  sendPrivateChannelChat: (payload: PrivateChannelChatPayload) => void;
+  sendPrivateChannelChat: (payload: ChatMessageItem) => void;
   updateFriendshipStatus: (payload: FriendItem) => void;
   newPrivateChannelChat: (payload: PrivateChannelItem) => void;
 }
@@ -17,17 +17,6 @@ const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
   SERVER_DOMAIN,
   { autoConnect: false }
 );
-
-interface PrivateChannelChatPayload {
-  channelId: string;
-  bucketId: number;
-  chatMessages: {
-    _id: string;
-    timestamp: Date;
-    senderId: string;
-    content: string | null;
-  }[];
-}
 
 const connectSocket = async () => {
   const gapiAuth = await getGapiAuthInstance();
@@ -41,11 +30,11 @@ const connectSocket = async () => {
 };
 
 socket.on('updateFriendshipStatus', (payload) => {
-  store.dispatch(AddFriendsToList({ [payload._id.toString()]: payload }));
+  store.dispatch(AddFriendsToList({ [payload.friendId.toString()]: payload }));
 });
 
 socket.on('newPrivateChannelChat', (payload) => {
-  store.dispatch(AddPrivateChannels({ [payload._id.toString()]: payload }));
+  store.dispatch(AddPrivateChannels({ [payload.id.toString()]: payload }));
 });
 
 socket.on('sendPrivateChannelChat', (payload) => {

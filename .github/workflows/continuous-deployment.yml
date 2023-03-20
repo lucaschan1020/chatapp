@@ -54,18 +54,18 @@ jobs:
           build-args: |
             REACT_APP_GAPI_CLIENTID=${{ secrets.GAPI_CLIENTID }}
             REACT_APP_SERVER_DOMAIN=${{ secrets.SERVER_DOMAIN }}
-      - id: auth
-        name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v1
-        with:
-          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ secrets.SERVICE_ACCOUNT }}
-      - id: get-credentials
-        uses: google-github-actions/get-gke-credentials@v1
-        with:
-          cluster_name: ${{ env.GKE_CLUSTER }}
-          location: ${{ env.GKE_ZONE }}
-      - name: Deploy to Google Kubernetes Engine
-        run: |
-          kubectl apply -f ./k8s
-          kubectl set image deployment/chatapp-ui-deployment chatapp-ui=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}
+      # - id: auth
+      #   name: Authenticate to Google Cloud
+      #   uses: google-github-actions/auth@v1
+      #   with:
+      #     workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+      #     service_account: ${{ secrets.SERVICE_ACCOUNT }}
+      # - id: get-credentials
+      #   uses: google-github-actions/get-gke-credentials@v1
+      #   with:
+      #     cluster_name: ${{ env.GKE_CLUSTER }}
+      #     location: ${{ env.GKE_ZONE }}
+      # - name: Deploy to Google Kubernetes Engine
+      #   run: |
+      #     kubectl apply -f ./k8s
+      #     kubectl set image deployment/chatapp-ui-deployment chatapp-ui=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}

@@ -17,7 +17,7 @@ function ChatMessage({ message, isConsecutive }: ChatMessageProps) {
   const sender = useAppSelector((state) => {
     const currentUser = state.CurrentUser;
     if (!currentUser) return null;
-    if (message.senderId !== currentUser._id) {
+    if (message.senderId !== currentUser.id) {
       const friend = state.Friends[message.senderId];
       if (!friend) return null;
       return friend;

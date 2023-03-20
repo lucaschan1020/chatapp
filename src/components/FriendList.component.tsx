@@ -20,10 +20,10 @@ enum PageEnum {
 }
 
 const IndexFriendshipMapping: Record<number, FriendshipEnum[]> = {
-  0: [FriendshipEnum.Friend],
-  1: [FriendshipEnum.Friend],
-  2: [FriendshipEnum.Pending, FriendshipEnum.Requested],
-  3: [FriendshipEnum.Blocked],
+  0: [FriendshipEnum.FRIEND],
+  1: [FriendshipEnum.FRIEND],
+  2: [FriendshipEnum.PENDING, FriendshipEnum.REQUESTED],
+  3: [FriendshipEnum.BLOCKED],
 };
 
 interface FriendListProps {
@@ -62,7 +62,7 @@ function FriendList({ index }: FriendListProps) {
       <div className="scrollbar-track scrollbar-4 scrollbar-thumb-rounded-lg scrollbar-thumb-border mt-2 flex flex-1 flex-col overflow-x-hidden overflow-y-scroll pb-2 -webkit-scrollbar-thumb:min-h-[2.5rem] -webkit-scrollbar-thumb:bg-scrollbar-thin-thumb">
         {friends?.map((friend) => (
           <div
-            key={friend._id}
+            key={friend.friendId}
             className="group ml-[1.875rem] mr-5 flex h-[3.875rem] flex-none cursor-pointer items-center justify-between border-t-[0.0625rem] border-solid border-modifier-accent hover:mr-[0.625rem] hover:ml-[1.25rem] hover:rounded-lg hover:border-transparent hover:bg-modifier-hover hover:py-4 hover:px-[0.625rem]"
           >
             <div className="item flex min-w-0">
@@ -91,7 +91,7 @@ function FriendList({ index }: FriendListProps) {
 
                 {index === 2 && (
                   <span className="font-primary text-xs font-medium leading-5 text-header-secondary">
-                    {friend.friendshipStatus === FriendshipEnum.Pending
+                    {friend.friendshipStatus === FriendshipEnum.PENDING
                       ? 'Outgoing Friend Request'
                       : 'Incoming Friend Request'}
                   </span>
@@ -107,7 +107,7 @@ function FriendList({ index }: FriendListProps) {
                     if (!friend.privateChannelId) {
                       await dispatch(
                         CreatePrivateChannel({
-                          participants: [friend._id],
+                          participants: [friend.friendId],
                           privateChannelName: '',
                         })
                       );
@@ -119,7 +119,9 @@ function FriendList({ index }: FriendListProps) {
                     }
 
                     const privateChannel =
-                      state.PrivateChannelList![friend.privateChannelId!];
+                      state.PrivateChannelList![
+                        state.Friends[friend.friendId].privateChannelId!
+                      ];
 
                     if (!privateChannel) {
                       await dispatch(
@@ -128,7 +130,7 @@ function FriendList({ index }: FriendListProps) {
                     }
                     navigate(
                       `/channels/@me/${
-                        state.Friends[friend._id].privateChannelId
+                        state.Friends[friend.friendId].privateChannelId
                       }`
                     );
                   }}
@@ -142,7 +144,7 @@ function FriendList({ index }: FriendListProps) {
             )}
             {index === 2 && (
               <div className="ml-2 flex">
-                {friend.friendshipStatus === FriendshipEnum.Requested && (
+                {friend.friendshipStatus === FriendshipEnum.REQUESTED && (
                   <div
                     className="text-interactive flex h-9 w-9 items-center justify-center rounded-[50%] bg-secondary hover:text-interactive-green-normal active:bg-modifier-active active:text-interactive-active"
                     onClick={async (e) => {
@@ -150,7 +152,7 @@ function FriendList({ index }: FriendListProps) {
                         UpdateFriend({
                           username: friend.username,
                           discriminator: friend.discriminator,
-                          friendshipStatus: FriendshipEnum.Friend,
+                          friendshipStatus: FriendshipEnum.FRIEND,
                         })
                       );
                     }}
