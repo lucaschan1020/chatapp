@@ -16,16 +16,29 @@ interface UpdateFriendOperation extends FriendRequest {
 const UpdateFriend = createAsyncThunk(
   'Friend/UpdateFriend',
   async (friend: UpdateFriendOperation, thunkAPI) => {
-    await friendAPI.put(`/${friend.username}/${friend.discriminator}`, {
-      friendshipStatus: friend.friendshipStatus,
-    });
+    const response = await friendAPI.put<FriendItem>(
+      `/${friend.username}/${friend.discriminator}`,
+      {
+        friendshipStatus: friend.friendshipStatus,
+      }
+    );
+
+    thunkAPI.dispatch(
+      AddFriendsToList({ [response?.data.friendId]: response?.data })
+    );
   }
 );
 
 const DeleteFriend = createAsyncThunk(
   'Friend/DeleteFriend',
   async (friend: FriendRequest, thunkAPI) => {
-    await friendAPI.delete(`/${friend.username}/${friend.discriminator}`);
+    const response = await friendAPI.delete<FriendItem>(
+      `/${friend.username}/${friend.discriminator}`
+    );
+
+    thunkAPI.dispatch(
+      AddFriendsToList({ [response?.data.friendId]: response?.data })
+    );
   }
 );
 

@@ -13,7 +13,14 @@ const CreatePrivateChannel = createAsyncThunk(
   async (newPrivateChannel: CreatePrivateChannelRequest, thunkAPI) => {
     const state = thunkAPI.getState() as AppState;
     if (!state.Auth.isAuth) return;
-    await privateChannelAPI.post('', newPrivateChannel);
+    const response = await privateChannelAPI.post<PrivateChannelItem>(
+      '',
+      newPrivateChannel
+    );
+
+    thunkAPI.dispatch(
+      AddPrivateChannels({ [response.data.id]: response.data })
+    );
   }
 );
 
@@ -26,7 +33,7 @@ const GetPrivateChannel = createAsyncThunk(
       `/private/${privateChannelId}`
     );
     thunkAPI.dispatch(
-      AddPrivateChannels({ [response.data._id]: response.data })
+      AddPrivateChannels({ [response.data.id]: response.data })
     );
   }
 );

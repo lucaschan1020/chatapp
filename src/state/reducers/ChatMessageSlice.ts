@@ -15,9 +15,14 @@ interface PrivateChannelBucket {
 const SendPrivateChannelChat = createAsyncThunk(
   'ChatMessage/SendPrivateChannelChat',
   async (chat: SendPrivateChannelChatRequest, thunkAPI) => {
-    await chatAPI.post(`/private/${chat.privateChannelId}`, {
-      content: chat.content,
-    });
+    const response = await chatAPI.post<ChatMessageItem>(
+      `/private/${chat.privateChannelId}`,
+      {
+        content: chat.content,
+      }
+    );
+
+    thunkAPI.dispatch(AddChatMessage(response?.data));
   }
 );
 

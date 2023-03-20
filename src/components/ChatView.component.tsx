@@ -3,14 +3,18 @@ import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import friendAPI from '../apis/friend';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { FriendshipEnum } from '../interfaces';
+import { FriendItem, FriendshipEnum } from '../interfaces';
 import { store } from '../state';
 import {
   GetBucketPrivateChannelChatMessage,
   GetPrivateChannelChatMessage,
   SendPrivateChannelChat,
 } from '../state/reducers/ChatMessageSlice';
-import { DeleteFriend, UpdateFriend } from '../state/reducers/FriendSlice';
+import {
+  AddFriendsToList,
+  DeleteFriend,
+  UpdateFriend,
+} from '../state/reducers/FriendSlice';
 import AvatarIcon from './AvatarIcon.component';
 import ChatMessage from './ChatMessage.component';
 import Icon from './Icon.component';
@@ -47,8 +51,9 @@ function ChatView({ className = '' }: ChatViewProps) {
   const Friendship = useAppSelector((state) => {
     if (!CurrentPrivateChannel) return null;
     if (CurrentPrivateChannel.isGroup) return null;
-    return state.Friends[CurrentPrivateChannel.participants[0]._id]
-      .friendshipStatus;
+    return state.Friends[
+      Object.values(CurrentPrivateChannel.participants)[0].id
+    ].friendshipStatus;
   });
 
   const newBucketDiv = useRef<HTMLDivElement>(null);
@@ -128,7 +133,7 @@ function ChatView({ className = '' }: ChatViewProps) {
             {CurrentPrivateChannel !== null
               ? CurrentPrivateChannel.isGroup
                 ? CurrentPrivateChannel.privateChannelName
-                : CurrentPrivateChannel.participants[0].username
+                : Object.values(CurrentPrivateChannel.participants)[0].username
               : ''}
           </div>
         </div>
@@ -180,10 +185,10 @@ function ChatView({ className = '' }: ChatViewProps) {
                 .filter((bucketId) => BucketChatMessages[bucketId])
                 .flatMap((bucketId) =>
                   BucketChatMessages[bucketId]!.chatMessages.map(
-                    ({ _id, timestamp, senderId, content }) => ({
+                    ({ id, timestamp, senderId, content }) => ({
                       channelId: BucketChatMessages[bucketId]!.channelId,
                       bucketId: BucketChatMessages[bucketId]!.bucketId,
-                      _id,
+                      id,
                       timestamp: parseJSON(timestamp),
                       senderId,
                       content,
@@ -201,7 +206,7 @@ function ChatView({ className = '' }: ChatViewProps) {
                       currentChatMessage.senderId;
                   return (
                     <ChatMessage
-                      key={currentChatMessage._id}
+                      key={currentChatMessage.id}
                       message={currentChatMessage}
                       isConsecutive={isConsecutive}
                     />
@@ -213,28 +218,30 @@ function ChatView({ className = '' }: ChatViewProps) {
               <AvatarIcon
                 src={
                   CurrentPrivateChannel && !CurrentPrivateChannel.isGroup
-                    ? CurrentPrivateChannel.participants[0].avatar
+                    ? Object.values(CurrentPrivateChannel.participants)[0]
+                        .avatar
                     : undefined
                 }
                 width="w-20"
                 height="h-20"
               />
-              <label
-                className="my-2 font-display text-[2rem] font-bold leading-10 text-header-primary"
-                onClick={() => {
-                  console.log(Friendship);
-                }}
-              >
+              <label className="my-2 font-display text-[2rem] font-bold leading-10 text-header-primary">
                 {CurrentPrivateChannel && CurrentPrivateChannel.isGroup
                   ? CurrentPrivateChannel.privateChannelName
-                  : CurrentPrivateChannel?.participants[0].username}
+                  : CurrentPrivateChannel != null
+                  ? Object.values(CurrentPrivateChannel.participants)[0]
+                      .username
+                  : ''}
               </label>
               {CurrentPrivateChannel && !CurrentPrivateChannel.isGroup && (
                 <>
                   <label className="font-primary text-base leading-5 text-header-secondary">
                     This is the beginning of your direct message history with
                     <strong className="font-semibold">
-                      {` @${CurrentPrivateChannel.participants[0].username} `}
+                      {` @${
+                        Object.values(CurrentPrivateChannel.participants)[0]
+                          .username
+                      } `}
                     </strong>
                     .
                   </label>
@@ -247,20 +254,36 @@ function ChatView({ className = '' }: ChatViewProps) {
                       <button
                         className="mr-2 h-6 min-h-[1.5rem] min-w-[3.25rem] flex-none rounded-[0.1875rem] bg-brand-experiment px-4 py-[0.125rem] font-primary text-sm font-medium leading-4 text-interactive-active hover:bg-brand-experiment-560 active:bg-brand-experiment-600"
                         onClick={async (e) => {
-                          await friendAPI.post(
-                            `/${CurrentPrivateChannel.participants[0].username}/${CurrentPrivateChannel.participants[0].discriminator}`
+                          const response = await friendAPI.post<FriendItem>(
+                            `/${
+                              Object.values(
+                                CurrentPrivateChannel.participants
+                              )[0].username
+                            }/${
+                              Object.values(
+                                CurrentPrivateChannel.participants
+                              )[0].discriminator
+                            }`
                           );
+
+                          if (response.status === 201) {
+                            dispatch(
+                              AddFriendsToList({
+                                [response?.data.friendId]: response?.data,
+                              })
+                            );
+                          }
                         }}
                       >
                         Add Friend
                       </button>
                     )}
-                    {Friendship === FriendshipEnum.Pending && (
+                    {Friendship === FriendshipEnum.PENDING && (
                       <button className="mr-2 h-6 min-h-[1.5rem] min-w-[3.25rem] flex-none cursor-not-allowed rounded-[0.1875rem] bg-brand-experiment px-4 py-[0.125rem] font-primary text-sm font-medium leading-4 text-interactive-active opacity-50">
                         Friend Request Sent
                       </button>
                     )}
-                    {Friendship === FriendshipEnum.Requested && (
+                    {Friendship === FriendshipEnum.REQUESTED && (
                       <>
                         <label className="mr-2 font-primary text-sm leading-[1.125rem] text-header-secondary">
                           Sent you a friend request:
@@ -270,13 +293,13 @@ function ChatView({ className = '' }: ChatViewProps) {
                           onClick={async (e) => {
                             await dispatch(
                               UpdateFriend({
-                                username:
-                                  CurrentPrivateChannel.participants[0]
-                                    .username,
-                                discriminator:
-                                  CurrentPrivateChannel.participants[0]
-                                    .discriminator,
-                                friendshipStatus: FriendshipEnum.Friend,
+                                username: Object.values(
+                                  CurrentPrivateChannel.participants
+                                )[0].username,
+                                discriminator: Object.values(
+                                  CurrentPrivateChannel.participants
+                                )[0].discriminator,
+                                friendshipStatus: FriendshipEnum.FRIEND,
                               })
                             );
                           }}
@@ -288,12 +311,12 @@ function ChatView({ className = '' }: ChatViewProps) {
                           onClick={async (e) => {
                             await dispatch(
                               DeleteFriend({
-                                username:
-                                  CurrentPrivateChannel.participants[0]
-                                    .username,
-                                discriminator:
-                                  CurrentPrivateChannel.participants[0]
-                                    .discriminator,
+                                username: Object.values(
+                                  CurrentPrivateChannel.participants
+                                )[0].username,
+                                discriminator: Object.values(
+                                  CurrentPrivateChannel.participants
+                                )[0].discriminator,
                               })
                             );
                           }}
@@ -302,17 +325,18 @@ function ChatView({ className = '' }: ChatViewProps) {
                         </button>
                       </>
                     )}
-                    {Friendship === FriendshipEnum.Friend && (
+                    {Friendship === FriendshipEnum.FRIEND && (
                       <button
                         className="mr-2 h-6 min-h-[1.5rem] min-w-[3.25rem] flex-none rounded-[0.1875rem] bg-interactive-muted px-4 py-[0.125rem] font-primary text-sm font-medium leading-4 text-interactive-active hover:bg-[#686d73] active:bg-muted"
                         onClick={async (e) => {
                           await dispatch(
                             DeleteFriend({
-                              username:
-                                CurrentPrivateChannel.participants[0].username,
-                              discriminator:
-                                CurrentPrivateChannel.participants[0]
-                                  .discriminator,
+                              username: Object.values(
+                                CurrentPrivateChannel.participants
+                              )[0].username,
+                              discriminator: Object.values(
+                                CurrentPrivateChannel.participants
+                              )[0].discriminator,
                             })
                           );
                         }}
@@ -320,18 +344,19 @@ function ChatView({ className = '' }: ChatViewProps) {
                         Remove Friend
                       </button>
                     )}
-                    {Friendship !== FriendshipEnum.Blocked && (
+                    {Friendship !== FriendshipEnum.BLOCKED && (
                       <button
                         className="mr-2 h-6 min-h-[1.5rem] min-w-[3.25rem] flex-none rounded-[0.1875rem] bg-interactive-muted px-4 py-[0.125rem] font-primary text-sm font-medium leading-4 text-interactive-active hover:bg-[#686d73] active:bg-muted"
                         onClick={async (e) => {
                           await dispatch(
                             UpdateFriend({
-                              username:
-                                CurrentPrivateChannel.participants[0].username,
-                              discriminator:
-                                CurrentPrivateChannel.participants[0]
-                                  .discriminator,
-                              friendshipStatus: FriendshipEnum.Blocked,
+                              username: Object.values(
+                                CurrentPrivateChannel.participants
+                              )[0].username,
+                              discriminator: Object.values(
+                                CurrentPrivateChannel.participants
+                              )[0].discriminator,
+                              friendshipStatus: FriendshipEnum.BLOCKED,
                             })
                           );
                         }}
@@ -340,17 +365,18 @@ function ChatView({ className = '' }: ChatViewProps) {
                       </button>
                     )}
 
-                    {Friendship === FriendshipEnum.Blocked && (
+                    {Friendship === FriendshipEnum.BLOCKED && (
                       <button
                         className="mr-2 h-6 min-h-[1.5rem] min-w-[3.25rem] flex-none rounded-[0.1875rem] bg-interactive-muted px-4 py-[0.125rem] font-primary text-sm font-medium leading-4 text-interactive-active hover:bg-[#686d73] active:bg-muted"
                         onClick={async (e) => {
                           await dispatch(
                             DeleteFriend({
-                              username:
-                                CurrentPrivateChannel.participants[0].username,
-                              discriminator:
-                                CurrentPrivateChannel.participants[0]
-                                  .discriminator,
+                              username: Object.values(
+                                CurrentPrivateChannel.participants
+                              )[0].username,
+                              discriminator: Object.values(
+                                CurrentPrivateChannel.participants
+                              )[0].discriminator,
                             })
                           );
                         }}
@@ -385,7 +411,10 @@ function ChatView({ className = '' }: ChatViewProps) {
                 CurrentPrivateChannel !== null
                   ? CurrentPrivateChannel.isGroup
                     ? CurrentPrivateChannel.privateChannelName
-                    : `@${CurrentPrivateChannel.participants[0].username}`
+                    : `@${
+                        Object.values(CurrentPrivateChannel.participants)[0]
+                          .username
+                      }`
                   : ''
               }`}
               ref={textAreaMessage}
@@ -405,7 +434,7 @@ function ChatView({ className = '' }: ChatViewProps) {
                 e.preventDefault();
                 if (
                   !draftMessage.trim() &&
-                  Friendship === FriendshipEnum.Friend
+                  Friendship === FriendshipEnum.FRIEND
                 )
                   return;
                 dispatch(
@@ -436,19 +465,26 @@ function ChatView({ className = '' }: ChatViewProps) {
           CurrentUser && (
             <div className="scrollbar-2 scrollbar-thumb-rounded scrollbar-thumb-border hover-scrollbar-thumb flex w-60 flex-none flex-col overflow-y-scroll bg-secondary -webkit-scrollbar-thumb:min-h-[2.5rem] -webkit-scrollbar-thumb:bg-transparent">
               <label className="pt-6 pr-2 pl-4 font-display text-xs font-semibold uppercase tracking-[0.015625rem] text-channel-default">
-                Members—{CurrentPrivateChannel.participants.length}
+                Members—
+                {
+                  Object.values(
+                    Object.values(CurrentPrivateChannel.participants)
+                  ).length
+                }
               </label>
               {[
-                ...CurrentPrivateChannel.participants,
+                ...Object.values(
+                  Object.values(CurrentPrivateChannel.participants)
+                ),
                 {
-                  _id: CurrentUser._id,
+                  id: CurrentUser.id,
                   avatar: CurrentUser.avatar,
                   username: CurrentUser.username,
                   discriminator: CurrentUser.discriminator,
                 },
               ].map((participant) => (
                 <div
-                  key={participant._id}
+                  key={participant.id}
                   className="text-interactive group ml-2 flex h-11 flex-none cursor-pointer items-center rounded-[0.25rem] px-2 py-[0.0625rem] hover:bg-modifier-hover"
                 >
                   <AvatarIcon src={participant.avatar} />

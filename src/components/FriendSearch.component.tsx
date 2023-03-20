@@ -1,9 +1,12 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import friendAPI from '../apis/friend';
+import { useAppDispatch } from '../hooks';
 import { FriendItem } from '../interfaces';
+import { AddFriendsToList } from '../state/reducers/FriendSlice';
 
 function FriendSearch() {
+  const dispatch = useAppDispatch();
   const [friendTag, setFriendTag] = useState<string>('');
   const [placeholderContent, setPlaceholderContent] = useState<string>('#0000');
   const [formMessage, setFormMessage] = useState<{
@@ -79,6 +82,9 @@ function FriendSearch() {
               );
 
               if (response.status === 201) {
+                dispatch(
+                  AddFriendsToList({ [response.data.friendId]: response.data })
+                );
                 setFormMessage({
                   content: (
                     <label className="text-positive">

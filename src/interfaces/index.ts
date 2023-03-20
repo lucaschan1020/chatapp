@@ -1,11 +1,13 @@
+export interface PrivateChannelParticipant {
+  id: string;
+  avatar: string;
+  username: string;
+  discriminator: number;
+}
+
 export interface PrivateChannelItem {
-  _id: string;
-  participants: {
-    _id: string;
-    avatar: string;
-    username: string;
-    discriminator: number;
-  }[];
+  id: string;
+  participants: Record<string, PrivateChannelParticipant>;
   privateChannelName: string;
   dateCreated: Date;
   isGroup: boolean;
@@ -13,17 +15,18 @@ export interface PrivateChannelItem {
 
 export interface ChatMessageItem {
   channelId: string;
-  bucketId: number;
   chatMessages: {
-    _id: string;
+    id: string;
     timestamp: Date;
     senderId: string;
     content: string | null;
+    lastModified: Date;
   }[];
+  bucketId: number;
 }
 
 export interface CurrentUser {
-  _id: string;
+  id: string;
   sub: string;
   email: string;
   emailVerified: boolean;
@@ -37,7 +40,7 @@ export interface CurrentUser {
 }
 
 export interface FriendItem {
-  _id: string;
+  friendId: string;
   friendshipStatus: FriendshipEnum | null;
   privateChannelId?: string;
   avatar: string;
@@ -46,8 +49,8 @@ export interface FriendItem {
 }
 
 export enum FriendshipEnum {
-  Pending,
-  Requested,
-  Friend,
-  Blocked,
+  PENDING = 'PENDING',
+  REQUESTED = 'REQUESTED',
+  FRIEND = 'FRIEND',
+  BLOCKED = 'BLOCKED',
 }
