@@ -1,15 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { PrivateChannelItem } from '../../interfaces';
-import { AddPrivateChannels } from './PrivateChannelListSlice';
 
 interface ViewState {
-  CurrentChat: PrivateChannelItem | null;
-  FriendListSelectedIndex: number;
+  friendListSelectedIndex: number;
 }
 
 const initialState: ViewState = {
-  CurrentChat: null as PrivateChannelItem | null,
-  FriendListSelectedIndex: 0,
+  friendListSelectedIndex: 0,
 };
 
 export const ViewStateSlice = createSlice({
@@ -17,16 +13,8 @@ export const ViewStateSlice = createSlice({
   initialState,
   reducers: {
     ChangeFriendListSelectedIndex: (state, action: PayloadAction<number>) => {
-      return { ...state, FriendListSelectedIndex: action.payload };
+      return { ...state, friendListSelectedIndex: action.payload };
     },
-  },
-  extraReducers: (builder) => {
-    builder.addCase(AddPrivateChannels, (state, action) => {
-      if (state.CurrentChat) {
-        return;
-      }
-      return { ...state, CurrentChat: { ...action.payload[0] } };
-    });
   },
 });
 

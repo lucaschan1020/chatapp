@@ -3,8 +3,6 @@ import { useAppDispatch } from '../hooks';
 import { connectSocket } from '../socketIO';
 import { store } from '../state';
 import { SignIn } from '../state/reducers/AuthSlice';
-import { InitializeFriendState } from '../state/reducers/FriendSlice';
-import { InitializePrivateChannelListState } from '../state/reducers/PrivateChannelListSlice';
 import Icon from './Icon.component';
 
 function Login() {
@@ -32,8 +30,6 @@ function Login() {
               const IsAuth = store.getState().Auth.isAuth;
               if (IsAuth) {
                 await connectSocket();
-                await dispatch(InitializeFriendState());
-                await dispatch(InitializePrivateChannelListState());
                 navigate(from, { replace: true });
               }
             }}

@@ -1,18 +1,42 @@
-import axios from 'axios';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import friendAPI from '../apis/friend';
-import { useAppDispatch } from '../hooks';
 import { FriendItem } from '../interfaces';
-import { AddFriendsToList } from '../state/reducers/FriendSlice';
+import { FriendRequest } from '../interfaces/http-request';
 
 function FriendSearch() {
-  const dispatch = useAppDispatch();
   const [friendTag, setFriendTag] = useState<string>('');
+  const [addedFriendTag, setAddedFriendTag] = useState<string>('');
   const [placeholderContent, setPlaceholderContent] = useState<string>('#0000');
-  const [formMessage, setFormMessage] = useState<{
-    content: JSX.Element | null;
-    isSuccess: boolean | null;
-  }>({ content: null, isSuccess: null });
+
+  const queryClient = useQueryClient();
+
+  const {
+    mutate: addFriend,
+    isSuccess: isSuccessAddFriend,
+    isError: isErrorAddFriend,
+  } = useMutation(
+    async (friend: FriendRequest) => {
+      const response = await friendAPI.post<FriendItem>(
+        `/${friend.username}/${friend.discriminator}`
+      );
+      return response.data;
+    },
+    {
+      onSuccess: (response) => {
+        queryClient.setQueryData<Record<string, FriendItem>>(
+          ['friends'],
+          (oldFriends) => {
+            if (!oldFriends) return { [response.friendId]: response };
+            return {
+              ...oldFriends,
+              [response.friendId]: response,
+            };
+          }
+        );
+      },
+    }
+  );
 
   useEffect(() => {
     const index = friendTag.indexOf('#');
@@ -25,9 +49,9 @@ function FriendSearch() {
   }, [friendTag]);
 
   const borderColor = () => {
-    if (formMessage.isSuccess === null) return 'focus-within:border-text-link';
-    if (formMessage.isSuccess) return 'focus-within:border-status-positive';
-    return 'focus-within:border-status-danger';
+    if (isSuccessAddFriend) return 'focus-within:border-status-positive';
+    if (isErrorAddFriend) return 'focus-within:border-status-danger';
+    return 'focus-within:border-text-link';
   };
 
   return (
@@ -75,50 +99,31 @@ function FriendSearch() {
             let discriminator = friendTag.slice(index);
             if (discriminator.length !== 5) return;
             const username = friendTag.slice(0, index);
-            setFormMessage({ content: null, isSuccess: true });
-            try {
-              const response = await friendAPI.post<FriendItem>(
-                `/${username}/${discriminator.slice(1)}`
-              );
 
-              if (response.status === 201) {
-                dispatch(
-                  AddFriendsToList({ [response.data.friendId]: response.data })
-                );
-                setFormMessage({
-                  content: (
-                    <label className="text-positive">
-                      Success! Your friend request to
-                      <strong> {friendTag} </strong>was sent.
-                    </label>
-                  ),
-                  isSuccess: true,
-                });
-
-                setFriendTag('');
-              }
-            } catch (err) {
-              if (axios.isAxiosError(err)) {
-                setFormMessage({
-                  content: (
-                    <label className="text-danger">
-                      Hm, didn't work. Double check that the capitalization,
-                      spelling, any spaces, and numbers are correct.
-                    </label>
-                  ),
-                  isSuccess: false,
-                });
-              } else {
-                throw err;
-              }
-            }
+            addFriend({
+              username,
+              discriminator: parseInt(discriminator.slice(1)),
+            });
+            setAddedFriendTag(friendTag);
+            setFriendTag('');
           }}
         >
           Send Friend Request
         </button>
       </div>
       <div className={`mt-2 font-primary text-sm font-normal`}>
-        {formMessage.content}
+        {isErrorAddFriend && (
+          <label className="text-danger">
+            Hm, didn't work. Double check that the capitalization, spelling, any
+            spaces, and numbers are correct.
+          </label>
+        )}
+        {isSuccessAddFriend && (
+          <label className="text-positive">
+            Success! Your friend request to
+            <strong> {addedFriendTag} </strong>was sent.
+          </label>
+        )}
       </div>
     </div>
   );

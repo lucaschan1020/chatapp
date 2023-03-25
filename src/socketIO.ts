@@ -1,10 +1,9 @@
+import { InfiniteData } from '@tanstack/react-query';
+import produce from 'immer';
 import { io, Socket } from 'socket.io-client';
 import getGapiAuthInstance from './apis/gapiAuth';
 import { ChatMessageItem, FriendItem, PrivateChannelItem } from './interfaces';
-import { store } from './state';
-import { AddChatMessage } from './state/reducers/ChatMessageSlice';
-import { AddFriendsToList } from './state/reducers/FriendSlice';
-import { AddPrivateChannels } from './state/reducers/PrivateChannelListSlice';
+import queryClient from './query-client';
 const SERVER_DOMAIN = process.env.REACT_APP_SERVER_DOMAIN ?? '';
 interface ServerToClientEvents {
   sendPrivateChannelChat: (payload: ChatMessageItem) => void;
@@ -30,20 +29,51 @@ const connectSocket = async () => {
 };
 
 socket.on('updateFriendshipStatus', (payload) => {
-  store.dispatch(AddFriendsToList({ [payload.friendId.toString()]: payload }));
+  queryClient.setQueryData<Record<string, FriendItem>>(
+    ['friends'],
+    (oldFriends) => {
+      if (!oldFriends) return { [payload.friendId.toString()]: payload };
+      return produce(oldFriends, (draft) => {
+        draft[payload.friendId.toString()] = payload;
+      });
+    }
+  );
 });
 
 socket.on('newPrivateChannelChat', (payload) => {
-  store.dispatch(AddPrivateChannels({ [payload.id.toString()]: payload }));
+  queryClient.setQueryData<Record<string, PrivateChannelItem>>(
+    ['private-channel'],
+    (oldPrivateChannels) => {
+      if (!oldPrivateChannels) return { [payload.id]: payload };
+      return produce(oldPrivateChannels, (draft) => {
+        draft[payload.id] = payload;
+      });
+    }
+  );
 });
 
 socket.on('sendPrivateChannelChat', (payload) => {
-  const channelId = payload.channelId;
-  const chatMessageState = store.getState().ChatMessages;
-  if (!chatMessageState) return;
-  const privateChannelChat = chatMessageState[channelId];
-  if (!privateChannelChat) return;
-  store.dispatch(AddChatMessage(payload));
+  queryClient.setQueryData<InfiniteData<ChatMessageItem>>(
+    ['chat', payload.channelId],
+    (oldChat) => {
+      if (!oldChat) return oldChat;
+      return produce(oldChat, (draft) => {
+        const bucketPage = draft.pages.find(
+          (page) => page.bucketId === payload.bucketId
+        );
+
+        if (bucketPage) {
+          bucketPage.chatMessages = [
+            ...bucketPage.chatMessages,
+            ...payload.chatMessages,
+          ];
+        } else {
+          draft.pages.unshift(payload);
+          draft.pageParams.unshift(payload.bucketId);
+        }
+      });
+    }
+  );
 });
 
 export { connectSocket };

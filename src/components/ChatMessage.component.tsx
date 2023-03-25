@@ -1,8 +1,9 @@
-import { useAppSelector } from '../hooks';
+import { PrivateChannelParticipant } from '../interfaces';
 import AvatarIcon from './AvatarIcon.component';
 import Icon from './Icon.component';
 
 interface ChatMessageProps {
+  sender: PrivateChannelParticipant | undefined;
   message: {
     channelId: string;
     bucketId: number;
@@ -13,17 +14,7 @@ interface ChatMessageProps {
   isConsecutive: boolean;
 }
 
-function ChatMessage({ message, isConsecutive }: ChatMessageProps) {
-  const sender = useAppSelector((state) => {
-    const currentUser = state.CurrentUser;
-    if (!currentUser) return null;
-    if (message.senderId !== currentUser.id) {
-      const friend = state.Friends[message.senderId];
-      if (!friend) return null;
-      return friend;
-    }
-    return currentUser;
-  });
+function ChatMessage({ sender, message, isConsecutive }: ChatMessageProps) {
   return (
     <>
       <div
@@ -40,7 +31,7 @@ function ChatMessage({ message, isConsecutive }: ChatMessageProps) {
                 className="mt-[0.125rem] cursor-pointer"
                 height="h-10"
                 width="w-10"
-                src={sender !== null ? sender.avatar : undefined}
+                src={sender?.avatar}
               />
             </div>
             <div className="flex">

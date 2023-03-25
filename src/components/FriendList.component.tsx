@@ -1,13 +1,14 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import produce from 'immer';
 import { useNavigate } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../hooks';
-import { FriendshipEnum } from '../interfaces';
-import { store } from '../state';
-import { DeleteFriend, UpdateFriend } from '../state/reducers/FriendSlice';
+import friendAPI from '../apis/friend';
+import privateChannelAPI from '../apis/privateChannel';
+import { FriendItem, FriendshipEnum, PrivateChannelItem } from '../interfaces';
 import {
-  CreatePrivateChannel,
-  GetPrivateChannel,
-  InitializePrivateChannelListState,
-} from '../state/reducers/PrivateChannelListSlice';
+  UpdateFriendOperation,
+  FriendRequest,
+  CreatePrivateChannelRequest,
+} from '../interfaces/http-request';
 import leadingZero from '../utilities/leading-zero';
 import AvatarIcon from './AvatarIcon.component';
 import Icon from './Icon.component';
@@ -19,29 +20,117 @@ enum PageEnum {
   Blocked,
 }
 
-const IndexFriendshipMapping: Record<number, FriendshipEnum[]> = {
-  0: [FriendshipEnum.FRIEND],
-  1: [FriendshipEnum.FRIEND],
-  2: [FriendshipEnum.PENDING, FriendshipEnum.REQUESTED],
-  3: [FriendshipEnum.BLOCKED],
-};
+const IndexFriendshipMapping = [
+  [FriendshipEnum.FRIEND],
+  [FriendshipEnum.FRIEND],
+  [FriendshipEnum.PENDING, FriendshipEnum.REQUESTED],
+  [FriendshipEnum.BLOCKED],
+] as const;
 
 interface FriendListProps {
   index: number;
 }
 
 function FriendList({ index }: FriendListProps) {
-  const friends = useAppSelector((state) => {
-    if (!state.Friends) return;
-    return Object.values(state.Friends).filter((friend) =>
-      IndexFriendshipMapping[index].some(
-        (friendship) => friendship === friend.friendshipStatus
-      )
-    );
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  const { data: friends } = useQuery({
+    queryKey: ['friends'],
+    queryFn: async ({ signal }) => {
+      const response = await friendAPI.get<Record<string, FriendItem>>('', {
+        signal,
+      });
+      return response.data;
+    },
+    select(response) {
+      return Object.values(response ?? {}).filter((friend) =>
+        IndexFriendshipMapping[index].some(
+          (friendship) => friendship === friend.friendshipStatus
+        )
+      );
+    },
   });
 
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
+  const { mutate: updateFriend } = useMutation(
+    async (friend: UpdateFriendOperation) => {
+      const response = await friendAPI.put<FriendItem>(
+        `/${friend.username}/${friend.discriminator}`,
+        {
+          friendshipStatus: friend.friendshipStatus,
+        }
+      );
+      return response.data;
+    },
+    {
+      onSuccess: (response) => {
+        queryClient.setQueryData<Record<string, FriendItem>>(
+          ['friends'],
+          (oldFriends) => {
+            if (!oldFriends) return { [response.friendId]: response };
+            return produce(oldFriends, (draft) => {
+              draft[response.friendId] = response;
+            });
+          }
+        );
+      },
+    }
+  );
+
+  const { mutate: deleteFriend } = useMutation(
+    async (friend: FriendRequest) => {
+      const response = await friendAPI.delete<FriendItem>(
+        `/${friend.username}/${friend.discriminator}`
+      );
+      return response.data;
+    },
+    {
+      onSuccess: (response) => {
+        queryClient.setQueryData<Record<string, FriendItem>>(
+          ['friends'],
+          (oldFriends) => {
+            if (!oldFriends) return { [response.friendId]: response };
+            return produce(oldFriends, (draft) => {
+              draft[response.friendId] = response;
+            });
+          }
+        );
+      },
+    }
+  );
+
+  const { mutate: createNewPrivateChannel } = useMutation(
+    async (newPrivateChannel: CreatePrivateChannelRequest) => {
+      const response = await privateChannelAPI.post<PrivateChannelItem>(
+        '/private',
+        newPrivateChannel
+      );
+      return response.data;
+    },
+    {
+      onSuccess: (response) => {
+        queryClient.setQueryData<Record<string, PrivateChannelItem>>(
+          ['private-channel'],
+          (oldPrivateChannels) => {
+            if (!oldPrivateChannels) return { [response.id]: response };
+            return produce(oldPrivateChannels, (draft) => {
+              draft[response.id] = response;
+            });
+          }
+        );
+      },
+    }
+  );
+
+  const navigateToNewPrivateChannel = (friend: FriendItem) => {
+    const updateFriend = queryClient.getQueryData<Record<string, FriendItem>>([
+      'friends',
+    ]);
+    if (!updateFriend) return;
+    if (!updateFriend[friend.friendId]?.privateChannelId) return;
+    navigate(`/channels/@me/${updateFriend[friend.friendId].privateChannelId}`);
+  };
+
   return (
     <>
       <div className="flex">
@@ -103,36 +192,19 @@ function FriendList({ index }: FriendListProps) {
                 <div
                   className="text-interactive flex h-9 w-9 items-center justify-center rounded-[50%] bg-secondary active:text-interactive-active group-hover:bg-tertiary group-hover:active:bg-modifier-active"
                   onClick={async (e) => {
-                    let state = store.getState();
                     if (!friend.privateChannelId) {
-                      await dispatch(
-                        CreatePrivateChannel({
+                      createNewPrivateChannel(
+                        {
                           participants: [friend.friendId],
                           privateChannelName: '',
-                        })
+                        },
+                        {
+                          onSuccess: () => navigateToNewPrivateChannel(friend),
+                        }
                       );
-                      state = store.getState();
+                    } else {
+                      navigateToNewPrivateChannel(friend);
                     }
-
-                    if (!state.PrivateChannelList) {
-                      await dispatch(InitializePrivateChannelListState());
-                    }
-
-                    const privateChannel =
-                      state.PrivateChannelList![
-                        state.Friends[friend.friendId].privateChannelId!
-                      ];
-
-                    if (!privateChannel) {
-                      await dispatch(
-                        GetPrivateChannel(friend.privateChannelId!)
-                      );
-                    }
-                    navigate(
-                      `/channels/@me/${
-                        state.Friends[friend.friendId].privateChannelId
-                      }`
-                    );
                   }}
                 >
                   <Icon.FriendMessage className="h-5 w-5" />
@@ -148,13 +220,11 @@ function FriendList({ index }: FriendListProps) {
                   <div
                     className="text-interactive flex h-9 w-9 items-center justify-center rounded-[50%] bg-secondary hover:text-interactive-green-normal active:bg-modifier-active active:text-interactive-active"
                     onClick={async (e) => {
-                      dispatch(
-                        UpdateFriend({
-                          username: friend.username,
-                          discriminator: friend.discriminator,
-                          friendshipStatus: FriendshipEnum.FRIEND,
-                        })
-                      );
+                      updateFriend({
+                        username: friend.username,
+                        discriminator: friend.discriminator,
+                        friendshipStatus: FriendshipEnum.FRIEND,
+                      });
                     }}
                   >
                     <Icon.ActionAccept className="h-5 w-5" />
@@ -163,12 +233,10 @@ function FriendList({ index }: FriendListProps) {
                 <div
                   className="text-interactive ml-[0.625rem] flex h-9 w-9 items-center justify-center rounded-[50%] bg-secondary hover:text-interactive-red-normal active:bg-modifier-active active:text-interactive-active"
                   onClick={(e) => {
-                    dispatch(
-                      DeleteFriend({
-                        username: friend.username,
-                        discriminator: friend.discriminator,
-                      })
-                    );
+                    deleteFriend({
+                      username: friend.username,
+                      discriminator: friend.discriminator,
+                    });
                   }}
                 >
                   <Icon.ActionDeny className="h-5 w-5" />
@@ -180,12 +248,10 @@ function FriendList({ index }: FriendListProps) {
                 <div
                   className="text-interactive flex h-9 w-9 items-center justify-center rounded-[50%] bg-secondary hover:text-status-danger active:bg-modifier-active active:text-interactive-active"
                   onClick={async (e) => {
-                    dispatch(
-                      DeleteFriend({
-                        username: friend.username,
-                        discriminator: friend.discriminator,
-                      })
-                    );
+                    deleteFriend({
+                      username: friend.username,
+                      discriminator: friend.discriminator,
+                    });
                   }}
                 >
                   <Icon.FriendBlock className="h-5 w-5" />

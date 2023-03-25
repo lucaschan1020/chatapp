@@ -1,20 +1,32 @@
+import {
+  InfiniteData,
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
+import { AxiosResponse } from 'axios';
 import { parseJSON } from 'date-fns';
+import produce from 'immer';
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import auth from '../apis/auth';
+import chatAPI from '../apis/chat';
 import friendAPI from '../apis/friend';
-import { useAppDispatch, useAppSelector } from '../hooks';
-import { FriendItem, FriendshipEnum } from '../interfaces';
-import { store } from '../state';
+import getGapiAuthInstance from '../apis/gapiAuth';
+import privateChannelAPI from '../apis/privateChannel';
 import {
-  GetBucketPrivateChannelChatMessage,
-  GetPrivateChannelChatMessage,
-  SendPrivateChannelChat,
-} from '../state/reducers/ChatMessageSlice';
+  ChatMessageItem,
+  CurrentUser,
+  FriendItem,
+  FriendshipEnum,
+  PrivateChannelItem,
+} from '../interfaces';
 import {
-  AddFriendsToList,
-  DeleteFriend,
-  UpdateFriend,
-} from '../state/reducers/FriendSlice';
+  UpdateFriendOperation,
+  FriendRequest,
+  SendPrivateChannelChatRequest,
+} from '../interfaces/http-request';
 import AvatarIcon from './AvatarIcon.component';
 import ChatMessage from './ChatMessage.component';
 import Icon from './Icon.component';
@@ -28,74 +40,213 @@ function ChatView({ className = '' }: ChatViewProps) {
   const [draftMessage, setDraftMessage] = useState('');
   const textAreaMessage = useRef<HTMLTextAreaElement>(null);
   const { privateChannelId } = useParams();
-  const dispatch = useAppDispatch();
 
-  const CurrentPrivateChannel = useAppSelector((state) => {
-    if (!state.PrivateChannelList) return null;
-    if (!privateChannelId) return null;
-    const privateChannel = state.PrivateChannelList[privateChannelId];
-    if (!privateChannel) return null;
-    return privateChannel;
+  const queryClient = useQueryClient();
+
+  const { data: user } = useQuery({
+    queryKey: ['user'],
+    queryFn: async ({ signal }) => {
+      const gapiAuth = await getGapiAuthInstance();
+      if (!gapiAuth.isSignedIn.get()) {
+        return;
+      }
+      const response = await auth.get<CurrentUser>('/login', {
+        signal,
+      });
+      return response.data;
+    },
   });
 
-  const CurrentUser = useAppSelector((state) => state.CurrentUser);
-
-  const BucketChatMessages = useAppSelector((state) => {
-    if (!privateChannelId) return null;
-    if (!state.ChatMessages) return null;
-    const bucketChat = state.ChatMessages[privateChannelId];
-    if (!bucketChat) return null;
-    return bucketChat;
+  const { data: currentPrivateChannel } = useQuery({
+    queryKey: ['private-channel', privateChannelId],
+    queryFn: async ({ queryKey, signal }) => {
+      const response = await privateChannelAPI.get<PrivateChannelItem>(
+        `/private/${queryKey[1]}`,
+        { signal }
+      );
+      return response.data;
+    },
   });
 
-  const Friendship = useAppSelector((state) => {
-    if (!CurrentPrivateChannel) return null;
-    if (CurrentPrivateChannel.isGroup) return null;
-    return state.Friends[
-      Object.values(CurrentPrivateChannel.participants)[0].id
-    ].friendshipStatus;
+  const { data: friendship } = useQuery({
+    queryKey: ['friends'],
+    queryFn: async ({ signal }) => {
+      const response = await friendAPI.get<Record<string, FriendItem>>('', {
+        signal,
+      });
+      return response.data;
+    },
+    enabled: !!currentPrivateChannel && !currentPrivateChannel.isGroup,
+    select(response) {
+      if (
+        !currentPrivateChannel ||
+        Object.values(currentPrivateChannel.participants).length === 0
+      ) {
+        return null;
+      }
+      return response[Object.values(currentPrivateChannel.participants)[0].id]
+        .friendshipStatus;
+    },
   });
+
+  const {
+    data: currentChat,
+    fetchNextPage: fetchNextChat,
+    hasNextPage: hasNextChat,
+  } = useInfiniteQuery({
+    queryKey: ['chat', privateChannelId],
+    queryFn: async ({ queryKey, signal, pageParam }) => {
+      let response: AxiosResponse<ChatMessageItem, any>;
+      if (pageParam === undefined) {
+        response = await chatAPI.get<ChatMessageItem>(
+          `/private/${queryKey[1]}`,
+          { signal }
+        );
+      } else {
+        response = await chatAPI.get<ChatMessageItem>(
+          `/private/${queryKey[1]}/${pageParam}`,
+          { signal }
+        );
+      }
+      return response.data;
+    },
+    onSuccess(data) {
+      if (data.pages.length !== 1 || data.pageParams[0] !== undefined) {
+        return;
+      }
+      queryClient.setQueryData<InfiniteData<ChatMessageItem>>(
+        ['chat', privateChannelId],
+        (oldChat) => {
+          if (!oldChat) return oldChat;
+          return produce(oldChat, (draft) => {
+            draft.pageParams[0] = data.pages[0].bucketId;
+          });
+        }
+      );
+    },
+    getNextPageParam(firstPage) {
+      if (firstPage.bucketId !== 0) {
+        return firstPage.bucketId - 1;
+      }
+      return undefined;
+    },
+    getPreviousPageParam(lastPage) {
+      return lastPage.bucketId + 1;
+    },
+  });
+
+  const { mutate: updateFriend } = useMutation(
+    async (friend: UpdateFriendOperation) => {
+      const response = await friendAPI.put<FriendItem>(
+        `/${friend.username}/${friend.discriminator}`,
+        {
+          friendshipStatus: friend.friendshipStatus,
+        }
+      );
+      return response.data;
+    },
+    {
+      onSuccess: (response) => {
+        queryClient.setQueryData<Record<string, FriendItem>>(
+          ['friends'],
+          (oldFriends) => {
+            if (!oldFriends) return { [response.friendId]: response };
+            return {
+              ...oldFriends,
+              [response.friendId]: response,
+            };
+          }
+        );
+      },
+    }
+  );
+
+  const { mutate: deleteFriend } = useMutation(
+    async (friend: FriendRequest) => {
+      const response = await friendAPI.delete<FriendItem>(
+        `/${friend.username}/${friend.discriminator}`
+      );
+      return response.data;
+    },
+    {
+      onSuccess: (response) => {
+        queryClient.setQueryData<Record<string, FriendItem>>(
+          ['friends'],
+          (oldFriends) => {
+            if (!oldFriends) return { [response.friendId]: response };
+            return {
+              ...oldFriends,
+              [response.friendId]: response,
+            };
+          }
+        );
+      },
+    }
+  );
+
+  const { mutate: sendMessage } = useMutation(
+    async (req: SendPrivateChannelChatRequest) => {
+      const response = await chatAPI.post<ChatMessageItem>(
+        `/private/${req.privateChannelId}`,
+        {
+          content: req.content,
+        }
+      );
+      return response.data;
+    },
+    {
+      onSuccess: (response) => {
+        queryClient.setQueryData<InfiniteData<ChatMessageItem>>(
+          ['chat', response.channelId],
+          (oldChat) => {
+            if (!oldChat) return oldChat;
+            return produce(oldChat, (draft) => {
+              const bucketPage = draft.pages.find(
+                (page) => page.bucketId === response.bucketId
+              );
+
+              if (bucketPage) {
+                bucketPage.chatMessages = [
+                  ...bucketPage.chatMessages,
+                  ...response.chatMessages,
+                ];
+              } else {
+                draft.pages.unshift(response);
+                draft.pageParams.unshift(response.bucketId);
+              }
+            });
+          }
+        );
+      },
+    }
+  );
 
   const newBucketDiv = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!BucketChatMessages || Object.keys(BucketChatMessages).length === 0)
-      return;
     if (!newBucketDiv.current) return;
-    const availableBuckets = Object.keys(BucketChatMessages).map((bucketId) =>
-      parseInt(bucketId)
-    );
-    const smallestBucketId = Math.min(...availableBuckets);
-    if (smallestBucketId === 0) return;
-    const smallestBucket = BucketChatMessages[smallestBucketId];
-    let observer: IntersectionObserver | null = null;
-    if (smallestBucket === undefined || smallestBucket !== null) {
-      observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting && privateChannelId) {
-            dispatch(
-              GetBucketPrivateChannelChatMessage({
-                privateChannelId,
-                bucketId: smallestBucketId - 1,
-              })
-            );
-            observer!.unobserve(entry.target);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          if (hasNextChat) {
+            fetchNextChat();
           }
-        },
-        {
-          rootMargin: '10px',
+          observer.unobserve(entry.target);
         }
-      );
-      observer.observe(newBucketDiv.current);
-    }
+      },
+      {
+        rootMargin: '10px',
+      }
+    );
+    observer.observe(newBucketDiv.current);
 
     return () => {
-      if (newBucketDiv.current && observer)
-        // eslint-disable-next-line
+      if (newBucketDiv.current !== null)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         observer.unobserve(newBucketDiv.current);
     };
-    // eslint-disable-next-line
-  }, [BucketChatMessages, privateChannelId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [newBucketDiv, currentChat]);
 
   useEffect(() => {
     if (textAreaMessage.current !== null) {
@@ -106,20 +257,7 @@ function ChatView({ className = '' }: ChatViewProps) {
   }, [draftMessage]);
 
   useEffect(() => {
-    if (!privateChannelId) return;
-    const state = store.getState();
     setDraftMessage('');
-
-    if (
-      state.ChatMessages === null ||
-      state.ChatMessages[privateChannelId] === undefined
-    ) {
-      const promise = dispatch(GetPrivateChannelChatMessage(privateChannelId));
-      return () => {
-        promise.abort();
-      };
-    }
-    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [privateChannelId]);
 
   return (
@@ -130,10 +268,10 @@ function ChatView({ className = '' }: ChatViewProps) {
             <Icon.Alias />
           </div>
           <div className="whitespace-nowrap font-display text-base font-semibold leading-5 text-header-primary">
-            {CurrentPrivateChannel !== null
-              ? CurrentPrivateChannel.isGroup
-                ? CurrentPrivateChannel.privateChannelName
-                : Object.values(CurrentPrivateChannel.participants)[0].username
+            {currentPrivateChannel !== undefined
+              ? currentPrivateChannel.isGroup
+                ? currentPrivateChannel.privateChannelName
+                : Object.values(currentPrivateChannel.participants)[0].username
               : ''}
           </div>
         </div>
@@ -150,10 +288,10 @@ function ChatView({ className = '' }: ChatViewProps) {
           <div className="text-interactive mx-2 cursor-pointer">
             <Icon.AddMember />
           </div>
-          {CurrentPrivateChannel && CurrentPrivateChannel.isGroup && (
+          {currentPrivateChannel && currentPrivateChannel.isGroup && (
             <div
               className="text-interactive mx-2 cursor-pointer"
-              onClick={() => setViewMemberList(!viewMemberList)}
+              onClick={() => setViewMemberList((v) => !v)}
             >
               <Icon.Members />
             </div>
@@ -180,45 +318,55 @@ function ChatView({ className = '' }: ChatViewProps) {
         <div className="flex min-w-0 flex-1 flex-col">
           <div className="scrollbar-4 scrollbar-thumb-rounded-lg scrollbar-track scrollbar-thumb-border flex flex-1 flex-col-reverse overflow-y-scroll -webkit-scrollbar-thumb:min-h-[2.5rem] -webkit-scrollbar-thumb:bg-tertiary">
             <div className="min-h-[1.875rem]"></div>
-            {BucketChatMessages &&
-              Object.keys(BucketChatMessages)
-                .filter((bucketId) => BucketChatMessages[bucketId])
-                .flatMap((bucketId) =>
-                  BucketChatMessages[bucketId]!.chatMessages.map(
-                    ({ id, timestamp, senderId, content }) => ({
-                      channelId: BucketChatMessages[bucketId]!.channelId,
-                      bucketId: BucketChatMessages[bucketId]!.bucketId,
-                      id,
-                      timestamp: parseJSON(timestamp),
-                      senderId,
-                      content,
-                    })
-                  )
-                )
-                .map((_chatMessage, index, ChatMessages) => {
-                  const currentChatMessage =
-                    ChatMessages[ChatMessages.length - 1 - index];
-                  const previousChatMessage =
-                    ChatMessages[ChatMessages.length - 2 - index] ?? null;
-                  const isConsecutive =
-                    previousChatMessage !== null &&
-                    previousChatMessage.senderId ===
-                      currentChatMessage.senderId;
-                  return (
-                    <ChatMessage
-                      key={currentChatMessage.id}
-                      message={currentChatMessage}
-                      isConsecutive={isConsecutive}
-                    />
-                  );
-                })}
+            {currentChat &&
+              currentChat.pages.flatMap((page) =>
+                page.chatMessages
+                  .map(({ id, timestamp, senderId, content }) => ({
+                    channelId: page.channelId,
+                    bucketId: page.bucketId,
+                    id,
+                    timestamp: parseJSON(timestamp),
+                    senderId,
+                    content,
+                  }))
+                  .map((_chatMessage, index, chatMessages) => {
+                    // reverse map
+                    const currentChatMessage = chatMessages.at(-1 - index)!;
+                    const previousChatMessage =
+                      chatMessages.at(-2 - index) ?? null;
+                    const isConsecutive =
+                      previousChatMessage !== null &&
+                      previousChatMessage.senderId ===
+                        currentChatMessage.senderId;
+
+                    const sender =
+                      user?.id === currentChatMessage.senderId
+                        ? {
+                            id: user?.id,
+                            avatar: user?.avatar,
+                            username: user?.username,
+                            discriminator: user?.discriminator,
+                          }
+                        : currentPrivateChannel?.participants[
+                            currentChatMessage.senderId
+                          ];
+                    return (
+                      <ChatMessage
+                        sender={sender}
+                        key={currentChatMessage.id}
+                        message={currentChatMessage}
+                        isConsecutive={isConsecutive}
+                      />
+                    );
+                  })
+              )}
             <div ref={newBucketDiv}></div>
 
             <div className="m-4 flex flex-col">
               <AvatarIcon
                 src={
-                  CurrentPrivateChannel && !CurrentPrivateChannel.isGroup
-                    ? Object.values(CurrentPrivateChannel.participants)[0]
+                  currentPrivateChannel && !currentPrivateChannel.isGroup
+                    ? Object.values(currentPrivateChannel.participants)[0]
                         .avatar
                     : undefined
                 }
@@ -226,20 +374,20 @@ function ChatView({ className = '' }: ChatViewProps) {
                 height="h-20"
               />
               <label className="my-2 font-display text-[2rem] font-bold leading-10 text-header-primary">
-                {CurrentPrivateChannel && CurrentPrivateChannel.isGroup
-                  ? CurrentPrivateChannel.privateChannelName
-                  : CurrentPrivateChannel != null
-                  ? Object.values(CurrentPrivateChannel.participants)[0]
+                {currentPrivateChannel && currentPrivateChannel.isGroup
+                  ? currentPrivateChannel.privateChannelName
+                  : currentPrivateChannel != null
+                  ? Object.values(currentPrivateChannel.participants)[0]
                       .username
                   : ''}
               </label>
-              {CurrentPrivateChannel && !CurrentPrivateChannel.isGroup && (
+              {currentPrivateChannel && !currentPrivateChannel.isGroup && (
                 <>
                   <label className="font-primary text-base leading-5 text-header-secondary">
                     This is the beginning of your direct message history with
                     <strong className="font-semibold">
                       {` @${
-                        Object.values(CurrentPrivateChannel.participants)[0]
+                        Object.values(currentPrivateChannel.participants)[0]
                           .username
                       } `}
                     </strong>
@@ -250,40 +398,30 @@ function ChatView({ className = '' }: ChatViewProps) {
                       No servers in common
                     </label>
                     <div className="mx-4 my-[0.625rem] h-1 w-1 rounded-[50%] bg-interactive-muted"></div>
-                    {Friendship === null && (
+                    {friendship === null && (
                       <button
                         className="mr-2 h-6 min-h-[1.5rem] min-w-[3.25rem] flex-none rounded-[0.1875rem] bg-brand-experiment px-4 py-[0.125rem] font-primary text-sm font-medium leading-4 text-interactive-active hover:bg-brand-experiment-560 active:bg-brand-experiment-600"
                         onClick={async (e) => {
-                          const response = await friendAPI.post<FriendItem>(
-                            `/${
-                              Object.values(
-                                CurrentPrivateChannel.participants
-                              )[0].username
-                            }/${
-                              Object.values(
-                                CurrentPrivateChannel.participants
-                              )[0].discriminator
-                            }`
-                          );
-
-                          if (response.status === 201) {
-                            dispatch(
-                              AddFriendsToList({
-                                [response?.data.friendId]: response?.data,
-                              })
-                            );
-                          }
+                          updateFriend({
+                            username: Object.values(
+                              currentPrivateChannel.participants
+                            )[0].username,
+                            discriminator: Object.values(
+                              currentPrivateChannel.participants
+                            )[0].discriminator,
+                            friendshipStatus: FriendshipEnum.FRIEND,
+                          });
                         }}
                       >
                         Add Friend
                       </button>
                     )}
-                    {Friendship === FriendshipEnum.PENDING && (
+                    {friendship === FriendshipEnum.PENDING && (
                       <button className="mr-2 h-6 min-h-[1.5rem] min-w-[3.25rem] flex-none cursor-not-allowed rounded-[0.1875rem] bg-brand-experiment px-4 py-[0.125rem] font-primary text-sm font-medium leading-4 text-interactive-active opacity-50">
                         Friend Request Sent
                       </button>
                     )}
-                    {Friendship === FriendshipEnum.REQUESTED && (
+                    {friendship === FriendshipEnum.REQUESTED && (
                       <>
                         <label className="mr-2 font-primary text-sm leading-[1.125rem] text-header-secondary">
                           Sent you a friend request:
@@ -291,17 +429,15 @@ function ChatView({ className = '' }: ChatViewProps) {
                         <button
                           className="mr-2 h-6 min-h-[1.5rem] min-w-[3.25rem] flex-none rounded-[0.1875rem] bg-brand-experiment px-4 py-[0.125rem] font-primary text-sm font-medium leading-4 text-interactive-active hover:bg-brand-experiment-560 active:bg-brand-experiment-600"
                           onClick={async (e) => {
-                            await dispatch(
-                              UpdateFriend({
-                                username: Object.values(
-                                  CurrentPrivateChannel.participants
-                                )[0].username,
-                                discriminator: Object.values(
-                                  CurrentPrivateChannel.participants
-                                )[0].discriminator,
-                                friendshipStatus: FriendshipEnum.FRIEND,
-                              })
-                            );
+                            updateFriend({
+                              username: Object.values(
+                                currentPrivateChannel.participants
+                              )[0].username,
+                              discriminator: Object.values(
+                                currentPrivateChannel.participants
+                              )[0].discriminator,
+                              friendshipStatus: FriendshipEnum.FRIEND,
+                            });
                           }}
                         >
                           Accept
@@ -309,76 +445,68 @@ function ChatView({ className = '' }: ChatViewProps) {
                         <button
                           className="mr-2 h-6 min-h-[1.5rem] min-w-[3.25rem] flex-none rounded-[0.1875rem] bg-interactive-muted px-4 py-[0.125rem] font-primary text-sm font-medium leading-4 text-interactive-active hover:bg-[#686d73] active:bg-muted"
                           onClick={async (e) => {
-                            await dispatch(
-                              DeleteFriend({
-                                username: Object.values(
-                                  CurrentPrivateChannel.participants
-                                )[0].username,
-                                discriminator: Object.values(
-                                  CurrentPrivateChannel.participants
-                                )[0].discriminator,
-                              })
-                            );
+                            deleteFriend({
+                              username: Object.values(
+                                currentPrivateChannel.participants
+                              )[0].username,
+                              discriminator: Object.values(
+                                currentPrivateChannel.participants
+                              )[0].discriminator,
+                            });
                           }}
                         >
                           Ignore
                         </button>
                       </>
                     )}
-                    {Friendship === FriendshipEnum.FRIEND && (
+                    {friendship === FriendshipEnum.FRIEND && (
                       <button
                         className="mr-2 h-6 min-h-[1.5rem] min-w-[3.25rem] flex-none rounded-[0.1875rem] bg-interactive-muted px-4 py-[0.125rem] font-primary text-sm font-medium leading-4 text-interactive-active hover:bg-[#686d73] active:bg-muted"
                         onClick={async (e) => {
-                          await dispatch(
-                            DeleteFriend({
-                              username: Object.values(
-                                CurrentPrivateChannel.participants
-                              )[0].username,
-                              discriminator: Object.values(
-                                CurrentPrivateChannel.participants
-                              )[0].discriminator,
-                            })
-                          );
+                          deleteFriend({
+                            username: Object.values(
+                              currentPrivateChannel.participants
+                            )[0].username,
+                            discriminator: Object.values(
+                              currentPrivateChannel.participants
+                            )[0].discriminator,
+                          });
                         }}
                       >
                         Remove Friend
                       </button>
                     )}
-                    {Friendship !== FriendshipEnum.BLOCKED && (
+                    {friendship !== FriendshipEnum.BLOCKED && (
                       <button
                         className="mr-2 h-6 min-h-[1.5rem] min-w-[3.25rem] flex-none rounded-[0.1875rem] bg-interactive-muted px-4 py-[0.125rem] font-primary text-sm font-medium leading-4 text-interactive-active hover:bg-[#686d73] active:bg-muted"
                         onClick={async (e) => {
-                          await dispatch(
-                            UpdateFriend({
-                              username: Object.values(
-                                CurrentPrivateChannel.participants
-                              )[0].username,
-                              discriminator: Object.values(
-                                CurrentPrivateChannel.participants
-                              )[0].discriminator,
-                              friendshipStatus: FriendshipEnum.BLOCKED,
-                            })
-                          );
+                          updateFriend({
+                            username: Object.values(
+                              currentPrivateChannel.participants
+                            )[0].username,
+                            discriminator: Object.values(
+                              currentPrivateChannel.participants
+                            )[0].discriminator,
+                            friendshipStatus: FriendshipEnum.BLOCKED,
+                          });
                         }}
                       >
                         Block
                       </button>
                     )}
 
-                    {Friendship === FriendshipEnum.BLOCKED && (
+                    {friendship === FriendshipEnum.BLOCKED && (
                       <button
                         className="mr-2 h-6 min-h-[1.5rem] min-w-[3.25rem] flex-none rounded-[0.1875rem] bg-interactive-muted px-4 py-[0.125rem] font-primary text-sm font-medium leading-4 text-interactive-active hover:bg-[#686d73] active:bg-muted"
                         onClick={async (e) => {
-                          await dispatch(
-                            DeleteFriend({
-                              username: Object.values(
-                                CurrentPrivateChannel.participants
-                              )[0].username,
-                              discriminator: Object.values(
-                                CurrentPrivateChannel.participants
-                              )[0].discriminator,
-                            })
-                          );
+                          deleteFriend({
+                            username: Object.values(
+                              currentPrivateChannel.participants
+                            )[0].username,
+                            discriminator: Object.values(
+                              currentPrivateChannel.participants
+                            )[0].discriminator,
+                          });
                         }}
                       >
                         Unblock
@@ -387,11 +515,11 @@ function ChatView({ className = '' }: ChatViewProps) {
                   </div>
                 </>
               )}
-              {CurrentPrivateChannel && CurrentPrivateChannel.isGroup && (
+              {currentPrivateChannel && currentPrivateChannel.isGroup && (
                 <label className="font-primary text-base leading-5 text-header-secondary">
                   Welcome to the beginning of the
                   <strong className="font-semibold">
-                    {` ${CurrentPrivateChannel.privateChannelName} `}
+                    {` ${currentPrivateChannel.privateChannelName} `}
                   </strong>
                   group.
                 </label>
@@ -408,11 +536,11 @@ function ChatView({ className = '' }: ChatViewProps) {
               className="scrollbar-3 scrollbar-thumb-rounded-lg scrollbar-thumb-border max-h-[29.375rem] min-h-[2.75rem] flex-1 resize-none overflow-y-auto overflow-x-hidden rounded-r-lg bg-channeltextarea-background py-[0.625rem] font-primary text-normal outline-none placeholder:whitespace-nowrap placeholder:text-channeltextarea-placeholder -webkit-scrollbar-thumb:bg-[rgba(24,25,28,.6)]"
               rows={1}
               placeholder={`Message ${
-                CurrentPrivateChannel !== null
-                  ? CurrentPrivateChannel.isGroup
-                    ? CurrentPrivateChannel.privateChannelName
+                currentPrivateChannel !== undefined
+                  ? currentPrivateChannel.isGroup
+                    ? currentPrivateChannel.privateChannelName
                     : `@${
-                        Object.values(CurrentPrivateChannel.participants)[0]
+                        Object.values(currentPrivateChannel.participants)[0]
                           .username
                       }`
                   : ''
@@ -424,8 +552,8 @@ function ChatView({ className = '' }: ChatViewProps) {
               }}
               onKeyDown={(e) => {
                 if (
-                  !BucketChatMessages ||
-                  Object.keys(BucketChatMessages).length === 0 ||
+                  !currentChat ||
+                  currentChat.pages.length === 0 ||
                   !privateChannelId
                 )
                   return e.preventDefault();
@@ -434,16 +562,18 @@ function ChatView({ className = '' }: ChatViewProps) {
                 e.preventDefault();
                 if (
                   !draftMessage.trim() &&
-                  Friendship === FriendshipEnum.FRIEND
+                  friendship === FriendshipEnum.FRIEND
                 )
                   return;
-                dispatch(
-                  SendPrivateChannelChat({
+                sendMessage(
+                  {
                     privateChannelId,
                     content: (e.target as HTMLTextAreaElement).value,
-                  })
+                  },
+                  {
+                    onSuccess: () => setDraftMessage(''),
+                  }
                 );
-                setDraftMessage('');
               }}
             ></textarea>
             <div className="absolute right-5 top-1 flex flex-none items-center">
@@ -459,28 +589,28 @@ function ChatView({ className = '' }: ChatViewProps) {
             </div>
           </div>
         </div>
-        {CurrentPrivateChannel &&
-          CurrentPrivateChannel.isGroup &&
+        {currentPrivateChannel &&
+          currentPrivateChannel.isGroup &&
           viewMemberList &&
-          CurrentUser && (
+          user && (
             <div className="scrollbar-2 scrollbar-thumb-rounded scrollbar-thumb-border hover-scrollbar-thumb flex w-60 flex-none flex-col overflow-y-scroll bg-secondary -webkit-scrollbar-thumb:min-h-[2.5rem] -webkit-scrollbar-thumb:bg-transparent">
               <label className="pt-6 pr-2 pl-4 font-display text-xs font-semibold uppercase tracking-[0.015625rem] text-channel-default">
                 Members—
                 {
                   Object.values(
-                    Object.values(CurrentPrivateChannel.participants)
+                    Object.values(currentPrivateChannel.participants)
                   ).length
                 }
               </label>
               {[
                 ...Object.values(
-                  Object.values(CurrentPrivateChannel.participants)
+                  Object.values(currentPrivateChannel.participants)
                 ),
                 {
-                  id: CurrentUser.id,
-                  avatar: CurrentUser.avatar,
-                  username: CurrentUser.username,
-                  discriminator: CurrentUser.discriminator,
+                  id: user.id,
+                  avatar: user.avatar,
+                  username: user.username,
+                  discriminator: user.discriminator,
                 },
               ].map((participant) => (
                 <div

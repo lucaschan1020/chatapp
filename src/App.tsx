@@ -8,11 +8,8 @@ import RequireAuth from './components/RequireAuth.component';
 import { useAppDispatch } from './hooks';
 import './index.css';
 import { UpdateAuthState } from './state/reducers/AuthSlice';
-import { UpdateCurrentUserState } from './state/reducers/CurrentUserSlice';
 import ChatView from './components/ChatView.component';
-import { InitializeFriendState } from './state/reducers/FriendSlice';
 import { connectSocket } from './socketIO';
-import { InitializePrivateChannelListState } from './state/reducers/PrivateChannelListSlice';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -20,9 +17,6 @@ function App() {
     const initialize = async () => {
       await connectSocket();
       await dispatch(UpdateAuthState());
-      await dispatch(UpdateCurrentUserState());
-      await dispatch(InitializeFriendState());
-      await dispatch(InitializePrivateChannelListState());
     };
     initialize();
     // eslint-disable-next-line react-hooks/exhaustive-deps

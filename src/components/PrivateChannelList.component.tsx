@@ -1,6 +1,9 @@
-import { useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { NavLink } from 'react-router-dom';
-import { useAppSelector } from '../hooks';
+import auth from '../apis/auth';
+import getGapiAuthInstance from '../apis/gapiAuth';
+import privateChannelAPI from '../apis/privateChannel';
+import { CurrentUser, PrivateChannelItem } from '../interfaces';
 import leadingZero from '../utilities/leading-zero';
 import AvatarIcon from './AvatarIcon.component';
 import Icon from './Icon.component';
@@ -10,10 +13,29 @@ interface PrivateChannelListProps {
 }
 
 function PrivateChannelList({ className = '' }: PrivateChannelListProps) {
-  const CurrentUser = useAppSelector((state) => state.CurrentUser);
-  const PrivateChannelList = useAppSelector(
-    (state) => state.PrivateChannelList
-  );
+  const { data: user } = useQuery({
+    queryKey: ['user'],
+    queryFn: async ({ signal }) => {
+      const gapiAuth = await getGapiAuthInstance();
+      if (!gapiAuth.isSignedIn.get()) {
+        return;
+      }
+      const response = await auth.get<CurrentUser>('/login', {
+        signal,
+      });
+      return response.data;
+    },
+  });
+
+  const { data: privateChannels } = useQuery({
+    queryKey: ['private-channel'],
+    queryFn: async ({ signal }) => {
+      const response = await privateChannelAPI.get<
+        Record<string, PrivateChannelItem>
+      >('/private', { signal });
+      return response.data;
+    },
+  });
 
   return (
     <div className={className}>
@@ -48,13 +70,13 @@ function PrivateChannelList({ className = '' }: PrivateChannelListProps) {
             </label>
             <Icon.DMPlus className="h-4 w-4 cursor-pointer" />
           </div>
-          {!PrivateChannelList ||
-            (Object.keys(PrivateChannelList).length === 0 && (
+          {!privateChannels ||
+            (Object.keys(privateChannels).length === 0 && (
               <Icon.EmptyPrivateChannelList className="fill-primary p-4" />
             ))}
-          {PrivateChannelList &&
-            Object.keys(PrivateChannelList).length > 0 &&
-            Object.values(PrivateChannelList).map((privateChannel) => (
+          {privateChannels &&
+            Object.keys(privateChannels).length > 0 &&
+            Object.values(privateChannels).map((privateChannel) => (
               <NavLink
                 to={`/channels/@me/${privateChannel.id}`}
                 key={privateChannel.id}
@@ -98,13 +120,13 @@ function PrivateChannelList({ className = '' }: PrivateChannelListProps) {
         </div>
       </div>
       <div className="mt-auto flex h-[3.3125rem] flex-none items-center bg-secondary-alt px-2">
-        <AvatarIcon src={CurrentUser?.avatar} />
+        <AvatarIcon src={user?.avatar} />
         <span className="ml-2 mr-1 flex w-[5.25rem] flex-col justify-center font-primary">
           <label className="truncate text-sm font-semibold leading-[1.125rem] text-header-primary">
-            {CurrentUser?.name}
+            {user?.name}
           </label>
           <label className="text-xs font-medium leading-[0.8125rem] text-header-secondary">
-            #{leadingZero(CurrentUser?.discriminator ?? 0, 4)}
+            #{leadingZero(user?.discriminator ?? 0, 4)}
           </label>
         </span>
         <div className="flex flex-1 justify-around">

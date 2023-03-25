@@ -11,7 +11,7 @@ interface FriendViewProps {
 
 function FriendView({ className = '' }: FriendViewProps) {
   const selectedIndex = useAppSelector(
-    (state) => state.ViewState.FriendListSelectedIndex
+    (state) => state.ViewState.friendListSelectedIndex
   );
   const dispatch = useAppDispatch();
   const tabItemSelected = (index: number) => {
