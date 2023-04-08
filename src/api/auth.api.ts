@@ -1,5 +1,6 @@
 import { UserEntity } from '@/interfaces/domain';
 import axios from '@/lib/axios';
+import getGapiAuthInstance from '@/lib/gapi-auth';
 
 interface LoginResponse {
   id: string;
@@ -21,7 +22,11 @@ const authApi = {
     return response.data;
   },
   post: async (): Promise<UserEntity> => {
-    const response = await axios.post<LoginResponse>('/api/auth/login');
+    const gapiAuthInstance = await getGapiAuthInstance();
+    const token = gapiAuthInstance.currentUser.get().getAuthResponse().id_token;
+    const response = await axios.post<LoginResponse>('/api/auth/login', {
+      userToken: token,
+    });
     return response.data;
   },
 };
