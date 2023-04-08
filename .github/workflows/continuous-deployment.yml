@@ -52,8 +52,8 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            REACT_APP_GAPI_CLIENTID=${{ secrets.GAPI_CLIENTID }}
-            REACT_APP_SERVER_DOMAIN=${{ secrets.SERVER_DOMAIN }}
+            VITE_GAPI_CLIENTID=${{ secrets.GAPI_CLIENTID }}
+            VITE_SERVER_DOMAIN=${{ secrets.SERVER_DOMAIN }}
       # - id: auth
       #   name: Authenticate to Google Cloud
       #   uses: google-github-actions/auth@v1
