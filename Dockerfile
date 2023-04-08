@@ -3,12 +3,12 @@ WORKDIR '/app'
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY ./public ./public
-COPY tailwind.config.js tsconfig.json ./
+COPY tailwind.config.cjs postcss.config.cjs vite.config.ts tsconfig.json tsconfig.node.json index.html ./
 COPY ./src ./src
-ARG REACT_APP_GAPI_CLIENTID
-ARG REACT_APP_SERVER_DOMAIN
+ARG VITE_GAPI_CLIENTID
+ARG VITE_SERVER_DOMAIN
 RUN npm run build
 
 FROM nginx:1.23.3-alpine
 COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
-COPY --from=builder /app/build /usr/share/nginx/html
+COPY --from=builder /app/dist /usr/share/nginx/html

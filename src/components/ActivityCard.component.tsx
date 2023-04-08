@@ -1,12 +1,12 @@
-import AvatarIcon from './AvatarIcon.component';
+import AvatarIcon from '@/components/AvatarIcon.component';
 
-function ActivityCard() {
+const ActivityCard = () => {
   return (
     <div className="flex cursor-pointer items-center gap-3 rounded-lg border-[0.0625rem] border-solid border-modifier-accent bg-secondary p-4 hover:bg-[#18191c]">
       <AvatarIcon />
       <div className="flex flex-1 flex-col">
         <label className="truncate font-primary text-base font-semibold leading-5 text-normal">
-          Bassism
+          John Doe
         </label>
         <label className="truncate font-primary text-sm font-normal leading-[1.125rem] text-header-secondary">
           <span className="uppercase">Valorant</span> - 25m
@@ -19,6 +19,6 @@ function ActivityCard() {
       />
     </div>
   );
-}
+};
 
 export default ActivityCard;

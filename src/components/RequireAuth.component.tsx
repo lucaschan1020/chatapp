@@ -1,11 +1,11 @@
 import { Navigate, useLocation } from 'react-router-dom';
-import { useAppSelector } from '../hooks';
+import { useAppSelector } from '../hooks/redux';
 
 interface RequireAuthProps {
   children: JSX.Element;
 }
 
-function RequireAuth({ children }: RequireAuthProps) {
+const RequireAuth: React.FC<RequireAuthProps> = ({ children }) => {
   const isAuth = useAppSelector((state) => state.Auth.isAuth);
   const location = useLocation();
 
@@ -18,6 +18,6 @@ function RequireAuth({ children }: RequireAuthProps) {
   }
 
   return children;
-}
+};
 
 export default RequireAuth;

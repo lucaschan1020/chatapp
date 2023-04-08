@@ -1,19 +1,11 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { configureStore } from "@reduxjs/toolkit";
 import AuthReducer from './reducers/AuthSlice';
-import ChatMessageReducer from './reducers/ChatMessageSlice';
 import ViewStateReducer from './reducers/ViewStateSlice';
-import CurrentUserReducer from './reducers/CurrentUserSlice';
-import FriendReducer from './reducers/FriendSlice';
-import PrivateChannelListReducer from './reducers/PrivateChannelListSlice';
 
 export const store = configureStore({
   reducer: {
-    PrivateChannelList: PrivateChannelListReducer,
     ViewState: ViewStateReducer,
-    ChatMessages: ChatMessageReducer,
     Auth: AuthReducer,
-    CurrentUser: CurrentUserReducer,
-    Friends: FriendReducer,
   },
 });
 
