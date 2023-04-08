@@ -2,12 +2,10 @@ import Icon from '@/components/Icon.component';
 import PrivateChannelMenu from '@/features/PrivateChannels/components/PrivateChannelMenu.component';
 import PrivateChannelNavigateButton from '@/features/PrivateChannels/components/PrivateChannelNavigateButton.component';
 import useGetPrivateChannels from '@/hooks/use-get-private-channels.hook';
-import { PrivateChannelEntity } from '@/interfaces/domain';
 import { NavLink } from 'react-router-dom';
 
 const PrivateChannelList: React.FC = () => {
-  const { data: x } = useGetPrivateChannels();
-  const privateChannels = {} as Record<string, PrivateChannelEntity>;
+  const { data: privateChannels } = useGetPrivateChannels();
 
   return (
     <>
