@@ -3,11 +3,14 @@ interface NoticeProps {
   children?: string;
 }
 
-function Notice({ className = '', children = 'test' }: NoticeProps) {
+const Notice: React.FC<NoticeProps> = ({
+  className = '',
+  children = 'test',
+}) => {
   return (
     <p
       className={
-        'h-9 rounded-tl-lg text-center font-primary text-sm font-medium leading-9 text-white' +
+        'min-h-[2.25rem] rounded-tl-lg text-center font-primary text-sm font-medium leading-9 text-white ' +
         className
       }
       style={{ backgroundColor: 'hsl(197, 100%, 32.5%)' }}
@@ -15,6 +18,6 @@ function Notice({ className = '', children = 'test' }: NoticeProps) {
       {children}
     </p>
   );
-}
+};
 
 export default Notice;

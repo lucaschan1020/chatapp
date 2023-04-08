@@ -5,138 +5,144 @@
 @font-face {
   font-family: Whitney;
   font-weight: 300;
-  src: url(./fonts/6c6374bad0b0b6d204d8d6dc4a18d820.woff) format('woff');
+  src: url(./assets/fonts/6c6374bad0b0b6d204d8d6dc4a18d820.woff) format('woff');
 }
 
 @font-face {
   font-family: Whitney;
   font-weight: 400;
-  src: url(./fonts/e8acd7d9bf6207f99350ca9f9e23b168.woff) format('woff');
+  src: url(./assets/fonts/e8acd7d9bf6207f99350ca9f9e23b168.woff) format('woff');
 }
 
 @font-face {
   font-family: Whitney;
   font-weight: 500;
-  src: url(./fonts/3bdef1251a424500c1b3a78dea9b7e57.woff) format('woff');
+  src: url(./assets/fonts/3bdef1251a424500c1b3a78dea9b7e57.woff) format('woff');
 }
 
 @font-face {
   font-family: Whitney;
   font-weight: 600;
-  src: url(./fonts/be0060dafb7a0e31d2a1ca17c0708636.woff) format('woff');
+  src: url(./assets/fonts/be0060dafb7a0e31d2a1ca17c0708636.woff) format('woff');
 }
 
 @font-face {
   font-family: Whitney;
   font-weight: 700;
-  src: url(./fonts/8e12fb4f14d9c4592eb8ec9f22337b04.woff) format('woff');
+  src: url(./assets/fonts/8e12fb4f14d9c4592eb8ec9f22337b04.woff) format('woff');
 }
 
 @font-face {
   font-family: Ginto;
   font-weight: 300;
-  src: url(./fonts/148d0f25ba9c02a9190be23e882c7f87.woff) format('woff');
+  src: url(./assets/fonts/148d0f25ba9c02a9190be23e882c7f87.woff) format('woff');
 }
 
 @font-face {
   font-family: Ginto;
   font-weight: 400;
-  src: url(./fonts/32c4f766e4892c054dfd367dbe0fc6dc.woff) format('woff');
+  src: url(./assets/fonts/32c4f766e4892c054dfd367dbe0fc6dc.woff) format('woff');
 }
 
 @font-face {
   font-family: Ginto;
   font-weight: 500;
-  src: url(./fonts/32c4f766e4892c054dfd367dbe0fc6dc.woff) format('woff');
+  src: url(./assets/fonts/32c4f766e4892c054dfd367dbe0fc6dc.woff) format('woff');
 }
 
 @font-face {
   font-family: Ginto;
   font-weight: 600;
-  src: url(./fonts/88055567e3d928bcb1e67e967081572e.woff) format('woff');
+  src: url(./assets/fonts/88055567e3d928bcb1e67e967081572e.woff) format('woff');
 }
 
 @font-face {
   font-family: Ginto;
   font-weight: 700;
-  src: url(./fonts/746a4f241e03deffc59b08c5650cf458.woff) format('woff');
+  src: url(./assets/fonts/746a4f241e03deffc59b08c5650cf458.woff) format('woff');
 }
 
 @font-face {
   font-family: Ginto;
   font-weight: 300;
   font-style: italic;
-  src: url(./fonts/26ec135289ee1c4e5439e30fa7d771b0.woff) format('woff');
+  src: url(./assets/fonts/26ec135289ee1c4e5439e30fa7d771b0.woff) format('woff');
 }
 
 @font-face {
   font-family: Ginto;
   font-weight: 400;
   font-style: italic;
-  src: url(./fonts/7a504226cbb79a1a6990a72266007030.woff) format('woff');
+  src: url(./assets/fonts/7a504226cbb79a1a6990a72266007030.woff) format('woff');
 }
 
 @font-face {
   font-family: Ginto;
   font-weight: 500;
   font-style: italic;
-  src: url(./fonts/7a504226cbb79a1a6990a72266007030.woff) format('woff');
+  src: url(./assets/fonts/7a504226cbb79a1a6990a72266007030.woff) format('woff');
 }
 
 @font-face {
   font-family: Ginto;
   font-weight: 600;
   font-style: italic;
-  src: url(./fonts/4ea3faef5f6c0c74eb4d5e1a4a5de0b4.woff) format('woff');
+  src: url(./assets/fonts/4ea3faef5f6c0c74eb4d5e1a4a5de0b4.woff) format('woff');
 }
 
 @font-face {
   font-family: Ginto;
   font-weight: 700;
   font-style: italic;
-  src: url(./fonts/09788e4fa057f2e0067e13209e56c8a7.woff) format('woff');
+  src: url(./assets/fonts/09788e4fa057f2e0067e13209e56c8a7.woff) format('woff');
 }
 
 @font-face {
   font-family: Ginto Nord;
   font-weight: 500;
-  src: url(./fonts/64f5045e7c47202da327cadef3c611d1.woff2) format('woff2'),
-    url(./fonts/e4308d367bcb6c91660d8618148e307d.woff) format('woff');
+  src: url(./assets/fonts/64f5045e7c47202da327cadef3c611d1.woff2)
+      format('woff2'),
+    url(./assets/fonts/e4308d367bcb6c91660d8618148e307d.woff) format('woff');
 }
 
 @font-face {
   font-family: Ginto Nord;
   font-weight: 600;
-  src: url(./fonts/37342aa4e66eb4137df0c8921e3853f0.woff2) format('woff2'),
-    url(./fonts/9d099dc8ec6264f00561648293f3d4b9.woff) format('woff');
+  src: url(./assets/fonts/37342aa4e66eb4137df0c8921e3853f0.woff2)
+      format('woff2'),
+    url(./assets/fonts/9d099dc8ec6264f00561648293f3d4b9.woff) format('woff');
 }
 
 @font-face {
   font-family: Ginto Nord;
   font-weight: 700;
-  src: url(./fonts/ae7c84783ad48b6d1c8e2bfbe707e0d4.woff2) format('woff2'),
-    url(./fonts/92e32db984c8577d8b81548b43b9c061.woff) format('woff');
+  src: url(./assets/fonts/ae7c84783ad48b6d1c8e2bfbe707e0d4.woff2)
+      format('woff2'),
+    url(./assets/fonts/92e32db984c8577d8b81548b43b9c061.woff) format('woff');
 }
 
 @font-face {
   font-family: Ginto Normal;
   font-weight: 400;
-  src: url(./fonts/57e5e55cf0143736ceab51ac0a9ebb54.woff2) format('woff2'),
-    url(./fonts/32c4f766e4892c054dfd367dbe0fc6dc.woff) format('woff');
+  src: url(./assets/fonts/57e5e55cf0143736ceab51ac0a9ebb54.woff2)
+      format('woff2'),
+    url(./assets/fonts/32c4f766e4892c054dfd367dbe0fc6dc.woff) format('woff');
 }
 
 @font-face {
   font-family: Ginto Normal;
   font-weight: 500;
-  src: url(./fonts/e215f61cbbc2e49cea6121e0d2679aa2.woff2) format('woff2'),
-    url(./fonts/88055567e3d928bcb1e67e967081572e.woff) format('woff');
+  src: url(./assets/fonts/e215f61cbbc2e49cea6121e0d2679aa2.woff2)
+      format('woff2'),
+    url(./assets/fonts/88055567e3d928bcb1e67e967081572e.woff) format('woff');
 }
 
 @font-face {
   font-family: Ginto Normal;
   font-weight: 700;
-  src: url(./fonts/1cce82154216dc3cb04a84d011ce1201.woff2) format('woff2'),
-    url(./fonts/746a4f241e03deffc59b08c5650cf458.woff) format('woff');
+  src: url(./assets/fonts/1cce82154216dc3cb04a84d011ce1201.woff2)
+      format('woff2'),
+    url(./assets/fonts/746a4f241e03deffc59b08c5650cf458.woff) format('woff');
 }
 
 @layer components {
@@ -175,4 +181,18 @@
   .text-interactive {
     @apply text-interactive-normal hover:text-interactive-hover;
   }
+
+  .flex-rest-x {
+    @apply min-w-0 flex-1 overflow-x-hidden;
+  }
+
+  .flex-rest-y {
+    @apply min-h-0 flex-1 overflow-y-hidden;
+  }
+}
+
+/* fallback to 100vh if not supported */
+.h-screen-sv {
+  height: 100vh;
+  height: 100svh;
 }

@@ -1,4 +1,4 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { configureStore } from "@reduxjs/toolkit";
 import AuthReducer from './reducers/AuthSlice';
 import ViewStateReducer from './reducers/ViewStateSlice';
 

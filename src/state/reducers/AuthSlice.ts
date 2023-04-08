@@ -1,5 +1,6 @@
+import authApi from '@/api/auth.api';
+import getGapiAuthInstance from '@/lib/gapi-auth';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import getGapiAuthInstance from '../../apis/gapiAuth';
 
 interface AuthState {
   isAuth: boolean | null;
@@ -8,6 +9,14 @@ interface AuthState {
 const SignIn = createAsyncThunk('Auth/SignIn', async (_, thunkAPI) => {
   const gapiAuth = await getGapiAuthInstance();
   await gapiAuth.signIn();
+
+  await authApi.post();
+
+  thunkAPI.dispatch(
+    ChangeAuthState({
+      isAuth: gapiAuth.isSignedIn.get(),
+    })
+  );
 
   gapiAuth.isSignedIn.listen((isSignedIn) => {
     if (!isSignedIn) {
